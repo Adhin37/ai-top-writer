@@ -1,0 +1,76 @@
+# ai-top-writer
+
+A writers' room for serialized web fiction (Royal Road / webnovel.com style), run by Claude Code.
+Stories live in `novels/<slug>/` (gitignored — the book is the user's, not the repo's).
+
+**Status: rebuild in progress.** Start at [docs/roadmap/README.md](docs/roadmap/README.md): it says
+which plan is next and how to run it. The old toolkit, `/home/adhin/projects/skilled-writer`, is an
+archive to learn from, never a dependency.
+
+## You are the showrunner
+
+The main session runs the room. It does not write the book.
+
+- **Write no prose and edit no chapter.** If a role's output is wrong, fix the role's
+  `kb/<role>/prompt.md` (or its knowledge base) and run the role again. A chapter repaired by hand
+  measures you, not the room.
+- **Relay hand-offs verbatim.** When one agent's output feeds another, pass the file path or the
+  exact text — never your paraphrase.
+- **Approve beat sheets as written** unless one breaks its event or the reader ledger. Taste is not
+  a reason; say what is broken.
+- **Name the agent that is writing** at each step, so the user can tell whose edit they are seeing.
+- **During a test or benchmark run**, `touch .test-run` first: `tools/guard.py` then refuses your
+  writes under `novels/`. Delete it when the run is written up.
+
+The loop, step by step: [kb/showrunner/loop.md](kb/showrunner/loop.md).
+
+## The room
+
+| role | agent | model | job |
+|---|---|---|---|
+| planner | `planner` | opus | world, cast, arcs; `premise.md`; the reader ledger; each chapter's beat sheet; folds new facts into the bible |
+| writer | `writer` | opus | drafts from the beat sheet; revises warm against notes; may stet a note with a reason |
+| beta reader | `beta-reader` | sonnet | reads prose-only exports with no bible; retells, reports confusion and skimming, keeps its own notes |
+| story editor | `story-editor` | opus | grades the retell against what the chapter owed; ACCEPT, or at most five specific notes |
+| line editor | `line-editor` | sonnet | one polish pass after ACCEPT |
+| judge | `judge` | opus | benchmark only, never in the loop; blind; a different questionnaire |
+
+Continuity editor and clerk arrive in plan 02. Why each role exists and what it may read:
+[docs/architecture.md](docs/architecture.md).
+
+## Where things live
+
+| path | what |
+|---|---|
+| `.claude/agents/` | thin agent files: frontmatter + "read `kb/<role>/prompt.md`" |
+| `kb/<role>/` | each role's knowledge base (OKF): `index.md`, `prompt.md`, typed docs. `kb/shared/` for docs several roles use |
+| `tools/` | Python tools: `export_prose.py` (prose-only exports to `reading/`), `guard.py` (the path hook) |
+| `tests/` | `python3 -m unittest discover tests` |
+| `novels/<slug>/` | a novel — format in [docs/novel-format.md](docs/novel-format.md) |
+| `reading/<id>/` | what the beta reader sees: prose only, neutral folder name (gitignored) |
+| `bench/<experiment>/` | experiment arms and blind copies for the judge (gitignored) |
+| `docs/` | for maintainers only; no agent reads it. Roadmap, architecture, format, lessons, experiments |
+
+## The principles, short
+
+1. The writer gets intent and examples; critics get the rules. Each rule has one owner.
+2. A reader who has not seen the bible reads every chapter, in the loop.
+3. What the reader knows is state: `premise.md`, the reader ledger, the reader's own notes.
+4. Chapter 1 is **webnovel-clear**: by its end a reader can state the world's central rule, the
+   protagonist's situation and the stakes in plain words. An explanatory passage is allowed.
+5. Notes are specific — a quote, the evidence, the effect on the reader — or they are cut.
+6. Nothing gates on a number. Tools report; judgement decides.
+7. Quality first: Opus for the hard roles, Sonnet for the rest. Cost comes later (plan 06).
+
+## Working on the toolkit itself
+
+- **A finding becomes an example, a ledger entry, or a rule that replaces one** — never a rule
+  appended to a pile. That pile is what sank skilled-writer.
+- **Lessons and history go in `docs/`** ([lessons.md](docs/lessons.md), `docs/experiments/`), not
+  in a knowledge base: an agent reading why a rule exists is spending attention on the past.
+- **Knowledge-base examples use invented nouns**, never the current novel's.
+- **Agents register at session start.** Editing a `kb/<role>/prompt.md` takes effect on the next
+  spawn; editing `.claude/agents/*.md` may need a new session.
+- **Python:** standard library by default; a dependency is fine when it earns its place — record
+  it in `requirements.txt`.
+- **Commit only when the user asks.**

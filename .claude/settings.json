@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(**)",
+      "Write(novels/**)",
+      "Edit(novels/**)",
+      "Write(reading/**)",
+      "Edit(reading/**)",
+      "Write(bench/**)",
+      "Write(docs/experiments/**)",
+      "Edit(docs/experiments/**)",
+      "Bash(python3:*)",
+      "Bash(ls:*)",
+      "Bash(wc:*)",
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(cat:*)",
+      "Bash(cp:*)",
+      "Bash(mkdir:*)",
+      "Bash(diff:*)",
+      "Bash(date:*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Read|Grep|Glob|Write|Edit|MultiEdit|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PROJECT_DIR}\"/tools/guard.py"
+          }
+        ]
+      }
+    ]
+  }
+}

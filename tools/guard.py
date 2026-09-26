@@ -1,0 +1,243 @@
+#!/usr/bin/env python3
+"""PreToolUse hook: which role may read and write which paths.
+
+Registered once in `.claude/settings.json` for Read|Grep|Glob|Write|Edit|NotebookEdit. It reads the
+hook payload on stdin, and exits 2 with a reason on stderr to refuse a call (0 allows it).
+
+Who is calling: a payload with no `agent_id` is the main session (the showrunner); otherwise
+`agent_type` names the role. Roles not in ROLES are not judged — the guard fails open on anything it
+was not written for, because a guard that blocks work it was never meant to judge gets switched off.
+
+Two kinds of role:
+  * **cold** roles (beta reader, judge) read only an allowlist. Everything else — the bible, the
+    plan, the author's intent — is exactly what they must not see. Their searches must be scoped.
+  * **working** roles read everything except a denylist (other roles' rubrics, experiment arms,
+    maintainer docs). This is routing, not a sandbox: it keeps the writer from writing toward the
+    reader's questionnaire and the planner from designing toward the judge.
+Every role writes only its allowlist.
+
+Not covered: Bash. The cold roles are given no Bash tool, which is their real wall.
+The main session may do anything, except write under novels/ while a `.test-run` file exists at
+the project root (a benchmark run measures the room, not the showrunner).
+"""
+import json
+import os
+import re
+import sys
+
+COMMON_DENY = ["bench/**", "docs/**", "kb/judge/**"]
+CRITIC_KBS = ["kb/beta-reader/**", "kb/story-editor/**", "kb/line-editor/**",
+              "kb/continuity-editor/**"]
+
+ROLES = {
+    "beta-reader": {
+        "read_only": ["reading/**", "kb/beta-reader/**"],
+        "write": ["reading/**"],
+        "why": "a beta reader knows only the pages in its reading folder - anything else is "
+               "context a real reader would not have",
+    },
+    "judge": {
+        "read_only": ["bench/*/blind/**", "kb/judge/**", "kb/shared/grading.md"],
+        "write": [],
+        "why": "a judge reads only the blind copies it was pointed at",
+    },
+    "writer": {
+        "read_deny": COMMON_DENY + ["reading/**"] + CRITIC_KBS,
+        "write": ["novels/*/work/**", "novels/*/chapters/**"],
+        "why": "the writer works from the beat sheet, the bible and the editor's notes - not from "
+               "the reader's questionnaire or the critics' rubrics",
+    },
+    "planner": {
+        "read_deny": COMMON_DENY + ["kb/beta-reader/**"],
+        "write": ["novels/*/novel.md", "novels/*/bible/**", "novels/*/plan/**",
+                  "novels/*/state/**", "novels/*/work/**"],
+        "why": "the planner designs the story, not toward the reader's questionnaire or the judge",
+    },
+    "story-editor": {
+        "read_deny": COMMON_DENY,
+        "write": ["novels/*/work/**"],
+        "why": "the story editor's notes go to work/; experiment arms and maintainer docs are not "
+               "part of the loop",
+    },
+    "line-editor": {
+        "read_deny": COMMON_DENY + ["reading/**", "kb/beta-reader/**"],
+        "write": ["novels/*/work/**", "novels/*/chapters/**"],
+        "why": "the line editor polishes the accepted draft; reader reports are the story "
+               "editor's input",
+    },
+    "continuity-editor": {
+        "read_deny": COMMON_DENY + ["reading/**", "kb/beta-reader/**"],
+        "write": ["novels/*/work/**"],
+        "why": "the continuity editor checks the draft against the bible and state",
+    },
+    "clerk": {
+        "read_deny": COMMON_DENY,
+        "write": ["novels/*/state/**", "novels/*/plan/**", "novels/*/work/**", "reading/**"],
+        "why": "the clerk writes state after a chapter is accepted",
+    },
+}
+
+WRITE_TOOLS = {"Write", "Edit", "MultiEdit", "NotebookEdit"}
+SEARCH_TOOLS = {"Grep", "Glob"}
+GLOB_CHARS = re.compile(r"[*?\[{]")
+
+
+def _glob_re(pattern):
+    """`**` any depth, `*` one segment, `?` one character. Anchored."""
+    out, i = [], 0
+    while i < len(pattern):
+        if pattern.startswith("**", i):
+            out.append(".*")
+            i += 2
+        elif pattern[i] == "*":
+            out.append("[^/]*")
+            i += 1
+        elif pattern[i] == "?":
+            out.append("[^/]")
+            i += 1
+        else:
+            out.append(re.escape(pattern[i]))
+            i += 1
+    return re.compile("^" + "".join(out) + "$")
+
+
+def matches(pattern, rel):
+    """True if the repo-relative path `rel` falls under `pattern`. `dir/**` also matches `dir`."""
+    if _glob_re(pattern).match(rel):
+        return True
+    if pattern.endswith("/**") and _glob_re(pattern[:-3]).match(rel):
+        return True
+    return False
+
+
+def project_root(payload):
+    return os.path.normpath(os.environ.get("CLAUDE_PROJECT_DIR") or payload.get("cwd")
+                            or os.getcwd())
+
+
+def relpath(path, root):
+    """Repo-relative POSIX path, "" for the root itself, None for anything outside the project."""
+    p = path if os.path.isabs(path) else os.path.join(root, path)
+    p = os.path.normpath(p)
+    if p == root:
+        return ""
+    if p.startswith(root + os.sep):
+        return p[len(root) + 1:].replace(os.sep, "/")
+    return None
+
+
+def _static_prefix(pattern):
+    """The part of a glob before its first wildcard segment: `reading/r1/*.md` -> `reading/r1`."""
+    segs = []
+    for seg in pattern.replace(os.sep, "/").split("/"):
+        if GLOB_CHARS.search(seg):
+            break
+        segs.append(seg)
+    return "/".join(segs)
+
+
+def _path_arg(ti, *keys):
+    for key in keys:
+        val = ti.get(key)
+        if isinstance(val, str) and val:
+            return val
+    return None
+
+
+def _search_targets(tool, ti):
+    """A search with no path searches the working directory, so its target is the root itself.
+    A Glob searches `path` joined with the pattern's fixed part: `reading/r1/*.md` with no path is
+    scoped to reading/r1, and `**/*.md` is not scoped at all."""
+    base = _path_arg(ti, "path") or ""
+    pattern = _path_arg(ti, "pattern") if tool == "Glob" else None
+    if not pattern:
+        return [("read", base or ".")]
+    prefix = _static_prefix(pattern)
+    if os.path.isabs(pattern):
+        out = [("read", prefix or os.sep)]
+    else:
+        out = [("read", os.path.join(base or ".", prefix) if prefix else (base or "."))]
+    if ".." in pattern.replace(os.sep, "/").split("/"):
+        out.append(("read", os.sep))    # climbs out of wherever it starts: judge it as outside
+    return out
+
+
+def targets(payload):
+    """(kind, path) pairs this call touches; kind is 'read' or 'write'."""
+    tool = str(payload.get("tool_name") or "")
+    ti = payload.get("tool_input") or {}
+    if not isinstance(ti, dict):
+        return []
+    if tool in WRITE_TOOLS:
+        path = _path_arg(ti, "file_path", "notebook_path")
+        return [("write", path)] if path else []
+    if tool == "Read":
+        path = _path_arg(ti, "file_path")
+        return [("read", path)] if path else []
+    if tool in SEARCH_TOOLS:
+        return _search_targets(tool, ti)
+    return []
+
+
+def _showrunner_verdict(payload, root):
+    """The main session is free, except under novels/ while a test run is armed."""
+    if not os.path.exists(os.path.join(root, ".test-run")):
+        return None
+    for kind, path in targets(payload):
+        rel = relpath(path, root)
+        if kind == "write" and rel is not None and matches("novels/**", rel):
+            return ("`%s`: a test run is armed (.test-run exists), and the showrunner writes "
+                    "nothing under novels/ during a run - a chapter repaired by hand measures the "
+                    "showrunner, not the room" % rel)
+    return None
+
+
+def _one_target(spec, kind, rel, shown):
+    if kind == "write":
+        if rel is None or not any(matches(p, rel) for p in spec["write"]):
+            return "`%s` is not yours to write" % shown
+        return None
+    if "read_only" in spec:
+        if rel == "":
+            return "this search is unscoped"
+        if rel is None or not any(matches(p, rel) for p in spec["read_only"]):
+            return "`%s` is not yours to open" % shown
+        return None
+    if rel is not None and any(matches(p, rel) for p in spec["read_deny"]):
+        return "`%s` is not yours to open" % shown
+    return None
+
+
+def verdict(payload):
+    """None to allow, or the reason the call is refused."""
+    root = project_root(payload)
+    if not payload.get("agent_id"):
+        return _showrunner_verdict(payload, root)
+    spec = ROLES.get(str(payload.get("agent_type") or "").strip())
+    if spec is None:
+        return None                     # a role this guard was not written for
+    for kind, path in targets(payload):
+        rel = relpath(path, root)
+        what = _one_target(spec, kind, rel, rel if rel is not None else path)
+        if what:
+            return "%s - %s" % (what, spec["why"])
+    return None
+
+
+def main():
+    try:
+        payload = json.loads(sys.stdin.read() or "{}")
+    except (ValueError, TypeError):
+        return 0
+    if not isinstance(payload, dict):
+        return 0
+    why = verdict(payload)
+    if why:
+        sys.stderr.write("Blocked: %s.\nIf your task genuinely needs it, say so in your report "
+                         "and carry on with what you have.\n" % why)
+        return 2
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

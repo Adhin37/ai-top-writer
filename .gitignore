@@ -1,0 +1,15 @@
+# The books belong to whoever ran the tool; the repo ships the engine.
+novels/*
+!novels/README.md
+!novels/_template/
+
+# Beta-reader exports and experiment arms: generated, and full of prose.
+reading/
+bench/
+
+# The test-run marker arms tools/guard.py for the main session.
+.test-run
+
+__pycache__/
+*.pyc
+.claude/settings.local.json
