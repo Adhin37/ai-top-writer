@@ -19,6 +19,11 @@ a turn, a `queued_command` attachment row when it lands mid-turn. Its size is co
 tokens as characters / 4, an estimate; *re-reads* multiply it by the showrunner responses that
 came after it, since each of them read it again from cache.
 
+An agent's last response, the one that calls `SubagentHandback`, is written before its usage
+lands, so its output and thinking are missing from the transcript. It is reported apart, as
+*unrecorded*: tokens estimated from the hand-back's length, a lower bound, never added to the
+recorded totals.
+
 Usage:
   trace.py SESSION [--transcripts DIR] [--since ISO] [--until ISO] [--match REGEX]
                    [--agents] [--json]
@@ -49,6 +54,8 @@ WRITE_5M, WRITE_1H = 1.25, 2.00
 SYNTHETIC = ("<synthetic>",)
 HANDBACK_MARK = "[Subagent hand-back]"
 HANDBACK_TOOLS = ("Agent", "Task", "SendMessage")
+FINAL_TOOL = "SubagentHandback"
+STALE = 8.0     # a final response recording fewer tokens than chars / STALE never got its usage
 CHARS_PER_TOKEN = 4.0
 TS = re.compile(r"^(\d{4})-(\d\d)-(\d\d)T(\d\d):(\d\d):(\d\d)(\.\d+)?")
 
@@ -114,6 +121,7 @@ class Response(object):
         self.input = self.write_5m = self.write_1h = self.read = 0
         self.output = self.thinking = 0
         self.model_s = 0.0
+        self.handback_chars = 0
 
     def absorb(self, row, usage):
         self.timestamp = self.timestamp or row.get("timestamp") or ""
@@ -133,6 +141,16 @@ class Response(object):
     @property
     def context(self):
         return self.input + self.read + self.write_5m + self.write_1h
+
+    @property
+    def unrecorded(self):
+        """Output tokens missing from a final response whose usage never landed (a lower bound)."""
+        if not self.handback_chars or self.output >= self.handback_chars / STALE:
+            return 0.0
+        return max(0.0, self.handback_chars / CHARS_PER_TOKEN - self.output)
+
+    def unrecorded_cost(self):
+        return self.unrecorded * RATES.get(self.model, (0.0, 0.0, 0.0))[1] / MILLION
 
     def cost(self):
         """(output $, cache-write $, cache-read $, input $). An unpriced model costs 0."""
@@ -210,6 +228,10 @@ class Transcript(object):
                 groups[key] = Response()
                 order.append(key)
             groups[key].absorb(row, usage)
+            groups[key].handback_chars += sum(
+                len(json.dumps(b.get("input"))) for b in blocks
+                if isinstance(b, dict) and b.get("type") == "tool_use"
+                and b.get("name") == FINAL_TOOL)
         self.responses = [groups[k] for k in order]
         by_id = dict((k[1], groups[k]) for k in order if len(k) == 2 and k[1])
         self._timing(events, by_id)
@@ -286,6 +308,8 @@ def summarise(paths, since=None, until=None, match=None):
         row["cache_write_usd"] = sum(p[1] for p in parts)
         row["cache_read_usd"] = sum(p[2] for p in parts)
         row["cost"] = sum(sum(p) for p in parts)
+        row["unrecorded"] = sum(r.unrecorded for r in rs)
+        row["unrecorded_usd"] = sum(r.unrecorded_cost() for r in rs)
         agents.append(row)
         total = roles.setdefault(t.role, dict((k, 0) for k in row if k not in
                                               ("role", "agent", "description", "models")))
@@ -306,7 +330,8 @@ def summarise(paths, since=None, until=None, match=None):
                 "cache_read_tokens": row["cache_read"],
             }
     return {"roles": roles, "agents": agents, "showrunner": showrunner,
-            "total": sum(r["cost"] for r in roles.values())}
+            "total": sum(r["cost"] for r in roles.values()),
+            "unrecorded_usd": sum(r["unrecorded_usd"] for r in roles.values())}
 
 
 def render(result, show_agents=False):
@@ -323,6 +348,13 @@ def render(result, show_agents=False):
                       r["cache_write"], r["cache_read"], r["output_usd"], r["cache_write_usd"],
                       r["cache_read_usd"], r["cost"]))
     out.append("%-14s %s %9.2f" % ("total", " " * 110, result["total"]))
+    missing = [(role, r) for role, r in order if r["unrecorded"]]
+    if missing:
+        out.append("unrecorded final responses, a lower bound from hand-back length: "
+                   + " · ".join("%s ~%.1fk tokens $%.2f" % (role, r["unrecorded"] / 1000,
+                                                           r["unrecorded_usd"])
+                                for role, r in missing)
+                   + " · total $%.2f" % result["unrecorded_usd"])
     s = result["showrunner"]
     if s:
         out.append("")

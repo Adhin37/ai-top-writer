@@ -14,12 +14,13 @@ reads and writes, cost, the showrunner's context, and hand-back sizes, scoped by
 - **Per role:** model seconds against tool seconds (from timestamps), and which `kb/` docs were
   opened.
 - **Per chapter:** the same, plus loop rounds.
-- **Flag the known under-count.** Every agent's final response, the one that calls
-  `SubagentHandback`, is written to its transcript before its usage lands, so that response's
-  output and thinking are missing. Plan 01's judges recorded 28k output tokens against ~100k tokens
-  of hand-back text. A lower bound from hand-back length gives at least $3.09 on plan 01 (judges at
-  least $2.65) and at least $0.70 on the ITERATE re-run. Estimate that response from its hand-back,
-  and report it apart from recorded usage.
+- **The known under-count is flagged** (done after 01's ITERATE re-run). Every agent's final
+  response, the one that calls `SubagentHandback`, is written to its transcript before its usage
+  lands. `trace.py` reports it on its own line: tokens estimated from the hand-back's length, a
+  lower bound, kept out of the recorded totals.
+  - Plan 01: at least $3.08, mostly judges.
+  - The ITERATE re-run: at least $0.70.
+  - The thinking behind that response cannot be recovered.
 
 ### 2. Port the cross-chapter detectors
 

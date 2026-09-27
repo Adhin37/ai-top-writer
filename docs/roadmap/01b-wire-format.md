@@ -202,6 +202,11 @@ L3 carries ITERATE's content changes as well as the format, so a quality change 
 on either. Only a clear regression in how the notes are acted on would point at the format.
 
 **In plan 02:**
+- carried from L3:
+  - the line editor's final message under its fixed template: the status line and `left` lines
+    only;
+  - the story editor's `owed <n>/<n>`, the notes header aligned with it;
+  - a stet, if any, not re-raised unless the reader's evidence answers its reason (L3 had none);
 - the planner's status and `gap` / `changed` lines;
 - the ledger written in the new form, with premise rows saying `premise`;
 - *For the planner* lines reaching the next beats task;

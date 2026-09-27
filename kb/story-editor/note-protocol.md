@@ -51,7 +51,9 @@ dir   keep the rules; give them to Nessa as what refusing would cost her, and dr
 
 Look for briefings yourself. Your beta reader is asked to report, so it reads every word. A reader
 who is paying skims a paragraph that nobody in the scene wants, even a plain one in the right place.
-A briefing note moves the facts into someone's want; it never cuts one the chapter owes.
+The same goes for one whose first sentence is a character's question: count who is in the
+sentences after it. A briefing note moves the facts into someone's want, or into the mouths of the
+people in the scene; it never cuts one the chapter owes.
 
 ---
 

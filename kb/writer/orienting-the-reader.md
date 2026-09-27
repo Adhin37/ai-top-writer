@@ -88,7 +88,8 @@ still slides past it. Nobody is in it and nobody wants anything in it. It stops 
 hottest line, and its last sentence says what Dask just said. What the reader skips is the rules.
 
 In the second, every rule is something Tovi is weighing: what the meter takes from her, and what
-opening it would cost. The reader reads each one because she is deciding something, and the scene
+opening it would cost. Every sentence, not only the first. A paragraph that opens on her question
+and then hands the rules to the narrator is the first version with a hook in front of it. The reader reads each one because she is deciding something, and the scene
 moves again on her decision. Dask's line keeps its job, so the paragraph does not say it twice. The
 yearly grading and the missing appeal wait for the scene where somebody appeals.
 

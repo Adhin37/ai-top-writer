@@ -97,6 +97,25 @@ class TraceTest(unittest.TestCase):
         self.assertAlmostEqual(s["handback_rereads"], 100 * 2 + 200 * 1 + 100 * 1)
         self.assertEqual(s["context_peak"], 3000)
 
+    def test_unrecorded_final_response(self):
+        sess = "4567ef-0000"
+        write(os.path.join(self.base, sess + ".jsonl"), [user("2026-01-01T00:00:00.000Z", "go")])
+        final = {"type": "tool_use", "id": "tu9", "name": "SubagentHandback",
+                 "input": {"message": "r" * 785}}             # 800 characters as JSON
+        sub = os.path.join(self.base, sess, "subagents", "agent-a2.jsonl")
+        write(sub, [user("2026-01-01T00:00:01.000Z", "read"),
+                    assistant("2026-01-01T00:00:02.000Z", "j1", usage(400), [
+                        {"type": "tool_use", "id": "tu8", "name": "Read", "input": {}}]),
+                    # the hand-back response: its usage never got past the first token
+                    assistant("2026-01-01T00:00:09.000Z", "j2", usage(3), [final])])
+        result = trace.summarise(trace.transcripts_for("4567", self.base))
+        role = result["roles"]["subagent"]
+        self.assertEqual(role["output"], 403)                 # recorded totals are untouched
+        self.assertAlmostEqual(role["unrecorded"], 800 / 4.0 - 3)
+        self.assertAlmostEqual(result["unrecorded_usd"], (800 / 4.0 - 3) * 20 / 1e6)
+        self.assertIn("unrecorded final responses", trace.render(result))
+        self.assertEqual(trace.summarise(self.paths)["unrecorded_usd"], 0)
+
     def test_window_and_match(self):
         early = trace.summarise(self.paths, until="2026-01-01T00:00:15")
         self.assertEqual(early["roles"]["showrunner"]["responses"], 2)

@@ -59,7 +59,11 @@ The slip on the table between them. The question: will she take the job nobody c
 
 - **The event is one clause a reader could retell** — a concrete verb and a target — and it sits in
   the longest scene.
-- **Every `learns` item names its moment**, and at least one lands in the first scene.
+- **Every `learns` item names its moment and who carries it**: someone saying it, someone doing it,
+  or the protagonist weighing it before a decision. At least one lands in the first scene. *"P3 —
+  in free indirect: grades are set once a year, no appeal"* names no one, and a rule nobody carries
+  is the paragraph a reader skims. *"P3 — the clerk reads the thirty-day rule off the form"* names
+  the clerk.
 - **Every scene turns**: something is different at its end. A scene that only delivers information
   is a bridge — make it a paragraph of summary, or give it a turn.
 - **`feel` is an experience**, not a theme: "the floor dropping", not "injustice is explored".

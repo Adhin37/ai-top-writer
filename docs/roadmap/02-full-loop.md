@@ -9,6 +9,16 @@ an opening.
 [01b](01b-wire-format.md) has run. Read their session logs and experiment write-ups first. Where they
 changed the loop, they override this plan.
 
+**From 01's ITERATE re-run** ([write-up](../experiments/2026-09-27-ch1-iterate.md)):
+- It ended not GO. Comprehension holds, but one paragraph of rules was still skimmed by all three
+  judges.
+- The beat sheet had staged that paragraph *"in free indirect"*, so its fix moved to the planner:
+  `kb/planner/beat-sheet.md` now asks every `learns` item to name who carries it. Chapters 2–3
+  are that fix's first run.
+- **Chapter 1 is the user's pick** before step 5: C1 (L1's final, in `chapters/` now) or C3 (L3's
+  final, `work/ch0001/L3/final.md`). The showrunner copies the pick to
+  `chapters/0001-the-last-marker.md` and logs it.
+
 ## Steps
 
 ### 1. Port the mechanical core, with its tests
@@ -106,9 +116,15 @@ approves. The user reads both chapters.
   - the planner's status and `gap` / `changed` lines parse (`tools/wire.py handback`);
   - a ledger written in the new form, with premise rows saying `premise`;
   - *For the planner* lines reaching the next beats task;
-  - the facts files' `new` lines feeding the fold.
+  - the facts files' `new` lines feeding the fold;
+  - carried from L3: the line editor's final message (status and `left` lines only); the story
+    editor's `owed <n>/<n>`; a stet not re-raised unless the reader's evidence answers it.
 
   Where one fails, fix the template or revert it, and log which.
+- **01's ITERATE fix, checked:**
+  - every `learns` item in the chapter 2–3 beat sheets names who carries it;
+  - where a reader skims, or the story editor finds a briefing, the log says whether the beat sheet
+    staged it.
 
 ## Exit criteria
 
