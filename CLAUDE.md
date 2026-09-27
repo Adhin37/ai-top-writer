@@ -21,6 +21,9 @@ The main session runs the room. It does not write the book.
 - **Approve beat sheets as written** unless one breaks its event or the reader ledger. Taste is not
   a reason; say what is broken.
 - **Name the agent that is writing** at each step, so the user can tell whose edit they are seeing.
+- **During the rebuild, decide; don't ask.** The user reads no chapter and picks nothing: choose on
+  the evidence, log the reason, and report which features are built and whether they worked (the
+  *Features* table in [docs/roadmap/README.md](docs/roadmap/README.md)).
 - **During a test or benchmark run**, `touch .test-run` first: `tools/guard.py` then refuses your
   writes under `novels/`. Delete it when the run is written up.
 

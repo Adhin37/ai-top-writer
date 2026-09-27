@@ -15,9 +15,9 @@ in `docs/sessions/`, and the `handoff` skill resumes it (the same session, or a 
 |---|---|---|---|
 | 00 | [Diagnosis: why the rebuild](00-diagnosis.md) | reference | — |
 | — | Session 1: foundation (this repo, the docs, the roadmap, the spike's agents and tools) | **done** 2026-09-26 | — |
-| 01 | [Session 2: vertical slice, chapter 1 A/B/C](01-vertical-slice.md) | **ITERATE re-run done** 2026-09-27 — comprehension holds, one lecture paragraph still skimmed 3/3 (not GO); the user's read (6.4) and the call on going to 02 outstanding | session 1 |
-| 01b | [Session 2b: the wire format, terse hand-offs between agents](01b-wire-format.md) | **built** 2026-09-27; L3's live checks done (two templates fixed, the trace fixed); the rest in 02 and 05 | 01's step 6.4 (run before it, at the user's request) |
-| 02 | [Session 3: the full loop and serial memory](02-full-loop.md) | planned | 01 = GO (or ITERATE done), 01b |
+| 01 | [Session 2: vertical slice, chapter 1 A/B/C](01-vertical-slice.md) | **closed** 2026-09-27: ITERATE done. Comprehension holds; not GO on one lecture paragraph, whose lever moved to the planner. Chapter 1 = C3 | session 1 |
+| 01b | [Session 2b: the wire format, terse hand-offs between agents](01b-wire-format.md) | **built** 2026-09-27; L3's live checks done (two templates fixed, the trace fixed); the rest in 02 and 05 | 01 |
+| 02 | [Session 3: the full loop and serial memory](02-full-loop.md) | **next** | 01 (closed), 01b |
 | 03 | [Session 4: the knowledge bases](03-knowledge-bases.md) | planned | 02 |
 | 04 | [Session 5: novel setup and planning from scratch](04-front-end.md) | planned | 03 |
 | 05 | [Session 6: benchmark run #7](05-benchmark-run-7.md) | planned | 04 |
@@ -31,8 +31,7 @@ in `docs/sessions/`, and the `handoff` skill resumes it (the same session, or a 
    wants to continue. It is tested on the same bible that produced run #6's confusing chapter 1. If
    the answer is no, nothing after it is worth doing as planned.
 2. **01b makes what agents write for each other terse.**
-   - It runs after the user's cold read, which settles 01's verdict.
-   - It runs before 01's ITERATE re-run, whose note-protocol fix is then written once, in the new
+   - It ran before 01's ITERATE re-run, whose note-protocol fix is then written once, in the new
      format.
    - It runs before 02, which adds two roles whose whole output is for other agents, so they are
      born in the wire format. It touches no channel a reader of the
@@ -49,6 +48,34 @@ in `docs/sessions/`, and the `handoff` skill resumes it (the same session, or a 
    tokens later.
 8. **07 retires the old repo** only after the new one has shipped a benchmark.
 
+## Features
+
+What the rebuild has built, and whether a real run has shown it working. Each session updates this
+table: it is what the user reads.
+
+| feature | plan | built | worked in a run |
+|---|---|---|---|
+| six roles: thin agent files and per-role knowledge bases | 1 | yes | yes (01) |
+| isolation guard (`tools/guard.py`) and prose-only exports (`tools/export_prose.py`) | 1 | yes | yes (01) |
+| premise sheet and reader ledger (planner) | 1 | yes | yes (01) |
+| in-loop cold beta reader, calibrated | 1, 01 | yes | yes (01) |
+| story editor notes and ACCEPT; warm writer revisions; one line pass | 1 | yes | yes (01) |
+| blind judge: read, compare, grade | 1 | yes | yes (01) |
+| hand-backs filed verbatim (`tools/handback.py`) | 01 | yes | yes (01) |
+| session handoff across usage limits (hooks, `checkpoint.py`, status line, `handoff` skill) | — | yes | hooks run every turn; not yet resumed across a limit |
+| wire format: one status line per role, notes and facts files (`kb/shared/wire.md`, `tools/wire.py`) | 01b | yes | yes for writer, story editor, line editor (L3). Planner lines: in 02 |
+| cost and context trace (`tools/trace.py`), with the unrecorded-output flag | 01b | yes | yes (L3) |
+| lecture fixes: writer example, briefing notes, beat-sheet `learns` carriers | 01 | yes | writer and editor yes (L3); planner check first runs in 02 |
+| ported core: `mdio`, novel paths, text stats, lint, state check | 02 | no | — |
+| continuity editor and clerk; planner fold mode | 02 | no | — |
+| serial memory: one reading folder, capped notes, re-read every 10 chapters | 02 | no | — |
+| cross-chapter lens: scene log, line editor reads the last two chapters, promises carried | 02 | no | — |
+| rewritten knowledge bases and `tools/kb_check.py` | 03 | no | — |
+| novel setup: planner init interview; `/new`, `/plan`, `/write`, `/status` | 04 | no | — |
+| benchmark run #7 against run #6 | 05 | no | — |
+| per-role measurement, then cost levers | 06 | partly (trace) | — |
+| skilled-writer retired | 07 | no | — |
+
 ## Standing decisions (from the user, 2026-09-26)
 
 - **Fresh repo.** Port only what is proven useful. The old repo is an archive, not a dependency.
@@ -64,6 +91,12 @@ in `docs/sessions/`, and the `handoff` skill resumes it (the same session, or a 
   it; it spends no agent runs re-testing itself. Each change is checked live by the next plan whose
   run uses it, and the whole roadmap gets one complete test run at the end (05). A calibrated
   instrument (the beta reader, the judge) is not changed without the calibration it needs.
+- **The user reads nothing and picks nothing during the rebuild** (2026-09-27). Every call a plan
+  once left to the user, such as which arm, which seed or which register, the showrunner makes on
+  the evidence and logs with its reason. Quality verdicts come from the blind judges and the in-loop
+  reader. A product feature that asks its user something (the init interview) is still built, and
+  in test runs the showrunner answers it from an answer sheet. Each session reports to the user
+  which features are built and whether they worked: the *Features* table above.
 - **What agents write for each other is terse** (2026-09-27): keyed lines, ids and paths instead of
   restating, and one status line as each role's final message. No human reads those channels. The
   prose, the reader's retell and everything addressed to the user stay full. See [01b](01b-wire-format.md).

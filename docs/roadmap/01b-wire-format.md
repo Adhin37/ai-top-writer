@@ -86,7 +86,7 @@ from `bench/ch1-abc/cost.txt`; the other numbers were computed from the transcri
 
 ## Prerequisites
 
-- **The user's cold read (01 step 6.4) is recorded, and 01's verdict is final.** On NO-GO, stop:
+- **01's verdict is final** (its step 6.4, the user's read, was later dropped). On NO-GO, stop:
   the room is being redesigned, and its hand-off format is moot.
 - **01's ITERATE re-run has *not* run yet.** It runs after 01b, on the wire templates, so the note
   protocol is written once. The baseline here is plan 01's **L1 and L2**, which ran on today's
@@ -196,7 +196,8 @@ calibrated instrument, and it is not touched without the calibration run it need
    unless the reader's evidence answers the writer's reason.
 5. `python3 tools/trace.py <session>` against L1 and L2 (`--match` on the spawn labels) gives words
    per artifact, hand-back tokens into the showrunner, its context peak, and cost per round.
-6. The user's read of L3's chapter. Are the notes still acted on where the reader stumbled?
+6. Are the notes still acted on where the reader stumbled? The showrunner answers from the rounds'
+   reports, notes and facts files. The user reads nothing during the rebuild.
 
 L3 carries ITERATE's content changes as well as the format, so a quality change cannot be pinned
 on either. Only a clear regression in how the notes are acted on would point at the format.
@@ -307,7 +308,8 @@ checks*.
 - **Notes acted on:** 5 of 5, and each problem the reader stumbled on was gone in the next draft. No
   sign the format cost the notes anything.
 - **Cost:** not measurably changed. L3's room cost $6.04, the same as L1 over the same three rounds.
-- **The user's read of L3 (check 6):** outstanding.
+- **Check 6, from the rounds:** yes. Every note was acted on, and each stumble was gone from the
+  next draft.
 
 **Baseline correction.** `trace.py` missed hand-backs that reach the showrunner mid-turn, as
 `queued_command` attachment rows. It counts them now, with a test.

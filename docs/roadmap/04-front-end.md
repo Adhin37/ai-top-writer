@@ -20,7 +20,9 @@ Create `novels/_template/`, following [novel-format.md](../novel-format.md):
 ### 2. The planner's init mode
 
 This is an interview in rounds. The planner asks and the showrunner relays the user's answers. It
-stops at each round with numbered questions and a recommended answer for each.
+stops at each round with numbered questions and a recommended answer for each. That is the product
+feature. **In rebuild test runs the user answers nothing:** the showrunner writes an answer sheet
+before init starts, answers every round from it, and logs each pick.
 
 1. **Seed and platform.** The premise in one line, the platform, the audience. The platform sets the
    defaults: Royal Road and webnovel.com mean **exposition: clear**, per the user's standing decision.
@@ -54,13 +56,13 @@ Each command is a short procedure that points at `kb/showrunner/` and does not r
 
 ### 4. Try it
 
-Start a small throwaway novel from a seed the user picks. Run init end to end, then write chapter 1
-with `/write`. The user judges:
-- whether the interview was worth their time;
-- whether the premise was right;
-- whether the chapter oriented them.
+The showrunner picks a seed and writes the answer sheet, then starts a small throwaway novel. It
+runs init end to end, answering from the sheet, then writes chapter 1 with `/write`. It checks:
+- every interview round asked and stopped, and the recommended answers were usable;
+- the premise restates the answer sheet and adds nothing;
+- the chapter-1 check below.
 
-Delete the throwaway novel afterwards only if the user says so.
+Keep the throwaway novel until 05 has run; it is gitignored.
 
 ## Verification
 
@@ -71,8 +73,8 @@ Delete the throwaway novel afterwards only if the user says so.
 
 ## Exit criteria
 
-The user can go from an idea to an approved chapter 1 in one sitting, without touching a file
-themselves.
+Init and `/write` take a seed to an accepted chapter 1 in one session, with no file touched by
+hand. The *Features* table in the roadmap README is updated.
 
 ## Session log
 

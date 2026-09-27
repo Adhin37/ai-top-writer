@@ -49,7 +49,7 @@ Carry over the old *traps* table only where it still applies:
 
 1. **Pre-flight.**
    - Tests and `kb_check` pass. Record the commit SHA, the UTC start time and the configuration table.
-   - The user picks the seed, or the showrunner offers three and the user picks.
+   - The showrunner picks the seed and logs why.
    - Write the answer sheet.
 2. **Init**, via `/new`: the interview, with the user's answers from the sheet.
 3. **Five chapters** via `/write`.
@@ -63,7 +63,7 @@ Carry over the old *traps* table only where it still applies:
 
 - **Three fresh judges** read all five chapters blind, with the full questionnaire. Their retells are
   graded against `premise.md`, and their verdicts are on a 0–5 scale anchored to behaviour.
-- **The user reads all five chapters** and gives their own verdict. Theirs is the one that counts.
+- **The judges' verdict is the run's verdict.** The user reads nothing (standing decision).
 - **The comparison table** against run #6 covers:
   - verdict;
   - chapter 1 comprehension;
@@ -77,7 +77,8 @@ Carry over the old *traps* table only where it still applies:
 - configuration;
 - per-chapter table;
 - judges;
-- the user's verdict;
+- **the feature table**: every feature 01–04 built, whether this run exercised it, and whether it
+  worked;
 - reconciliation and routing;
 - limitations;
 - what run #8 must do.
@@ -87,7 +88,8 @@ Then fix what the run found, after the run, each fix following the routing rule 
 
 ## Exit criteria
 
-- The user's verdict is recorded, with their reasons.
+- The feature table is complete. Every feature built in 01–04 ran, and each worked or its failure
+  is routed. The roadmap README's *Features* table is updated from it.
 - Every finding is routed.
 - The comparison with run #6 is written, and its confounds are named. The novels, the models and the
   pipeline all differ.

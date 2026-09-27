@@ -120,7 +120,6 @@ or preload it through the agent's `skills:` field. Record the decision in `docs/
 
 Re-run chapter 4 of the slice novel through the loop with the new knowledge bases, and compare it
 with chapters 2–3:
-- the user's read;
 - the beta reader's click-next;
 - how many REVISE rounds the story editor needed;
 - whether the notes got more specific.
@@ -134,8 +133,9 @@ with chapters 2–3:
 
 ## Exit criteria
 
-Chapter 4 is at least as good as chapters 2–3 by the user's read, with the knowledge bases in
-place, and no role's prompt carries rules its knowledge base now owns.
+Chapter 4 is at least as good as chapters 2–3 by the reader's click-next, the story editor's rounds
+and how specific its notes are. The knowledge bases are in place, and no role's prompt carries rules
+its knowledge base now owns.
 
 ## Session log
 

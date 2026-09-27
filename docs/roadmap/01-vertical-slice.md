@@ -163,11 +163,8 @@ Record per round: words, the reader's retell grade, the verdict, and the number 
    - retells are graded against `premise.md` by a fresh judge in grading mode.
 3. **Pairwise.** A–C1, A–C2, B1–C1 and B2–C2, each by 3 fresh judges, with the order swapped
    between judges.
-4. **The user:**
-   1. Reads **C1 cold**, and before opening `premise.md` writes in their own words the world's
-      central rule, Wren's situation and what he stands to lose.
-   2. Reads B1 and C1 blind and picks one.
-   3. Compares with A. They cannot be blind to A.
+4. **The user's reads: dropped** (2026-09-27, standing decision: the user reads nothing during the
+   rebuild). The judges carry them: criterion 2 (single reads) and criterion 6 (pairwise).
 
 ### Step 7 — cost and time
 
@@ -185,13 +182,14 @@ Record per round: words, the reader's retell grade, the verdict, and the number 
 1. Calibration passed (step 3).
 2. For **both** C1 and C2, at least 2 of 3 single-read judges state the central rule correctly
    (graded *stated*).
-3. The user, reading C1 cold, can state the central rule, Wren's situation and the stakes.
-4. The user prefers C1 to A.
+3. *Dropped 2026-09-27; carried by 2.* It was: the user, reading C1 cold, can state the central
+   rule, Wren's situation and the stakes.
+4. *Dropped 2026-09-27; carried by 6.* It was: the user prefers C1 to A.
 5. At most 1 of 3 judges per C arm reports skimming an explanation or lecture.
 6. C beats A in at least 4 of the 6 pairwise A–C judgements.
 
-**ITERATE** (fix, then re-run step 5 once) when comprehension passes (2 and 3) but the prose reads
-flat, lectures or is skimmed (4 or 5 fails):
+**ITERATE** (fix, then re-run step 5 once) when comprehension passes (2) but the prose reads flat,
+lectures or is skimmed (5 fails):
 - revise the writer's examples in `kb/writer/orienting-the-reader.md`;
 - revise the story editor's note protocol.
 
@@ -291,7 +289,7 @@ still outstanding, and the user asked for the re-run first.
 - **Verdict: still not GO.** Criterion 5 fails, and the one iteration is spent. Comprehension holds.
   The remaining paragraph is staged by the beat sheet (*"In free indirect: …"*), which was held
   constant. **Recommended:** go on to 02 and move the lever to the planner's beat-sheet example,
-  conditional on the user's step 6.4. The alternatives (accept criterion 5 in spirit, or re-plan
+  The alternatives (accept criterion 5 in spirit, or re-plan
   chapter 1) are in the write-up.
 - **Cost:** $13.94 in all. The room $6.04, the same as L1; judges $1.48; the showrunner $6.42,
   against $19.96 in plan 01.
@@ -300,5 +298,13 @@ still outstanding, and the user asked for the re-run first.
   - `kb/line-editor/prompt.md`: *"Exactly these lines"*, with extra flags as `left` lines;
   - `tools/trace.py` counts hand-backs queued mid-turn, with a test.
 
-  `chapters/0001-the-last-marker.md` is still C1; which chapter 1 plan 02 continues from is the
-  user's pick. `.test-run` removed after the write-up. Nothing committed.
+  `.test-run` was removed after the write-up.
+
+**Closed (2026-09-27), by the showrunner.** The user decided that during the rebuild they read and
+pick nothing, so step 6.4 and criteria 3–4 were dropped (the judges' 2 and 6 carry them).
+- **Verdict: ITERATE done, going on.** Comprehension passes, and C beat A 6/6. Criterion 5 alone
+  fails, on one paragraph the beat sheet staged. The lever moved to the planner
+  (`kb/planner/beat-sheet.md`), and plan 02 checks it.
+- **Chapter 1 = C3.** L3's final was copied to `chapters/0001-the-last-marker.md`. L1's final stays
+  in `work/ch0001/L1/`. C3 is in the length band, all three pairwise judges found its rule clearer,
+  it was made by the current prompts, and the C1–C3 pairwise was inside the order effect.

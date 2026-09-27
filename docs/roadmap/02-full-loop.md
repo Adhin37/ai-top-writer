@@ -15,9 +15,8 @@ changed the loop, they override this plan.
 - The beat sheet had staged that paragraph *"in free indirect"*, so its fix moved to the planner:
   `kb/planner/beat-sheet.md` now asks every `learns` item to name who carries it. Chapters 2–3
   are that fix's first run.
-- **Chapter 1 is the user's pick** before step 5: C1 (L1's final, in `chapters/` now) or C3 (L3's
-  final, `work/ch0001/L3/final.md`). The showrunner copies the pick to
-  `chapters/0001-the-last-marker.md` and logs it.
+- **Chapter 1 is C3**, L3's final, already in `chapters/0001-the-last-marker.md` (the showrunner's
+  pick; see 01's session log).
 
 ## Steps
 
@@ -99,7 +98,7 @@ two-person talks, one tempo, a promised scene skipped. For now:
 
 Through the full loop. The beat sheets come from the planner, from run #6's plan rows 2–3, and the
 event is kept unless the reader ledger needs it changed: the planner says so and the showrunner
-approves. The user reads both chapters.
+approves.
 
 ## Verification
 
@@ -111,7 +110,8 @@ approves. The user reads both chapters.
 - **The notes check.** A fresh beta reader given ch01–03 cold writes its own notes. Diff them against
   the running notes; anything the running notes believe that the fresh reader does not is drift.
   Record it.
-- The user's verdict on chapters 2–3 is recorded in the session log.
+- Per chapter, the session log records the reader's click-next and reason, and the story editor's
+  rounds and verdicts.
 - **01b's live checks for this plan** (01b §5–8):
   - the planner's status and `gap` / `changed` lines parse (`tools/wire.py handback`);
   - a ledger written in the new form, with premise rows saying `premise`;
@@ -130,9 +130,10 @@ approves. The user reads both chapters.
 
 - Three chapters were written by the loop without the showrunner touching a chapter.
 - The state is consistent, and the reader's notes agree with a fresh read.
-- The user would keep reading.
+- The in-loop reader would keep reading, by its own report on chapters 2 and 3.
+- The *Features* table in the roadmap README is updated.
 
-**If the user would not keep reading:** record why, in their words, and adjust plan 03 to target it
+**If the reader would not keep reading:** record why, in its words, and adjust plan 03 to target it
 before the knowledge bases are written.
 
 ## Session log
