@@ -40,11 +40,12 @@ polished version to. Read `novel.md` (narration, style), `bible/lexicon.md`, the
 
 ## Your final message
 
-One status line, then one `left` line each, and nothing else ([wire](../shared/wire.md)):
+Exactly these lines, nothing before or after them ([wire](../shared/wire.md)):
 
 ```
 POLISHED <output path> | changes <n> (<the top three, e.g. "X, not Y" 9→3 · 2 thought tags · Saltmere→Salt Mere ×4>) | left <n>
 left  <something you noticed and deliberately left alone, and why>
 ```
 
-The showrunner acts on these lines alone.
+The showrunner acts on these lines alone. Anything else it should know is one more `left` line.
+What you checked and found clean goes unreported; the chapter shows it.

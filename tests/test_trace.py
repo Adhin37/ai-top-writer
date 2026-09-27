@@ -55,6 +55,10 @@ class TraceTest(unittest.TestCase):
                  [{"type": "tool_result", "tool_use_id": "tu1", "content": "x" * 400}]),
             assistant("2026-01-01T00:00:11.000Z", "m2", usage(10, 0, read=2000)),
             user("2026-01-01T00:00:20.000Z", "[Subagent hand-back] " + "y" * 779),
+            # a hand-back that lands mid-turn is queued as an attachment row
+            {"type": "attachment", "timestamp": "2026-01-01T00:00:20.500Z",
+             "attachment": {"type": "queued_command",
+                            "prompt": "[Subagent hand-back] " + "z" * 379}},
             assistant("2026-01-01T00:00:21.000Z", "m3", usage(10, 0, read=3000)),
         ])
         sub = os.path.join(self.base, sess, "subagents", "agent-a1.jsonl")
@@ -87,10 +91,10 @@ class TraceTest(unittest.TestCase):
 
     def test_handbacks_entering_the_showrunner(self):
         s = trace.summarise(self.paths)["showrunner"]
-        self.assertEqual(s["handbacks"], 2)
-        self.assertAlmostEqual(s["handback_tokens"], 100 + 200)
-        # the tool result is read again by m2 and m3; the hand-back message by m3
-        self.assertAlmostEqual(s["handback_rereads"], 100 * 2 + 200 * 1)
+        self.assertEqual(s["handbacks"], 3)
+        self.assertAlmostEqual(s["handback_tokens"], 100 + 200 + 100)
+        # the tool result is read again by m2 and m3; the hand-back message and attachment by m3
+        self.assertAlmostEqual(s["handback_rereads"], 100 * 2 + 200 * 1 + 100 * 1)
         self.assertEqual(s["context_peak"], 3000)
 
     def test_window_and_match(self):

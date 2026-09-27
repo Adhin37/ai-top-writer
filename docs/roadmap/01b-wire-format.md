@@ -285,3 +285,30 @@ user's decision.** No agent was spawned, and nothing under `novels/` was written
   Its words per section: owed table 766, notes 502, keep 318.
 - **Docs:** `CLAUDE.md` (act on status lines; the new tools), `docs/architecture.md` (hand-offs as
   files plus a status line), `docs/novel-format.md` (`work/` holds the facts files).
+
+**Live checks, L3 (2026-09-27, in 01's ITERATE re-run).** Results in
+[docs/experiments/2026-09-27-ch1-iterate.md](../experiments/2026-09-27-ch1-iterate.md), *01b live
+checks*.
+
+- **Status lines:**
+  - writer clean 3/3;
+  - story editor 2/3: one `owed 9/10 stated`, copied from the notes header, whose template now
+    reads `owed 5/6`;
+  - line editor 0/2: a prose recap after its `left` lines. Its template now says *"Exactly these
+    lines"*, and anything else goes in one more `left` line.
+- **Facts files:** written 3/3, no refusal.
+- **Notes files:** 707–945 words (L1: 1,609–2,056); `wire.py check` found no defect.
+- **Stets:** none, so check 4 could not be tested.
+- **Notes acted on:** 5 of 5, and each problem the reader stumbled on was gone in the next draft. No
+  sign the format cost the notes anything.
+- **Cost:** not measurably changed. L3's room cost $6.04, the same as L1 over the same three rounds.
+- **The user's read of L3 (check 6):** outstanding.
+
+**Baseline correction.** `trace.py` missed hand-backs that reach the showrunner mid-turn, as
+`queued_command` attachment rows. It counts them now, with a test.
+- Plan 01's showrunner baseline (above) is really **140 hand-back entries, ~170k tokens, ~12.4M
+  re-read tokens, 22% of its cache reads**, not 110 / ~115k / ~8.2M / 14%.
+- Cost per role is unchanged.
+- Separately, every agent's final response, the `SubagentHandback` call, is logged before its usage
+  lands. So transcripts under-count output by at least $3.09 on plan 01, mostly judges'. Plan 06 §1
+  says so.

@@ -15,8 +15,8 @@ in `docs/sessions/`, and the `handoff` skill resumes it (the same session, or a 
 |---|---|---|---|
 | 00 | [Diagnosis: why the rebuild](00-diagnosis.md) | reference | — |
 | — | Session 1: foundation (this repo, the docs, the roadmap, the spike's agents and tools) | **done** 2026-09-26 | — |
-| 01 | [Session 2: vertical slice, chapter 1 A/B/C](01-vertical-slice.md) | **run** 2026-09-27 — provisional ITERATE; user's read (6.4) outstanding; the ITERATE re-run waits for 01b | session 1 |
-| 01b | [Session 2b: the wire format, terse hand-offs between agents](01b-wire-format.md) | **built** 2026-09-27; its live checks run in 01's ITERATE re-run, 02 and 05 | 01's step 6.4 (run before it, at the user's request) |
+| 01 | [Session 2: vertical slice, chapter 1 A/B/C](01-vertical-slice.md) | **ITERATE re-run done** 2026-09-27 — comprehension holds, one lecture paragraph still skimmed 3/3 (not GO); the user's read (6.4) and the call on going to 02 outstanding | session 1 |
+| 01b | [Session 2b: the wire format, terse hand-offs between agents](01b-wire-format.md) | **built** 2026-09-27; L3's live checks done (two templates fixed, the trace fixed); the rest in 02 and 05 | 01's step 6.4 (run before it, at the user's request) |
 | 02 | [Session 3: the full loop and serial memory](02-full-loop.md) | planned | 01 = GO (or ITERATE done), 01b |
 | 03 | [Session 4: the knowledge bases](03-knowledge-bases.md) | planned | 02 |
 | 04 | [Session 5: novel setup and planning from scratch](04-front-end.md) | planned | 03 |

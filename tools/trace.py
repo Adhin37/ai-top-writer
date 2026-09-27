@@ -13,8 +13,9 @@ input-side fields are taken once, and `output_tokens` - a streaming counter - is
 group's maximum, as is its thinking share (`output_tokens_details.thinking_tokens`).
 
 Scope is one session: `<transcripts>/<session>.jsonl` (the showrunner) and every subagent under
-`<transcripts>/<session>/subagents/`. A hand-back enters the showrunner two ways: as an `Agent` or
-`SendMessage` tool result, or as a `[Subagent hand-back]` agent message. Its size is counted in
+`<transcripts>/<session>/subagents/`. A hand-back enters the showrunner as an `Agent` or
+`SendMessage` tool result, or as a `[Subagent hand-back]` agent message: a user row when it opens
+a turn, a `queued_command` attachment row when it lands mid-turn. Its size is counted in
 tokens as characters / 4, an estimate; *re-reads* multiply it by the showrunner responses that
 came after it, since each of them read it again from cache.
 
@@ -190,6 +191,10 @@ class Transcript(object):
                             and names.get(b.get("tool_use_id")) in HANDBACK_TOOLS):
                         self.handbacks.append(
                             (stamp, text_length(b.get("content")) / CHARS_PER_TOKEN))
+            if kind == "attachment" and self.role == "showrunner":
+                queued = row.get("attachment") if isinstance(row.get("attachment"), dict) else {}
+                if has_mark(queued.get("prompt")):
+                    self.handbacks.append((stamp, text_length(queued["prompt"]) / CHARS_PER_TOKEN))
             if kind != "assistant":
                 continue
             for b in blocks:

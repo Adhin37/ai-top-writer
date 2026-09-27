@@ -270,3 +270,35 @@ was re-read on each later showrunner turn: 116k tokens, 9.8M re-reads. That beca
 [01b](01b-wire-format.md). **Order:** step 6.4 (the user's cold read) → 01b → this plan's ITERATE
 re-run, whose fixes to the writer's examples and the note protocol go into 01b's wire templates.
 That re-run is also the wire format's first live run; it works through 01b's checklist (01b §5–8).
+
+**ITERATE re-run (2026-09-27, session `bb94d8f1`).** Log and write-up:
+[docs/experiments/2026-09-27-ch1-iterate.md](../experiments/2026-09-27-ch1-iterate.md). Step 6.4 was
+still outstanding, and the user asked for the re-run first.
+
+- **Levers:** `kb/writer/orienting-the-reader.md` example 3, the narrator block → *"the rules as
+  somebody's problem"*; the story editor's note protocol (N2, a briefing note from its own reading)
+  plus its step 3 and ACCEPT rule.
+- **Loop L3:** REVISE (4 notes), REVISE (1: *"the ridge argument stops for a briefing"*), ACCEPT.
+  The loop raised the lecture as a note for the first time. C3: 2,617 words, the first arm in the
+  band.
+- **Judging** (the user chose C3 single reads + C1–C3):
+  - central rule stated 2/3, the resettling 3/3;
+  - mean score 4.00;
+  - **skimmed an explanation 3/3, all on the one Reading paragraph** (C1 had two to three skimmed
+    places);
+  - C1–C3 pairwise C3 2/3, but each judge picked the text it read first;
+  - all three called C3's rule clearer.
+- **Verdict: still not GO.** Criterion 5 fails, and the one iteration is spent. Comprehension holds.
+  The remaining paragraph is staged by the beat sheet (*"In free indirect: …"*), which was held
+  constant. **Recommended:** go on to 02 and move the lever to the planner's beat-sheet example,
+  conditional on the user's step 6.4. The alternatives (accept criterion 5 in spirit, or re-plan
+  chapter 1) are in the write-up.
+- **Cost:** $13.94 in all. The room $6.04, the same as L1; judges $1.48; the showrunner $6.42,
+  against $19.96 in plan 01.
+- **Changed during the session, each logged with its reason:**
+  - `kb/story-editor/prompt.md`: the notes header now reads `owed 5/6`, like the status line;
+  - `kb/line-editor/prompt.md`: *"Exactly these lines"*, with extra flags as `left` lines;
+  - `tools/trace.py` counts hand-backs queued mid-turn, with a test.
+
+  `chapters/0001-the-last-marker.md` is still C1; which chapter 1 plan 02 continues from is the
+  user's pick. `.test-run` removed after the write-up. Nothing committed.
