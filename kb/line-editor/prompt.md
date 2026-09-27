@@ -38,10 +38,13 @@ polished version to. Read `novel.md` (narration, style), `bible/lexicon.md`, the
 - **The meaning of a line of dialogue.**
 - The chapter's length by more than a few percent either way. You are polishing, not cutting.
 
-## What you hand back
+## Your final message
+
+One status line, then one `left` line each, and nothing else ([wire](../shared/wire.md)):
 
 ```
-POLISHED — <output path>
-changes   <count> — e.g. thinned "X, not Y" from 9 to 3 · fixed 2 thought tags · "Saltmere" → "Salt Mere" ×4
-left      <anything you noticed and deliberately left alone, and why> | none
+POLISHED <output path> | changes <n> (<the top three, e.g. "X, not Y" 9→3 · 2 thought tags · Saltmere→Salt Mere ×4>) | left <n>
+left  <something you noticed and deliberately left alone, and why>
 ```
+
+The showrunner acts on these lines alone.

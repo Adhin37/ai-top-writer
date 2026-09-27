@@ -64,6 +64,28 @@ class HandbackTest(unittest.TestCase):
         with self.assertRaises(FileNotFoundError):
             handback.find_transcript("zzz", self.base)
 
+    def test_append_adds_a_fenced_entry_named_by_the_spawn_label(self):
+        transcript(self.path, [use("SubagentHandback", {"message": "NOTES READY w/n.md | ACCEPT"})])
+        with open(self.path[:-len(".jsonl")] + ".meta.json", "w", encoding="utf-8") as fh:
+            json.dump({"agentType": "story-editor", "description": "Story editor on L4 r0"}, fh)
+        log = os.path.join(self.base, "log.md")
+        with open(log, "w", encoding="utf-8") as fh:
+            fh.write("# Log\n")
+        for _ in range(2):
+            with contextlib.redirect_stdout(io.StringIO()):
+                rc = handback.main(["abc", log, "--append", "--transcripts", self.base])
+            self.assertEqual(rc, 0)
+        with open(log, encoding="utf-8") as fh:
+            text = fh.read()
+        entry = ("\n**Story editor on L4 r0** (`abc`), hand-back verbatim:\n\n"
+                 "```\nNOTES READY w/n.md | ACCEPT\n```\n")
+        self.assertEqual(text, "# Log\n" + entry + entry)
+
+    def test_append_fences_around_a_fence(self):
+        entry = handback.log_entry("abc", "", "text\n```\ncode\n```\n")
+        self.assertTrue(entry.startswith("\n`abc`, hand-back verbatim:\n\n````\n"))
+        self.assertTrue(entry.endswith("\n````\n"))
+
     def test_cli_writes_the_file(self):
         transcript(self.path, [use("SubagentHandback", {"message": REPORT})])
         out = os.path.join(self.base, "reading", "r1", "report.md")

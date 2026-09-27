@@ -56,19 +56,45 @@ A child, a new hire, a foreigner, an official taking a statement — anyone with
 know. The answer is short, in the speaker's voice, and it leaves out the part that hurts most, which
 is the part the reader now wants.
 
-### 3. One plain paragraph, once the reader cares
+### 3. The rules as somebody's problem
 
-After the first incident has given the reader a question, a paragraph of plain narration that
-answers it is not an infodump. It is the answer to the question you just made them ask.
+**A briefing — plain, well placed, and skimmed:**
 
-> Everyone on the Stack knew the arithmetic. The air came up from the processors on Deck Nine,
-> it was counted by the litre, and it was billed every shift to whoever breathed it. A grade-four
-> fitter breathed free; a grade-one sweeper breathed a little short and slept a lot. Nobody breathed
-> for nothing, and nobody had ever found a way off the meter that lasted.
+> "Meter's the meter," Dask said, and went back to his tea.
+>
+> Everyone on the Stack knew the arithmetic. The air came up from the processors on Deck Nine, it
+> was counted by the litre, and it was billed every shift to whoever breathed it. The Board set
+> each worker's grade once a year, and the grade decided how much air the Stack paid for. Meters
+> were sealed by the Board's own engineers, and a fitter who broke a seal lost her grade. There was
+> no appeal. Nobody argued with a meter.
+>
+> "It's billing him for two," Tovi said.
 
-Written in the protagonist's attitude, placed right after the hook, kept to one paragraph, and
-followed immediately by the story moving again. In chapter 1 you will usually need one of these.
-That is fine. Two in a row is a lecture.
+**The same rules, as what she is weighing — read:**
+
+> "Meter's the meter," Dask said, and went back to his tea.
+>
+> "It's billing him for two." Tovi tapped the glass. Her brother was nine and slept curled like a
+> cat; he did not breathe for two. Every litre that came up from Deck Nine was billed to whoever
+> breathed it, and her grade paid for his until he had one of his own, so the meter was spending
+> her. She could have the seal off in a minute with the kit on her belt. But the seal was the
+> Board's, and a fitter who broke one lost her grade, and then she would be paying for both of them
+> on a meter she did not trust.
+>
+> She left the seal on and started writing the readings down.
+
+The first paragraph comes right after the question, in one plain block, and a reader in a hurry
+still slides past it. Nobody is in it and nobody wants anything in it. It stops the argument at its
+hottest line, and its last sentence says what Dask just said. What the reader skips is the rules.
+
+In the second, every rule is something Tovi is weighing: what the meter takes from her, and what
+opening it would cost. The reader reads each one because she is deciding something, and the scene
+moves again on her decision. Dask's line keeps its job, so the paragraph does not say it twice. The
+yearly grading and the missing appeal wait for the scene where somebody appeals.
+
+Chapter 1 usually needs one passage like this, where the premise is said plainly. That is fine.
+What makes a passage a lecture is not how plain or how long it is. It is that nobody in it wants
+anything.
 
 ### 4. A name arrives with what it is
 
@@ -95,8 +121,8 @@ sheet, not the bible:
 3. What happens to them if it goes wrong?
 4. Which names did I use that the page never explains?
 
-If any answer needs something only you know, put it on the page — in the scene if it fits, in one
-plain paragraph if it does not. The beat sheet's `learns` line lists what this chapter owes; every
+If any answer needs something only you know, put it on the page: in the scene if it fits, or in one
+passage where someone is weighing it (example 3) if it does not. The beat sheet's `learns` line lists what this chapter owes; every
 item on it should be answerable from the page.
 
 ## When to break it

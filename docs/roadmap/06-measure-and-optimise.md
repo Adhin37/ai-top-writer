@@ -55,7 +55,9 @@ one lever at a time, on the same beat sheets.
    come from reasoning benchmarks, not fiction.
 3. **Model per role.** Can the writer's revision rounds run on Sonnet while round 0 stays on Opus?
    Can the beta reader drop to Haiku? Run the beta-reader calibration from plan 01 again before
-   trusting it.
+   trusting it. The same calibration run can take 01b's deferred change: the report's list
+   sections in wire form, with the retell untouched. Test it as its own arm, not mixed with the
+   model change.
 4. **Loop pruning.** From the round statistics: if the second revision round almost never changes
    the verdict, cap at one. If the continuity editor rarely finds anything after chapter 3, run it
    every other chapter.

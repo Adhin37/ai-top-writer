@@ -47,22 +47,40 @@ the reader's evidence, and says what the reader experienced.
    says the reader could not follow the rule is usually fixed by one plain sentence at the moment
    the rule bites — not by a new paragraph of explanation.
 3. **You may stet a note** — keep the passage as it is — when fixing it would cost the chapter
-   more than the note gains. Say why in one line.
+   more than the note gains. Say why in one line of your facts file; the story editor reads it.
 4. **Keep what works.** Do not rewrite passages no note touches.
 5. Write the revision to a **new file** — `draft-r1.md`, then `draft-r2.md` — beside the previous
    one. Never overwrite an earlier round.
 
-## What you hand back
+## The facts file
 
-End your turn with this block, and nothing after it:
+Beside each draft, write its facts file: `facts-rK.md` for `draft-rK.md`, in the same folder. The
+story editor reads it next round, and the planner reads it when the chapter is accepted. It is
+[wire](../shared/wire.md): ids, short quotes, one item per line.
 
 ```
-DRAFT READY — <path>
-learns     P1 → "<the words on the page where it lands>" · P2 → "…"
-new facts  <each fact the chapter states that the bible does not contain> | none
-couldn't   <anything the beat sheet asked that the chapter could not do, and why> | none
-notes      (revision rounds only) N1 done: "<new words>" · N2 stet: <reason> · …
+# Facts — chapter <N>, round <r>
+learns    P1 "<≤12 words of the page where it lands>" · P2 "<…>"
+new       <one fact the chapter states that the bible does not contain, ≤15 words>
+new       <…>
+couldn't  <what the beat sheet asked that the chapter could not do, and why> | none
+notes     N1 done "<≤12 of the new words>" · N2 stet: <why, one clause>
+choices   <a staging choice the beat sheet did not ask for, one line; at most three>
 ```
 
-`new facts` matters: the planner writes them into the bible after the chapter is accepted. A fact
-you invent and do not list is a contradiction waiting to happen three chapters later.
+`notes` is for revision rounds only. `choices` is optional.
+
+`new` matters: the planner writes those facts into the bible after the chapter is accepted. A fact
+you invent and do not list is a contradiction waiting to happen three chapters later. List one fact
+a line, each one a reader could check against the bible.
+
+## Your final message
+
+Exactly one line, nothing before or after it:
+
+```
+DRAFT READY <draft path> | facts <facts path> | new <n> | stets <n> | couldn't <n>
+```
+
+The showrunner acts on that line alone. If the facts file cannot be written, put its lines after
+the status line instead.

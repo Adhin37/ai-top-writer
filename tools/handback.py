@@ -8,10 +8,13 @@ subagent's transcript instead:
 
   * default: the agent's last SubagentHandback message, whole;
   * --report: only its `# Report` block (heading to the end of *Would I click next?*). If the agent
-    never handed back a report, it falls back to the content of a refused Write to `*report.md`.
+    never handed back a report, it falls back to the content of a refused Write to `*report.md`;
+  * --append: add it to the end of OUT instead of replacing OUT, fenced, under a line naming the
+    agent by its spawn description. This is how an experiment's working log takes a hand-back
+    without the showrunner retyping it.
 
 Usage:
-  handback.py AGENT_ID OUT [--report] [--transcripts DIR]
+  handback.py AGENT_ID OUT [--report] [--append] [--transcripts DIR]
 
 Transcripts are found at ~/.claude/projects/<project>/<session>/subagents/agent-<AGENT_ID>.jsonl,
 where <project> is the repository path with every "/" turned into "-". --transcripts points at a
@@ -85,6 +88,22 @@ def report_block(text):
     return (body[:m.end()] if m else body).rstrip() + "\n"
 
 
+def description(path):
+    """The spawning call's short label for the agent, from `agent-<id>.meta.json`, or ""."""
+    try:
+        with open(path[:-len(".jsonl")] + ".meta.json", encoding="utf-8") as fh:
+            return str(json.load(fh).get("description") or "")
+    except (OSError, ValueError, AttributeError):
+        return ""
+
+
+def log_entry(agent_id, label, text):
+    """A hand-back as an experiment log takes it: a naming line, then the text, fenced."""
+    fence = "````" if "```" in text else "```"
+    name = "**%s** (`%s`)" % (label, agent_id) if label else "`%s`" % agent_id
+    return "\n%s, hand-back verbatim:\n\n%s\n%s\n%s\n" % (name, fence, text.rstrip("\n"), fence)
+
+
 def extract(path, report=False):
     msg = last_handback(path)
     if not report:
@@ -98,6 +117,7 @@ def main(argv=None):
     ap.add_argument("agent_id")
     ap.add_argument("out")
     ap.add_argument("--report", action="store_true", help="only the `# Report` block")
+    ap.add_argument("--append", action="store_true", help="append to OUT, fenced, as a log entry")
     ap.add_argument("--transcripts", help="directory to search for the transcript")
     args = ap.parse_args(argv)
     try:
@@ -110,9 +130,14 @@ def main(argv=None):
         sys.stderr.write("handback: agent %s has handed nothing back\n" % args.agent_id)
         return 1
     os.makedirs(os.path.dirname(os.path.abspath(args.out)), exist_ok=True)
-    with open(args.out, "w", encoding="utf-8") as fh:
-        fh.write(text if text.endswith("\n") else text + "\n")
-    print("%s -> %s (%d words)" % (args.agent_id, args.out, len(text.split())))
+    if args.append:
+        with open(args.out, "a", encoding="utf-8") as fh:
+            fh.write(log_entry(args.agent_id, description(path), text))
+    else:
+        with open(args.out, "w", encoding="utf-8") as fh:
+            fh.write(text if text.endswith("\n") else text + "\n")
+    print("%s -> %s (%d words%s)" % (args.agent_id, args.out, len(text.split()),
+                                     ", appended" if args.append else ""))
     return 0
 
 

@@ -267,4 +267,6 @@ verbatim; `kb/showrunner/loop.md` step 3 names it; the control is sections I–I
 other ran long, and that the one-line hand-back contracts were not kept. The story editor wrote ~700
 words before `NOTES READY`, and the notes files ran 1,370–2,060 words for 0–2 notes. Every hand-back
 was re-read on each later showrunner turn: 116k tokens, 9.8M re-reads. That became
-[01b](01b-wire-format.md), run after this plan's ITERATE re-run.
+[01b](01b-wire-format.md). **Order:** step 6.4 (the user's cold read) → 01b → this plan's ITERATE
+re-run, whose fixes to the writer's examples and the note protocol go into 01b's wire templates.
+That re-run is also the wire format's first live run; it works through 01b's checklist (01b §5–8).

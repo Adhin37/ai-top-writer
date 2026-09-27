@@ -11,11 +11,14 @@ sys.path.insert(0, os.path.join(ROOT, "tools"))
 
 import export_prose  # noqa: E402  (its frontmatter parser)
 import guard  # noqa: E402
+import wire  # noqa: E402
 
 AGENTS = os.path.join(ROOT, ".claude", "agents")
 KB = os.path.join(ROOT, "kb")
 LINK = re.compile(r"\]\(([^)#\s]+)(?:#[^)]*)?\)")
 COLD = {"beta-reader", "judge"}
+WIRED = ("planner", "writer", "story-editor", "line-editor", "showrunner")
+PLACEHOLDER = re.compile(r"<[^<>]*>")
 
 
 def read(path):
@@ -121,6 +124,35 @@ class KnowledgeBaseTest(unittest.TestCase):
                     continue
                 with self.subTest(doc=os.path.relpath(path, ROOT), link=target):
                     self.assertTrue(os.path.exists(os.path.join(os.path.dirname(path), target)))
+
+    def test_working_roles_link_the_wire_format_and_cold_roles_do_not(self):
+        for role in WIRED:
+            with self.subTest(role=role):
+                self.assertIn("../shared/wire.md", read(os.path.join(KB, role, "index.md")))
+        for role in COLD:
+            for name in os.listdir(os.path.join(KB, role)):
+                with self.subTest(role=role, doc=name):
+                    self.assertNotIn("wire.md", read(os.path.join(KB, role, name)))
+
+    def test_every_status_line_template_parses(self):
+        """A prompt's final-line template and tools/wire.py must agree on the form."""
+        def fill(line):
+            line = line.replace("<ACCEPT|REVISE>", "REVISE").replace("ACCEPT or REVISE", "REVISE")
+            line = line.replace("<stated>/<due>", "4/5").replace("\\|", "|")
+            return PLACEHOLDER.sub(lambda m: "1" if m.group(0) == "<n>" else "x", line)
+        sources = [os.path.join(KB, r, "prompt.md") for r in WIRED if r != "showrunner"]
+        sources.append(os.path.join(KB, "shared", "wire.md"))
+        seen = set()
+        for path in sources:
+            for raw in read(path).splitlines():
+                line = fill(raw.strip().strip("|").strip().strip("`"))
+                if not wire.STATUS.match(line):
+                    continue
+                verb, _, _, found = wire.parse_status(line)
+                seen.add(verb)
+                with self.subTest(doc=os.path.relpath(path, ROOT), line=raw.strip()):
+                    self.assertEqual(found, [])
+        self.assertEqual(seen, set(wire.VERBS))
 
     def test_root_index_declares_okf_version(self):
         fields, _ = export_prose.split_frontmatter(read(os.path.join(KB, "index.md")))

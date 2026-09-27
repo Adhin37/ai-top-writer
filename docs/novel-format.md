@@ -27,7 +27,9 @@ novels/<slug>/
     timeline.md           the in-world calendar
     scenes.md             one row per scene: chapter, who, where, tempo (plan 02)
   work/chNNNN/            the loop's hand-off files for the chapter in progress — beat sheet,
-                          drafts per round, editor notes. Overwritten per chapter; not a backup
+                          drafts per round, the writer's facts file per round, editor notes.
+                          Written in the wire format (kb/shared/wire.md). Overwritten per
+                          chapter; not a backup
   chapters/NNNN-<slug>.md the accepted chapters
 ```
 

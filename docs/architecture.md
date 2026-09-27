@@ -69,6 +69,19 @@ planner ──> beats.md ──(showrunner approves)──> writer ──> draft
 
 The showrunner's step-by-step version is [kb/showrunner/loop.md](../kb/showrunner/loop.md).
 
+**Roles hand each other files, and end on one status line.** What one role writes for another
+follows the wire format ([kb/shared/wire.md](../kb/shared/wire.md)):
+- ids and paths instead of restating;
+- quotes clipped to what locates a passage;
+- one item per line.
+
+The notes file carries the story editor's lines for the planner. The writer's facts file carries
+its stets to the next story editor and its new facts to the planner's fold. The showrunner acts on
+the status lines (`tools/wire.py` parses them) and never carries content between roles.
+
+Not wire: the prose, the beta reader's report and memory (the measurement), the judge's answers,
+and anything for the user. [roadmap/01b](roadmap/01b-wire-format.md) says why.
+
 **Why a fresh beta reader each round:** a reader who has read round 0 knows what round 1 is trying
 to say. The *notes* that become the reader's memory come only from the reader of the accepted
 round.

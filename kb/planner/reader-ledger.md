@@ -19,6 +19,11 @@ Three kinds of row:
   on the page, not a letterhead, by the opening contract chapter.
 - **Promises** — what the page has promised the reader will happen or be answered, and by when.
 
+The ledger is read by the planner, the story editor and the clerk, never by a reader of the book,
+so it is [wire](../shared/wire.md): one row per debt, the fact in one clause (about twenty words),
+and *how it lands* as a moment in about twenty-five. Premise facts are already written out in
+`bible/premise.md`; their rows say `premise` and the moment, not the fact again.
+
 ## Example
 
 The world is invented.
@@ -29,9 +34,9 @@ The world is invented.
 ## Facts
 | id | fact, in plain words | due by ch | how it lands | status |
 |---|---|---|---|---|
-| P1 | The Stack is sealed; all air comes from Deck Nine | 1 | Tovi's first line of work is a leaking air main; she says it to the new hire | owed |
-| P2 | Air is billed each shift; your grade pays for it | 1 | her meter ticks over at shift change the moment her grade is struck | owed |
-| P3 | Ungraded: thirty days of credit, then down-well | 1 | the clerk tells her, reading it off the form; her brother asks what day thirty-one means | owed |
+| P1 | premise | 1 | Tovi's first line of work is a leaking air main; she says it to the new hire | owed |
+| P2 | premise | 1 | her meter ticks over at shift change the moment her grade is struck | owed |
+| P3 | premise | 1 | the clerk tells her, reading it off the form; her brother asks what day thirty-one means | owed |
 | F4 | The deep crews are paid in air, not credits | 2 | the crew boss's offer | owed |
 | F5 | Down-well is a mining colony, and no one has ever bought their way back up | 4 | a letter from someone who went | owed |
 

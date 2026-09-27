@@ -1,9 +1,9 @@
 # 01b — Session 2b: the wire format, terse hand-offs between agents
 
 **Goal:** make what agents write *for each other* short, keyed and parseable, without touching what
-a reader of the book sees, and prove that no one can tell the difference in the chapter. The user
-brought this forward of "tokens later" (2026-09-27) because it only touches channels no human reads.
-Prose-side levers stay in [06](06-measure-and-optimise.md).
+a reader of the book sees. The next plans' runs check that no one can tell the difference in the
+chapter. The user brought this forward of "tokens later" (2026-09-27) because it only touches
+channels no human reads. Prose-side levers stay in [06](06-measure-and-optimise.md).
 
 **Hypothesis:** the room's hand-offs can shrink by about half, with no loss in what the writer does
 with the notes, if they follow one discipline:
@@ -86,15 +86,18 @@ from `bench/ch1-abc/cost.txt`; the other numbers were computed from the transcri
 
 ## Prerequisites
 
-- Plan 01's ITERATE re-run of step 5 is done. Call it **L3**; its prompts are the verbose baseline.
-  The user's cold read (01 step 6.4) is recorded.
+- **The user's cold read (01 step 6.4) is recorded, and 01's verdict is final.** On NO-GO, stop:
+  the room is being redesigned, and its hand-off format is moot.
+- **01's ITERATE re-run has *not* run yet.** It runs after 01b, on the wire templates, so the note
+  protocol is written once. The baseline here is plan 01's **L1 and L2**, which ran on today's
+  prompts, so 01b's comparison measures the format alone.
 - `python3 -m unittest discover tests` passes.
 
 ## Rules for this session
 
 - **One lever at a time.** Nothing in 01b changes what a role *decides*, only how it writes it
-  down. A change to a note's content, the accept rule, or the writer's examples belongs to another
-  plan.
+  down. A change to a note's content, the accept rule, or the writer's examples belongs to 01's
+  ITERATE re-run, which follows this plan.
 - **Replace, never append.** Each role's output template is swapped for its wire form. No "be
   concise" line is added on top of an old template.
 - **Unchanged, on purpose:**
@@ -105,7 +108,6 @@ from `bench/ch1-abc/cost.txt`; the other numbers were computed from the transcri
   - the beat sheet's story lines, which are intent for the writer (principle 1);
   - every judge answer, which is benchmark-only and read by the user;
   - everything addressed to the user.
-- `touch .test-run` before any replay. Delete it when the run is written up.
 
 ## Steps
 
@@ -120,8 +122,8 @@ timestamps and tool names only, never prompt text or prose. Scope it by session 
   `SendMessage` tool results, and as `[Subagent hand-back]` agent messages;
 - usage counted once per message id.
 
-Also add `tests/test_trace.py`, with a small fixture JSONL. **Baseline:** run it on `6f833c83` and on
-L3's session. It must reproduce `bench/ch1-abc/cost.txt` per role, within rounding.
+Also add `tests/test_trace.py`, with a small fixture JSONL. **Baseline:** run it on `6f833c83`, plan 01's
+session, which holds L1 and L2. It must reproduce `bench/ch1-abc/cost.txt` per role, within rounding.
 
 ### 2. `kb/shared/wire.md`
 
@@ -159,7 +161,7 @@ dir   the rule in plain words where the tally is first named
 | writer | `kb/writer/prompt.md` | the hand-back block moves to `work/chNNNN/facts-rK.md`: `learns P1 "<≤12 words>" · …`; `new <one fact, ≤15 words>` per line; `couldn't`; `notes N1 done "<new words>" · N2 stet: <reason>`; at most 3 `choices` lines. Final message: `DRAFT READY <draft> \| facts <facts> \| new 12 \| stets 0 \| couldn't 0` |
 | planner | `kb/planner/prompt.md`, `reader-ledger.md` | `PLANNER DONE <task> \| <files> \| gaps n \| changed n`, then one `gap` / `changed` line each. Ledger: premise rows point at `premise.md` instead of restating it; other facts ≤20 words; *how it lands* names a moment in ≤25 words |
 | line editor | `kb/line-editor/prompt.md` | `POLISHED <path> \| changes 14 (<the top 3>) \| left n`, then one `left` line each |
-| beta reader | `kb/beta-reader/prompt.md`: list sections only (**step 7**) | world rules, who's who, terms, confused, skimmed, best moment, expect next: one line each, a quote of ≤15 words and a reason of ≤12. Retell and *what the MC wants* untouched |
+| beta reader | `kb/beta-reader/prompt.md`: list sections only, **deferred** (see 5–8) | proposed: world rules, who's who, terms, confused, skimmed, best moment, expect next, one line each, a quote of ≤15 words and a reason of ≤12. Retell and *what the MC wants* untouched |
 | showrunner | `kb/showrunner/loop.md` | act on status lines; open a role's file only to decide (the beat sheet) or when a status line does not parse; give the story editor `facts-rK.md` in rounds 1–2, and the planner the last notes file's *For the planner* lines; in experiments, file hand-backs with `handback.py --append` instead of retyping them |
 
 ### 4. Tools and tests
@@ -174,44 +176,42 @@ dir   the rule in plain words where the tally is first named
 - **`tests/test_wiring.py`:** every working role's `index.md` links `kb/shared/wire.md`, and the
   cold roles' do not.
 
-### 5. Probe (T1)
+### 5–8. Live checks, in the next plans' runs (no replays here)
 
-Spawn the writer (a revision round on L1's `draft-r0.md` with L1's `notes-r0.md`), the story editor
-and the line editor on plan 01's files. Check:
-- **each final message is exactly one line** that `tools/wire.py` parses;
-- **the writer's `facts-rK.md` write is not refused** by Claude Code's "report file" rule (plan 01
-  found that rule for `report.md`). If it is refused, fall back: the terse block becomes the final
-  message, filed with `handback.py`. Log which.
+**The user's decision (2026-09-27):** no paid replays per plan, because each one costs a share of
+the session limit. Each change is checked in the next plan's real run that uses it, and the whole
+roadmap gets one complete test run at the end (plan 05). The probe, T2 (the notes replay) and T4
+(an L4 loop) became the checklist below. T3 became a non-change: the beta reader's report is a
+calibrated instrument, and it is not touched without the calibration run it needs.
 
-### 6. Replay the notes channel (T2)
+**In 01's ITERATE re-run (L3)**, the first loop on the wire templates:
+1. Every final message is one line: `python3 tools/wire.py handback <filed hand-back>` finds no
+   defect.
+2. The writer's `facts-rK.md` is written. If Claude Code refuses it as a report file, the status
+   line is followed by the facts lines (the prompt's fallback), and the showrunner files them with
+   `handback.py`. Log which happened.
+3. `python3 tools/wire.py check` on each notes and facts file finds no defect. Compare its words
+   per section with L1's notes-r0: owed table 766, notes 502, keep 318.
+4. In rounds 1–2 the story editor was given the facts file. It does not re-raise a stetted note
+   unless the reader's evidence answers the writer's reason.
+5. `python3 tools/trace.py <session>` against L1 and L2 (`--match` on the spawn labels) gives words
+   per artifact, hand-back tokens into the showrunner, its context peak, and cost per round.
+6. The user's read of L3's chapter. Are the notes still acted on where the reader stumbled?
 
-Inputs held fixed: L1's `draft-r0.md` and `reading/L1-r0/report.md`.
+L3 carries ITERATE's content changes as well as the format, so a quality change cannot be pinned
+on either. Only a clear regression in how the notes are acted on would point at the format.
 
-1. Two story editors run on the old template (from git) and two on the wire template.
-2. Compare the verdict, the note count, and which draft passages the notes target.
-3. Each note set goes to a **fresh** writer: the same cold condition for both arms, which is not the
-   loop's warm one. Each revision goes to a fresh beta reader.
-4. Pairwise-judge the revisions, old against wire: 3 judges per pair, labels and order swapped.
+**In plan 02:**
+- the planner's status and `gap` / `changed` lines;
+- the ledger written in the new form, with premise rows saying `premise`;
+- *For the planner* lines reaching the next beats task;
+- the facts files' `new` lines feeding the fold.
 
-About $12–15.
+**In plan 05 (the complete test run):** the format across five chapters, with `tools/trace.py`
+per chapter.
 
-### 7. Replay the reader's list sections (T3; optional, last)
-
-Re-run plan 01's calibration (three readers on A, three on the control, each graded) with the new
-list sections. Then run two readers on L1 `draft-r0` and have the story editor grade both reports.
-About $2–3. Skip it if the session runs long; it is the smallest saving and the only one that
-touches an instrument.
-
-### 8. End to end (T4)
-
-One full loop of chapter 1 (**L4**) from the same beat sheet, with every kept change. `tools/trace.py`
-compares L4 with L1, L2 and L3 on:
-- words per artifact;
-- the room's output, thinking and cache;
-- the showrunner's peak context and hand-back tokens;
-- model seconds and cost.
-
-The user reads L4's chapter.
+**Deferred:** the beta reader's list sections, with plan 06's calibration re-run (lever 3 re-runs
+it anyway, for Haiku).
 
 ### 9. Close
 
@@ -223,45 +223,28 @@ before:
   status line (`kb/shared/wire.md`);
 - plan 06's Part A §1, trimmed to what is left.
 
-## Keep criteria, per channel (fixed before step 5)
+Then plan 01's ITERATE re-run is next, and it edits the wire templates. The writer's examples and
+the story editor's note protocol are its levers, and it runs the checks above.
 
-| channel | kept when |
-|---|---|
-| status lines and hand-backs (T1) | every probe line parses; tests pass |
-| notes (T2) | the wire notes target the same passages and verdict as the old ones (1 of 4 editors may differ, as the old ones differ among themselves), **and** the wire-note revisions tie or win at least 3 of 6 pairwise picks |
-| facts file | the probe's write is accepted, or the fallback works |
-| reader list sections (T3) | calibration passes as in plan 01 (A's central rule missing/wrong ≥2/3; the control's stated ≥2/3), and the story editor's grades of L1 r0 do not move |
-| the whole (T4) | the user cannot tell L4's chapter is worse than L3's; trace shows the saving |
+## When a live check fails
 
-A channel that fails is reverted, and the write-up records it as a lever that lost.
-
-## Known confounds, to write down, not fix
-
-- **n is small:** two editors per arm, three judges per pair. A difference of one pick is noise.
-- **The T2 revisions are cold**, while the loop's are warm. Both arms share the condition, so the
-  comparison is fair, but the absolute quality is not the loop's.
-- **L3 and L4 differ by loop variance too** (L1 took three rounds, L2 one). T4 reads the trend, not a
-  verdict.
+The plan whose run found it revises the template, or reverts the channel to its prose form, and
+logs which in its session log. `tools/wire.py` reports and never gates; nothing about the chapter
+waits on it.
 
 ## Files produced
 
-- `tools/trace.py`, `tools/wire.py`; `tools/handback.py --append`; their tests.
+- `tools/trace.py`, `tools/wire.py`, `tools/handback.py --append`, and their tests.
 - `kb/shared/wire.md`, and the replaced templates in `kb/`.
-- `docs/experiments/<date>-wire-format.md`, which is committed. It holds:
-  - the trace baseline;
-  - the probe;
-  - the T2–T4 tables;
-  - the channels kept and reverted;
-  - cost and time;
-  - confounds.
-- `docs/lessons.md`: what the format taught, if anything.
+- Updated `CLAUDE.md`, `docs/architecture.md` and `docs/novel-format.md`.
 
 ## Verification
 
 - `python3 -m unittest discover tests` passes, with the new trace, wire and handback tests.
-- Every role's final message in T4 is one line that `tools/wire.py` parses.
-- `tools/trace.py` on `6f833c83` reproduces `bench/ch1-abc/cost.txt` per role.
-- No kept channel is without its T-row in the write-up.
+- `tests/test_wiring.py`: every working role's index links `wire.md` and no cold role's does, and
+  every status-line template in a prompt parses in `tools/wire.py`.
+- `tools/trace.py 6f833c83 --until 2026-09-27T07:58:16` reproduces `bench/ch1-abc/cost.txt` per
+  role.
 
 ## Out of scope
 
@@ -273,4 +256,32 @@ A channel that fails is reverted, and the write-up records it as a lever that lo
 
 ## Session log
 
-*(filled in when this plan runs)*
+**2026-09-27. Steps 1–4 and 9 built; steps 5–8 became live checks for the next runs, by the
+user's decision.** No agent was spawned, and nothing under `novels/` was written.
+
+- **Deviation: run before 01 step 6.4.** The user asked for 01b before their cold read of C1, so
+  01's verdict is still a provisional ITERATE.
+- **`tools/trace.py`** matches `bench/ch1-abc/cost.txt` exactly on 6f833c83 with
+  `--until 2026-09-27T07:58:16` (when `cost.txt` was written; the session ran on after it): cost
+  per role and in total ($38.03), responses, and output tokens.
+  - Model seconds are the trace's own measure: from the row a response answers to that response's
+    last row. They agree with `cost.txt` within 5 s for five roles. The writer shows 968 against
+    926, and the showrunner 1,094 against 643; `cost.txt` counted those differently.
+  - Showrunner baseline for that window: context mean 307k, peak 581k tokens over 189 responses.
+    110 hand-backs came in, ~115k tokens and ~8.2M re-read tokens, 14% of its cache reads.
+- **`kb/shared/wire.md`**, linked from the shared index and from the planner's, writer's, story
+  editor's, line editor's and showrunner's indexes.
+- **Templates replaced:**
+  - story editor: `prompt.md`, and `note-protocol.md`, whose examples are now wire;
+  - writer: `prompt.md`, with the `facts-rK.md` file;
+  - planner: `prompt.md`, the `premise.md` check line, and `reader-ledger.md`;
+  - line editor: `prompt.md`;
+  - showrunner: `loop.md`.
+- **Unchanged:** the beta reader (deferred to plan 06's calibration) and the judge.
+- **Tools:** `tools/wire.py`, `tools/handback.py --append`, `tools/trace.py`. Tests went from 72
+  to 94, all passing. `tests/test_wiring.py` now checks that every prompt's status-line template
+  parses.
+- **Baseline for live check 3:** `wire.py check` on L1's `notes-r0.md` flags it as the old form.
+  Its words per section: owed table 766, notes 502, keep 318.
+- **Docs:** `CLAUDE.md` (act on status lines; the new tools), `docs/architecture.md` (hand-offs as
+  files plus a status line), `docs/novel-format.md` (`work/` holds the facts files).

@@ -16,6 +16,8 @@ The main session runs the room. It does not write the book.
   measures you, not the room.
 - **Relay hand-offs verbatim.** When one agent's output feeds another, pass the file path or the
   exact text — never your paraphrase.
+- **Act on status lines.** Every role ends on one line (`kb/shared/wire.md`). Open a role's file
+  only to make a decision, or when its line does not parse (`tools/wire.py`).
 - **Approve beat sheets as written** unless one breaks its event or the reader ledger. Taste is not
   a reason; say what is broken.
 - **Name the agent that is writing** at each step, so the user can tell whose edit they are seeing.
@@ -45,7 +47,7 @@ Continuity editor and clerk arrive in plan 02. Why each role exists and what it 
 | `.claude/agents/` | thin agent files: frontmatter + "read `kb/<role>/prompt.md`" |
 | `.claude/skills/handoff/` | the main session's procedure for handing over across a usage-limit reset, and resuming |
 | `kb/<role>/` | each role's knowledge base (OKF): `index.md`, `prompt.md`, typed docs. `kb/shared/` for docs several roles use |
-| `tools/` | Python tools: `export_prose.py` (prose-only exports to `reading/`), `guard.py` (the path hook), `handback.py` (files a hand-back from a transcript), `checkpoint.py` + `session_hooks.py` + `statusline.py` (session handoffs) |
+| `tools/` | Python tools: `export_prose.py` (prose-only exports to `reading/`), `guard.py` (the path hook), `handback.py` (files a hand-back from a transcript, or appends it to a log), `wire.py` (parses status lines, notes and facts files), `trace.py` (a session's cost per role, from its transcripts), `checkpoint.py` + `session_hooks.py` + `statusline.py` (session handoffs) |
 | `tests/` | `python3 -m unittest discover tests` |
 | `novels/<slug>/` | a novel — format in [docs/novel-format.md](docs/novel-format.md) |
 | `reading/<id>/` | what the beta reader sees: prose only, neutral folder name (gitignored) |

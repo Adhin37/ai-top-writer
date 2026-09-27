@@ -47,6 +47,6 @@ are the ones nobody comes back from.
 - **Say it back.** Read "in one breath" aloud. Could a friend repeat it after one hearing? If a
   sentence needs a coined term, gloss it in the same sentence or replace it.
 - **Every fact cites a source.** A fact with no source is invented; if the premise needs it, it
-  goes into the bible first, and the hand-back says so.
+  goes into the bible first, and a `changed` line of your final message says so.
 - **Not too much.** Faction politics, history, the magic system's third rule — these are true, and
   they are chapter 5's business. The premise is only what chapter 1 cannot do without.

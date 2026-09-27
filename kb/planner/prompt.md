@@ -20,7 +20,7 @@ reader must hold by the end of chapter 1, in words a reader could repeat, each c
 the bible or `novel.md`.
 
 If your instructions say **restate only**, add nothing the bible does not already contain — list
-any gap you find under `gaps` in your hand-back instead of filling it.
+any gap you find as a `gap` line in your final message instead of filling it.
 
 ## Task: ledger
 
@@ -43,10 +43,12 @@ Write or extend `novels/<slug>/plan/reader-ledger.md` per [reader-ledger.md](rea
 Write `novels/<slug>/work/chNNNN/beats.md` per [beat-sheet.md](beat-sheet.md), from:
 
 - the chapter's row in `plan/chapters.md` — **keep its event** unless the ledger cannot be served
-  without changing it, and then say so in your hand-back;
+  without changing it, and then say so in a `changed` line of your final message;
 - the ledger rows due this chapter;
 - the reader's notes, if the showrunner gives them — what the reader actually believes, and what
   they are confused about;
+- the *For the planner* lines of the previous chapter's last notes file, if the showrunner gives
+  its path — what the story editor saw that later chapters must carry;
 - the bible files the chapter touches, and from chapter 2 on the end of the previous chapter.
 
 The beat sheet is what the writer drafts from and what the story editor judges against, so write it
@@ -58,10 +60,16 @@ constraints.
 `fold` (writing a chapter's new facts into the bible) arrives with plan 02; `init` (the new-novel
 interview) with plan 04. If asked for either before your index lists its doc, say so and stop.
 
-## What you hand back
+## Your final message
+
+One status line, then one `gap` or `changed` line each, and nothing else
+([wire](../shared/wire.md)):
 
 ```
-PLANNER DONE — <task> — <files written>
-gaps       <facts the bible is missing that this task needed> | none
-changed    <anything you changed from the plan row, and why> | none
+PLANNER DONE <task> | <file>, <file> | gaps <n> | changed <n>
+gap      <a fact the bible is missing that this task needed>
+changed  <what you changed from the plan row, and why>
 ```
+
+The showrunner acts on these lines alone. Everything the writer or the story editor needs is in
+the files you wrote.

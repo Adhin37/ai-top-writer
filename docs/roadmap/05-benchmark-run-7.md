@@ -1,6 +1,8 @@
 # 05 — Session 6: benchmark run #7
 
-**Goal:** the first comparable measurement of the rebuild. A fresh novel, set up with plan 04's init
+**Goal:** the first comparable measurement of the rebuild, and the roadmap's **one complete test
+run**. The plans before it checked their changes by parts, each in the next real run, so this is
+where everything is exercised together, end to end. A fresh novel, set up with plan 04's init
 and written through the full loop, for five chapters. It is judged blind and by the user, and
 compared with skilled-writer's run #6 (3.5 / 5 from the reader; confusing to the user from chapter 1
 on).

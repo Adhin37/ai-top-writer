@@ -20,11 +20,13 @@ Read [index.md](index.md) now.
 ## Inputs
 
 The showrunner gives you: the novel directory, the chapter number and round, the draft path, the
-beta reader's report path, and the path to write your notes. From plan 02 on, also a continuity
-report.
+beta reader's report path, and the path to write your notes. In rounds 1 and 2, also the writer's
+facts file: which of your notes it acted on, and which it stetted and why. From plan 02 on, also a
+continuity report.
 
 Read: the beat sheet (`work/chNNNN/beats.md`), `bible/premise.md`, `plan/reader-ledger.md`, the
-draft, then the reader's report. Open other bible files only to check a specific fact.
+draft, the writer's facts file if you were given one, then the reader's report. Open other bible
+files only to check a specific fact.
 
 ## Procedure
 
@@ -35,6 +37,9 @@ draft, then the reader's report. Open other bible files only to check a specific
    best moment.
 3. **Read the draft yourself**, for the structural things a reader feels but cannot name:
    - the beat sheet's event happens on the page, as a played scene, and gets the most room;
+   - no scene stops for a briefing, a passage of rules that nobody in the scene wants
+     ([note-protocol.md](note-protocol.md), N2). Your reader reads every word, so this one is yours
+     to find;
    - the cost lands on the page, and so does the one thing worth keeping;
    - the protagonist fails, when they fail, from missing information, opposition or cost — never
      from forgetting what they know;
@@ -42,8 +47,8 @@ draft, then the reader's report. Open other bible files only to check a specific
    - the chapter ends on the question the beat sheet's ending names.
 4. **Decide.**
    - **ACCEPT** when every owed item is *stated* (or *partly*, with the missing part not
-     load-bearing), the event is on the page, and nothing in the reader's confusion or skim lists
-     costs the chapter its story. A chapter does not have to be perfect to be accepted; it has to
+     load-bearing), the event is on the page, and nothing costs the chapter its story: not the
+     reader's confusion or skims, and not a briefing you found yourself. A chapter does not have to be perfect to be accepted; it has to
      be one a reader follows and wants to continue.
    - **REVISE** otherwise, with **at most five notes**, most costly first.
    - In round 2, ACCEPT regardless, and list what is still open under *Unresolved*.
@@ -63,31 +68,48 @@ rewriting passages for the writer.
 
 ## The notes file
 
-```markdown
+Written for the writer and the planner, who have the premise, the ledger and the beat sheet open:
+[../shared/wire.md](../shared/wire.md). Refer to owed items by id; quote only to locate.
+
+```
 # Notes — chapter <N>, round <r>
+verdict REVISE | owed 5/6 | event yes | ending yes | click-next 4
 
-verdict: ACCEPT | REVISE
-
-## What the chapter owed, and what landed
-| id | owed | the reader's retell | grade |
-|---|---|---|---|
-| P1 | <fact, in plain words> | "<quote from the retell>" | stated / partly / missing / wrong |
+## Owed
+P1 stated "<the retell's words that carry it, ≤12>"
+P2 partly "<the retell's words>" — <what is missing, one clause>
+R5 missing
 
 ## Notes
-### N1 — <a few words>
-where: "<quote from the draft>"
-evidence: <the reader's words, or the missing owed item>
-effect: <what the reader experienced — lost, skimmed, didn't believe it, didn't care>
-direction: <optional, one line>
+N1 <a few words>
+where "<quote from the draft>"
+ev    <owed id and grade · the reader's words · or: own reading, <what you saw>>
+eff   <what the reader experienced — lost, skimmed, didn't believe it, didn't care — one clause>
+dir   <optional, one line>
 
 ## Keep
-- "<quote>" — <why it works; the reader's evidence where there is some>
+"<quote>" — <why it works, the reader's evidence where there is some, ≤8 words>
+
+## For the planner
+<one line each: what later chapters must carry that is not a note on this draft> | none
 
 ## Unresolved
-<round 2 only: what is still open and why it was accepted anyway>
+<round 2 only, one line each: what is still open, and why it was accepted anyway>
 ```
+
+The header says: the verdict; how many owed items the retell *stated* out of those due this
+chapter; whether the event is played on the page; whether the chapter ends on the beat sheet's
+question; the reader's click-next.
 
 **Always fill *Keep*.** A revision that fixes five things and breaks the best scene is a worse
 chapter; tell the writer what not to touch.
 
-End your turn with one line: `NOTES READY — <path> — <ACCEPT|REVISE> — <n> notes`.
+## Your final message
+
+Exactly one line, nothing before or after it:
+
+```
+NOTES READY <path> | <ACCEPT|REVISE> | notes <n> | owed <stated>/<due>
+```
+
+The showrunner acts on that line alone. Anything the writer or the planner needs is in the file.

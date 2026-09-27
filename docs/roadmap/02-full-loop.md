@@ -102,6 +102,13 @@ approves. The user reads both chapters.
   the running notes; anything the running notes believe that the fresh reader does not is drift.
   Record it.
 - The user's verdict on chapters 2–3 is recorded in the session log.
+- **01b's live checks for this plan** (01b §5–8):
+  - the planner's status and `gap` / `changed` lines parse (`tools/wire.py handback`);
+  - a ledger written in the new form, with premise rows saying `premise`;
+  - *For the planner* lines reaching the next beats task;
+  - the facts files' `new` lines feeding the fold.
+
+  Where one fails, fix the template or revert it, and log which.
 
 ## Exit criteria
 
