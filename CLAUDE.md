@@ -75,6 +75,10 @@ Continuity editor and clerk arrive in plan 02. Why each role exists and what it 
   appended to a pile. That pile is what sank skilled-writer.
 - **Lessons and history go in `docs/`** ([lessons.md](docs/lessons.md), `docs/experiments/`), not
   in a knowledge base: an agent reading why a rule exists is spending attention on the past.
+- **Docs for people get diagrams.** In `README.md` and `CONTRIBUTING.md`, when a flow needs
+  clarifying or the reader needs the project from above, draw it with the `mermaid` skill as a
+  fenced `mermaid` block (GitHub renders it) instead of more prose. Agent-facing files
+  (`kb/`, `.claude/agents/`) get none: no person reads them.
 - **Knowledge-base examples use invented nouns**, never the current novel's.
 - **Agents register at session start.** Editing a `kb/<role>/prompt.md` takes effect on the next
   spawn; editing `.claude/agents/*.md` may need a new session.
