@@ -8,12 +8,16 @@ session starts, so a session opened anywhere else cannot spawn them. Then say *"
 docs/roadmap/NN"*. When the session ends, fill in the plan's *Session log*, update the status
 column below, and fix any later plan the session proved wrong. Plans are proposals, not contracts.
 
+A session stopped by the usage limit is picked up by the next one on its own: hooks keep its handoff
+in `docs/sessions/`, and the `handoff` skill resumes it (the same session, or a fresh one).
+
 | # | plan | status | depends on |
 |---|---|---|---|
 | 00 | [Diagnosis: why the rebuild](00-diagnosis.md) | reference | — |
 | — | Session 1: foundation (this repo, the docs, the roadmap, the spike's agents and tools) | **done** 2026-09-26 | — |
-| 01 | [Session 2: vertical slice, chapter 1 A/B/C](01-vertical-slice.md) | next | session 1 |
-| 02 | [Session 3: the full loop and serial memory](02-full-loop.md) | planned | 01 = GO |
+| 01 | [Session 2: vertical slice, chapter 1 A/B/C](01-vertical-slice.md) | **run** 2026-09-27 — provisional ITERATE; user's read (6.4) outstanding | session 1 |
+| 01b | [Session 2b: the wire format, terse hand-offs between agents](01b-wire-format.md) | planned | 01's ITERATE re-run |
+| 02 | [Session 3: the full loop and serial memory](02-full-loop.md) | planned | 01 = GO (or ITERATE done), 01b |
 | 03 | [Session 4: the knowledge bases](03-knowledge-bases.md) | planned | 02 |
 | 04 | [Session 5: novel setup and planning from scratch](04-front-end.md) | planned | 03 |
 | 05 | [Session 6: benchmark run #7](05-benchmark-run-7.md) | planned | 04 |
@@ -26,16 +30,20 @@ column below, and fix any later plan the session proved wrong. Plans are proposa
    plus an in-loop cold reader plus a reader ledger produces a chapter 1 a newcomer understands and
    wants to continue. It is tested on the same bible that produced run #6's confusing chapter 1. If
    the answer is no, nothing after it is worth doing as planned.
-2. **02 finishes the loop across chapters.** One chapter cannot test serial memory, the state write
+2. **01b makes what agents write for each other terse** before 02 adds two roles whose whole output
+   is for other agents, so they are born in the wire format. It touches no channel a reader of the
+   book sees, which is why the user brought it forward of "tokens later" (2026-09-27). Prose-side
+   levers (effort, model, the showrunner's context) stay in 06.
+3. **02 finishes the loop across chapters.** One chapter cannot test serial memory, the state write
    or continuity.
-3. **03 writes the knowledge bases** once the loop has shown what each role needs. Writing them
+4. **03 writes the knowledge bases** once the loop has shown what each role needs. Writing them
    first would repeat the old mistake: rules written for a pipeline nobody had run.
-4. **04 is the front end.** Setting up a new novel needs the knowledge bases, and the benchmark needs
+5. **04 is the front end.** Setting up a new novel needs the knowledge bases, and the benchmark needs
    a new novel.
-5. **05 is the first comparable measurement** against run #6.
-6. **06 optimises cost only after quality is established.** The user's instruction: quality first,
+6. **05 is the first comparable measurement** against run #6.
+7. **06 optimises cost only after quality is established.** The user's instruction: quality first,
    tokens later.
-7. **07 retires the old repo** only after the new one has shipped a benchmark.
+8. **07 retires the old repo** only after the new one has shipped a benchmark.
 
 ## Standing decisions (from the user, 2026-09-26)
 
@@ -48,6 +56,9 @@ column below, and fix any later plan the session proved wrong. Plans are proposa
 - **Per-role knowledge bases in OKF format** replace the old cards, routing and search.
 - **Fewer limitations than the old repo.** Carry over a rule only when its evidence still applies.
   [lessons.md](../lessons.md) says which ones do.
+- **What agents write for each other is terse** (2026-09-27): keyed lines, ids and paths instead of
+  restating, and one status line as each role's final message. No human reads those channels. The
+  prose, the reader's retell and everything addressed to the user stay full. See [01b](01b-wire-format.md).
 
 ## Session 1 log (2026-09-26, run from the skilled-writer session)
 

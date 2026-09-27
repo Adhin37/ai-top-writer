@@ -80,6 +80,17 @@ class AgentWiringTest(unittest.TestCase):
         self.assertTrue(any("tools/guard.py" in c for c in commands))
         self.assertTrue(os.path.isfile(os.path.join(ROOT, "tools", "guard.py")))
 
+    def test_settings_wire_the_session_hooks(self):
+        settings = json.loads(read(os.path.join(ROOT, ".claude", "settings.json")))
+        for event in ("Stop", "SubagentStop", "StopFailure", "SessionEnd", "PreCompact",
+                      "SessionStart", "UserPromptSubmit", "PostToolUse"):
+            commands = [h["command"] for entry in settings["hooks"].get(event, [])
+                        for h in entry["hooks"]]
+            self.assertTrue(any("tools/session_hooks.py" in c for c in commands), event)
+        self.assertIn("tools/statusline.py", settings["statusLine"]["command"])
+        self.assertTrue(os.path.isfile(os.path.join(ROOT, ".claude", "skills", "handoff",
+                                                    "SKILL.md")))
+
 
 class KnowledgeBaseTest(unittest.TestCase):
     def test_every_doc_has_a_type(self):

@@ -59,6 +59,9 @@ line on the difference. Invented, genre-neutral nouns.>
   number to watch, never a limit.
 - **Keep history out.** "Run #4 shipped…" belongs in `docs/lessons.md`, never in a knowledge base. An
   agent reading why a rule exists is spending attention on the past.
+- **Output templates are wire; teaching stays prose.** A `prompt.md` that defines what a role hands
+  back links `kb/shared/wire.md` (from 01b) instead of restating its rules. Craft docs keep writing
+  in full sentences and examples.
 - **Keep examples genre-neutral.** Use invented proper nouns and portable officialdom (an inspector, a
   toll-keeper). The last run's novel always leaks into the examples written right after it, so sweep
   for it at the end of every run.

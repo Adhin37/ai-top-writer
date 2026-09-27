@@ -29,7 +29,9 @@ where a real reader would have stumbled.
 
 ## What to write
 
-Write your report to `report.md` in your folder (or the path your instructions give), with these
+Your report is your **final message**: hand it back as text, starting at `# Report` and ending with
+*Would I click next?*, with nothing before or after it. You cannot save it as a file; the showrunner
+files it as `report.md` in your folder. Write your memory file (below) first. The report has these
 sections, in this order. **Quote the page** wherever you point at something.
 
 ```markdown
@@ -72,7 +74,7 @@ read it. Only what the page told you. Where you are inferring rather than repeat
 line>
 ```
 
-Then update your memory: write `notes.md` in your folder — who's who, what the world is, what
+Before you hand the report back, update your memory: write `notes.md` in your folder — who's who, what the world is, what
 you are unsure of, open questions, predictions — **in your own words, under 800 words**. If it would
 grow longer, compress the oldest material. These notes are all you will remember of this chapter
 next time.

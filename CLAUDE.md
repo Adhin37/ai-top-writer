@@ -43,13 +43,15 @@ Continuity editor and clerk arrive in plan 02. Why each role exists and what it 
 | path | what |
 |---|---|
 | `.claude/agents/` | thin agent files: frontmatter + "read `kb/<role>/prompt.md`" |
+| `.claude/skills/handoff/` | the main session's procedure for handing over across a usage-limit reset, and resuming |
 | `kb/<role>/` | each role's knowledge base (OKF): `index.md`, `prompt.md`, typed docs. `kb/shared/` for docs several roles use |
-| `tools/` | Python tools: `export_prose.py` (prose-only exports to `reading/`), `guard.py` (the path hook) |
+| `tools/` | Python tools: `export_prose.py` (prose-only exports to `reading/`), `guard.py` (the path hook), `handback.py` (files a hand-back from a transcript), `checkpoint.py` + `session_hooks.py` + `statusline.py` (session handoffs) |
 | `tests/` | `python3 -m unittest discover tests` |
 | `novels/<slug>/` | a novel — format in [docs/novel-format.md](docs/novel-format.md) |
 | `reading/<id>/` | what the beta reader sees: prose only, neutral folder name (gitignored) |
 | `bench/<experiment>/` | experiment arms and blind copies for the judge (gitignored) |
 | `docs/` | for maintainers only; no agent reads it. Roadmap, architecture, format, lessons, experiments |
+| `docs/sessions/` | each session's handoff, rebuilt by hooks every turn and at a usage limit (gitignored) |
 
 ## The principles, short
 

@@ -5,8 +5,9 @@ complete loop, with the beta reader's memory carried forward, state written afte
 and continuity checked against the bible. After this session, the loop can write a book rather than
 an opening.
 
-**Prerequisite:** plan 01 ended **GO**, or **ITERATE** with the iteration done. Read its session log
-and experiment write-up first. Where they changed the loop, they override this plan.
+**Prerequisite:** plan 01 ended **GO**, or **ITERATE** with the iteration done, and plan
+[01b](01b-wire-format.md) has run. Read their session logs and experiment write-ups first. Where they
+changed the loop, they override this plan.
 
 ## Steps
 
@@ -49,6 +50,13 @@ Rules for the port:
   - **Lists** every new fact the chapter established under `Bible:` in its report. It never edits
     `bible/`.
 - **Planner, fold mode:** takes the clerk's `Bible:` list and writes the facts into `bible/`.
+- **Both new roles are born in the wire format** (`kb/shared/wire.md`, from 01b).
+  - Each final message is one status line.
+  - The continuity editor's findings are one line each: a quote, the bible line, the defect.
+  - The clerk's `Bible:` list has one fact a line.
+  - Claude Code refuses a subagent's report file, so a text report is filed verbatim with
+    `tools/handback.py`.
+  - The `mdio.py` port may absorb `tools/wire.py`'s parsing.
 
 ### 3. Serial memory for the beta reader
 

@@ -243,4 +243,28 @@ optimisation.
 
 ## Session log
 
-*(filled in when this plan runs)*
+**2026-09-26 → 27. Steps 0–7 run; step 6.4 (the user's reading) outstanding.** Full log and write-up:
+[docs/experiments/2026-09-26-ch1-abc.md](../experiments/2026-09-26-ch1-abc.md).
+
+- **Calibration passed first time**: A's central rule missing/wrong 3/3; the control stated 3/3 (all
+  three control readers recognised Wells — an upper bound).
+- **Loop**: L1 took all three rounds (REVISE, REVISE, ACCEPT); L2 was accepted at round 0, so B2 = C2
+  and the B2–C2 pairwise was not run.
+- **Judging**: central rule stated — A 0/3, B1 2/3, C1 2/3, C2 1/3 (the C2 misses are one corollary
+  clause the graders split on); pairwise C over A 6/6, C1 over B1 3/3; mean scores A 3.67, B1 4.00,
+  C1 4.17, C2 4.33; skimmed an explanation in 11 of 12 reads.
+- **Provisional verdict: ITERATE** (criterion 5 fails on both C arms; 2 fails strictly on C2), final
+  after the user's cold read of C1 and B1/C1 pick.
+- **Cost**: $38.03 in all; the room $6.04 (L1) and $2.85 (L2) a chapter plus $2.12 planning; the
+  showrunner $19.96.
+
+Changed during the session, each logged with its reason: the beta reader hands its report back as
+text (Claude Code refuses a subagent's report file); `tools/handback.py` (+5 tests) files hand-backs
+verbatim; `kb/showrunner/loop.md` step 3 names it; the control is sections I–II of Gutenberg #35.
+`.test-run` is still armed. Nothing committed.
+
+**Follow-up (2026-09-27):** this session's transcripts showed that what the agents wrote for each
+other ran long, and that the one-line hand-back contracts were not kept. The story editor wrote ~700
+words before `NOTES READY`, and the notes files ran 1,370–2,060 words for 0–2 notes. Every hand-back
+was re-read on each later showrunner turn: 116k tokens, 9.8M re-reads. That became
+[01b](01b-wire-format.md), run after this plan's ITERATE re-run.

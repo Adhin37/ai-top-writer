@@ -10,6 +10,9 @@ bench/
 # The test-run marker arms tools/guard.py for the main session.
 .test-run
 
+# Session handoffs and the usage reading: one machine's working state, full of agent prompts.
+docs/sessions/
+
 __pycache__/
 *.pyc
 .claude/settings.local.json

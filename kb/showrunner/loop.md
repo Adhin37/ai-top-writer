@@ -45,7 +45,9 @@ python3 tools/export_prose.py novels/{slug}/work/chNNNN/draft-rK.md --reading-di
 ```
 
 Spawn a **fresh beta-reader**: *"Your reading folder is reading/{id}-chNN-rK/. Report on chapter
-N."* Its report lands in `reading/{id}-chNN-rK/report.md`.
+N."* It hands its report back as text — Claude Code refuses a subagent's write to a report file —
+and you file it verbatim from its transcript, never retyped:
+`python3 tools/handback.py <agent-id> reading/{id}-chNN-rK/report.md --report`.
 
 (From plan 02: spawn the **continuity-editor** in parallel on `draft-rK.md`.)
 

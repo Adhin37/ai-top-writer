@@ -54,7 +54,7 @@ Carry over the old *traps* table only where it still applies:
    - The chapter-1 check: the beta reader's retell, graded against `premise.md`, must state the
      central rule. If it does not, the loop revises. This is the loop working, not an intervention.
    - Log per chapter: rounds, notes, stets, the reader's click-next, words, and model time and cost
-     per role.
+     per role. Time and cost come from `tools/trace.py` (built in 01b), scoped by session id.
 4. **Stop at five.** Write the showrunner's impression.
 
 ## Step 3 — judging
