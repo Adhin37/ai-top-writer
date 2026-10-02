@@ -34,13 +34,16 @@ path to write your file to. Then:
 1. **The bible.** A name, rank, price, distance, rule, date or relationship stated differently from
    the bible.
 2. **The state.** Someone somewhere they cannot be (the last block's `at`), holding what they gave
-   away (`has`), recovered too fast (`cost`), or a day that does not follow the timeline.
-3. **Time and travel.** The time the page allows for a journey, against the bible's distances.
+   away (`has`), recovered too fast (`cost`), or a day that does not follow the timeline
+   ([people-and-figures.md](people-and-figures.md)).
+3. **Time and travel.** The time the page allows for a journey, against the bible's distances,
+   and every time word against the block it points back to ([time-and-travel.md](time-and-travel.md)).
 4. **Spellings and numbers.** Lint's `lexicon` and `numerals` lines, held against the lexicon; a
    term spelled or capitalised two ways; a figure the bible defines, reused with another meaning.
 5. **Who could know it.** A character states or acts on something they have no source for: it is not
    theirs in any block's `kno`, they did not see it on the page, and it is not common knowledge. The
-   narration too: in a limited viewpoint it knows only what its character knows.
+   narration too: in a limited viewpoint it knows only what its character knows
+   ([provenance.md](provenance.md)).
 
 Not yours: whether the chapter works, its pace, its prose, the reader's experience. Lint's other
 lines (house style, echoes) are the line editor's. **A fact the bible does not contain is not a

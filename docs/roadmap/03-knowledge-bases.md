@@ -148,4 +148,51 @@ its knowledge base now owns.
 
 ## Session log
 
-*(filled in when this plan runs)*
+**2026-10-02, session `a21d2d62` (continued from plan 02; one usage-limit pause, resumed in place).**
+Proof run: [docs/experiments/2026-10-02-kb-ch4.md](../experiments/2026-10-02-kb-ch4.md).
+
+- **Step 1:** [docs/kb-mapping.md](../kb-mapping.md). 44 rows, one per old skill, each with a
+  destination or the reason it is dropped. Dropped: `revision-pass` and `write-chapter` (the loop
+  replaced them), the review cards (the beta reader and judge replaced them). `novel-init` and
+  `title-craft` go to plan 04.
+- **Step 2:** 51 docs, ~26k words (~33k with prompts and indexes), against ~160k words of skills
+  and cards:
+
+  | role | docs | of which new |
+  |---|---|---|
+  | writer | 15 | 12 (6 toggles) |
+  | planner | 16 | 12 (5 toggles) |
+  | story editor | 6 | 5 |
+  | line editor | 6 | 5 |
+  | continuity editor | 3 | 3 |
+  | clerk | 1 | 1 |
+
+  Plus `kb/shared/` (4). Plan 02's four findings went in as examples and routings:
+  - a short `kno` block;
+  - C1's grade under *Owed*;
+  - `beat` lines;
+  - the "that afternoon" example.
+
+  The bias rules are absolute, in the planner's and the line editor's docs, said once in each.
+- **Step 3:** `tools/kb_check.py` checks types, indexes, links and agents. It sweeps for a novel's
+  proper nouns with `--novel` (repeatable), and prints words and negations as information. Tests
+  174 → 182. Clean, with **zero leaks** against both the slice novel and run #5's.
+- **Step 4:** decided from the transcripts of plans 01–02. Every one of 111 spawns read its
+  `prompt.md` first, and working roles read their `index.md` in 37 of 41. So the thin agent files
+  stay; recorded in `docs/architecture.md`.
+- **Step 5:** chapter 4, every role fresh:
+  - 2 rounds (REVISE 5, ACCEPT), click-next 4 and 4;
+  - 5 notes, all on the reader's words, 3 also on a continuity finding;
+  - room $8.35.
+
+  At least as good as ch 2–3 on all three measures. **Exit criteria met.**
+- **Changed during the run:**
+  - `kb/line-editor/across-chapters.md` led the line editor to cut the beat sheet's named last
+    beat. The doc now says a named beat is reshaped, never removed; the role was re-run and
+    restored it.
+  - `tools/wire.py` accepts `beat` lines under *Owed*.
+
+**Cost:** the ch 4 run $22.78, of which the showrunner $14.43 at a mean context of 847k tokens.
+Plan 06's first lever: a plan per session, not two.
+
+`.test-run` was removed after the write-up. Nothing committed.

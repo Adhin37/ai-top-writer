@@ -39,7 +39,7 @@ What carries over from skilled-writer: [lessons.md](lessons.md).
 | role | agent | model | reads | writes | job |
 |---|---|---|---|---|---|
 | **showrunner** | main session | (session) | everything | `bench/`, `reading/` via tools; nothing in `novels/` beyond setup copies | runs the loop, approves beat sheets, relays hand-offs verbatim |
-| **planner** | `planner` | opus | novel, `reading/*/notes.md` | `novel.md`, `bible/`, `plan/`, `state/` seeds, `work/` | world, cast, arcs; `premise.md`; reader ledger; each chapter's beat sheet; folds new facts into the bible |
+| **planner** | `planner` | opus | novel, `reading/*/notes.md` | `novel.md`, `bible/`, `plan/`, `state/` seeds, `work/` | the new-novel interview; world, cast, arcs; `premise.md`; reader ledger; each chapter's beat sheet; folds new facts into the bible |
 | **writer** | `writer` | opus | novel (not `reading/`, not `bench/`) | `work/`, `chapters/` | prose from the beat sheet; revises warm against the editor's notes; may *stet* a note with a reason |
 | **beta reader** | `beta-reader` | sonnet | its reading folder only | its reading folder | retell, world-as-understood, who's who, terms guessed, confusion and skim quotes, best moment, predictions, click-next; keeps its notes |
 | **story editor** | `story-editor` | opus | novel, reading reports | `work/` | grades the retell against the ledger; merges reader (and continuity) reports against the beat sheet's intent; ACCEPT or ≤5 notes |
@@ -95,17 +95,63 @@ and its notes replace the running ones, which catches drift. `tools/reading.py` 
 **Why the line editor runs once, after ACCEPT:** polishing a draft that is about to be rewritten is
 wasted work, and a committee that polishes every round sands the voice off.
 
+## A new novel
+
+`/new` turns a seed into a novel the loop can write from. `tools/scaffold.py` copies
+`novels/_template/`; the planner then interviews the user in seven rounds:
+1. seed and platform;
+2. genre, tone, viewpoint and the protagonist;
+3. world and society;
+4. cast, and when the antagonist's face reaches the page;
+5. style;
+6. premise and ledger;
+7. title, blurb and the arc plan.
+
+Each round's questions go to a file, `work/init/round-N.md`, each with the answer the planner
+recommends and why, and the planner stops. The showrunner shows them to the user and relays the
+answers verbatim; the planner writes what the round decided into the template's files and asks
+the next round. The interview's record is those files, so a fresh planner can resume it.
+
+Two rounds are shaped by run #6's failures:
+- **Style (5):** the user picks a voice from the page, not from authors' names. The writer drafts
+  one beat in three registers that differ in kind, and the chosen sample goes into `novel.md` as
+  the style anchor. Naming authors led run #6's architect to literary withholding for a Royal Road
+  book.
+- **Premise (6):** the user says the premise back in their own words. A load-bearing fact missing
+  from the say-back means the premise did not land, and it is rewritten.
+
+`tools/scaffold.py check` then reports any placeholder left, and any premise fact or antagonist face
+the ledger does not schedule in time. In a rebuild test run the showrunner answers from an answer
+sheet written before init starts, and logs each answer's source. `/write`, `/plan` and `/status`
+are thin procedures over [kb/showrunner/](../kb/showrunner/index.md) and `tools/status.py`.
+
 ## Knowledge bases
 
 Each role has an OKF bundle in `kb/<role>/`: an `index.md` the role reads first, a `prompt.md` with
 its procedure, and typed documents it opens when they apply. One level of disclosure: index, then
-doc. Shared documents (the format spec, retell grading) sit in `kb/shared/` and are linked from
-each index that uses them. The agent files in `.claude/agents/` are thin — frontmatter plus "read
-your prompt" — so a prompt can be improved mid-session without restarting it (agents register at
-session start).
+doc. Shared documents (the format spec, retell grading, the wire format, the state format) sit in
+`kb/shared/` and are linked from each index that uses them.
+
+Plan 03 distilled skilled-writer's 44 skills and 119 cards (~160k words) into 51 docs (~26k
+words; ~33k with the prompts and indexes), mapped skill by skill in [kb-mapping.md](kb-mapping.md):
+- craft docs follow one template: the idea in three sentences, worked examples with invented nouns
+  (the version that works beside a flat one), and when to break it;
+- critics' docs are catalogues of patterns, each with the note or finding it becomes;
+- optional modules are `toggle-*.md` docs, opened only when `novel.md` switches them on, and each
+  index says which key;
+- the bias rules are the one absolute area, split between the planner (structure) and the line
+  editor (the line).
+
+`tools/kb_check.py` checks the bundles' shape, sweeps them for a novel's proper nouns
+(`--novel`), and prints words and negations per doc, as information.
+
+**Loading.** The agent files in `.claude/agents/` are thin: frontmatter plus "read your prompt".
+A prompt can be improved mid-session without restarting it (agents register at session start).
+Plan 03 checked the transcripts of plans 01–02: every one of 111 spawns read its `prompt.md` first,
+and the working roles read their `index.md` in 37 of 41. So the prompt stays out of the agent body
+and is not preloaded.
 
 What goes in a doc and how it is written: [roadmap/03-knowledge-bases.md](roadmap/03-knowledge-bases.md).
-Session 1 seeded only what the chapter-1 experiment needs.
 
 ## Isolation
 

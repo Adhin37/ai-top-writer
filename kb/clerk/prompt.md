@@ -54,7 +54,8 @@ A block is for someone who will read five of them and none of the chapters. So: 
 everyone ended up, and **who knows what, and how**. That last line is the one no other file holds.
 The continuity editor uses it to catch a character stating what they could not know. Write each
 `kno` item with its source: *"Nessa+ the tally was signed before the boy drowned (the date on
-it)"*, not *"Nessa learns about the tally"*.
+it)"*, not *"Nessa learns about the tally"*. And only what changed in this chapter
+([short-blocks.md](short-blocks.md)).
 
 ## Your final message
 

@@ -18,8 +18,8 @@ in `docs/sessions/`, and the `handoff` skill resumes it (the same session, or a 
 | 01 | [Session 2: vertical slice, chapter 1 A/B/C](01-vertical-slice.md) | **closed** 2026-09-27: ITERATE done. Comprehension holds; not GO on one lecture paragraph, whose lever moved to the planner. Chapter 1 = C3 | session 1 |
 | 01b | [Session 2b: the wire format, terse hand-offs between agents](01b-wire-format.md) | **built** 2026-09-27; L3's live checks done (two templates fixed, the trace fixed); the rest in 02 and 05 | 01 |
 | 02 | [Session 3: the full loop and serial memory](02-full-loop.md) | **done** 2026-10-02: ch 2–3 through the full loop, click-next 4 every round; state clean; memory agrees with a fresh read (one drift) | 01 (closed), 01b |
-| 03 | [Session 4: the knowledge bases](03-knowledge-bases.md) | **next** | 02 |
-| 04 | [Session 5: novel setup and planning from scratch](04-front-end.md) | planned | 03 |
+| 03 | [Session 4: the knowledge bases](03-knowledge-bases.md) | **done** 2026-10-02: 51 docs from 44 skills; `kb_check` clean, zero leaks; ch 4 at least as good as ch 2–3 (2 rounds, click-next 4) | 02 |
+| 04 | [Session 5: novel setup and planning from scratch](04-front-end.md) | **next** | 03 |
 | 05 | [Session 6: benchmark run #7](05-benchmark-run-7.md) | planned | 04 |
 | 06 | [Session 7: measurement, then optimisation](06-measure-and-optimise.md) | planned | 05 |
 | 07 | [Session 8: retire skilled-writer](07-retire-skilled-writer.md) | planned | 05 |
@@ -70,7 +70,7 @@ table: it is what the user reads.
 | continuity editor and clerk; planner fold mode | 02 | yes | yes (02): two real catches nobody else made; 4 clean state writes; 3 folds |
 | serial memory: one reading folder, capped notes, re-read every 10 chapters | 02 | yes | yes (02), with a warm compression step for the cap; the re-read is built, checked once by hand at ch 3, and first due at ch 10 |
 | cross-chapter lens: scene log, line editor reads the last two chapters, promises carried | 02 | yes | yes (02): 4 recurring habits thinned; the scene log steered the next chapter; no promise skipped |
-| rewritten knowledge bases and `tools/kb_check.py` | 03 | no | — |
+| rewritten knowledge bases and `tools/kb_check.py` | 03 | yes | yes (03): ch 4 on the new bases matched ch 2–3 (2 rounds, click-next 4, notes on reader and continuity evidence); one doc caused a line-editor error, fixed in the doc |
 | novel setup: planner init interview; `/new`, `/plan`, `/write`, `/status` | 04 | no | — |
 | benchmark run #7 against run #6 | 05 | no | — |
 | per-role measurement, then cost levers | 06 | partly (trace) | — |

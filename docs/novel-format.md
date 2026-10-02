@@ -3,14 +3,18 @@
 A novel is a directory, `novels/<slug>/`. `novels/` is gitignored: the book belongs to whoever ran
 the tool, and the toolkit deliberately manages no version control or backups for it.
 
-This is the **target** format. Session 2 runs on skilled-writer run #6's bible as it stands, plus
-the two files marked **new**; plan 04 builds the template.
+`novels/_template/` is this format with every value a `{{…}}` placeholder. `/new` copies it
+(`python3 tools/scaffold.py new <slug>`), the planner's init interview fills it
+([kb/planner/init.md](../kb/planner/init.md)), and `python3 tools/scaffold.py check
+novels/<slug>` reports what is left. The slice novel of plans 01–03 predates the template: its
+`novel.md` is skilled-writer run #6's, and its plan's `hook` column holds the last line, not its
+kind.
 
 ```
 novels/<slug>/
-  novel.md                config (YAML frontmatter) + premise paragraph + blurb
+  novel.md                config (YAML frontmatter) + blurb + style anchor (below)
   bible/
-    premise.md            NEW — what a reader must hold, in plain words (below)
+    premise.md            what a reader must hold, in plain words (below)
     world.md              setting, places, distances, factions, the rules of the world
     society.md            labour, money, law, belief — the central rule reaching ordinary life
     lexicon.md            spellings, terms, forms of address, number style
@@ -19,13 +23,17 @@ novels/<slug>/
     cast/_extras.md       one line per walk-on
   plan/
     arcs.md               arc-level design, including when the antagonist reaches the page
-    chapters.md           one row per chapter: title, pov, temp, hook, goal, obstacle, turn, event, cost
-    reader-ledger.md      NEW — facts, faces and promises owed to the reader, by chapter (below)
+    chapters.md           one row per chapter: title, pov, temp, hook, goal, obstacle, turn, event,
+                          cost, keeps, threads
+    reader-ledger.md      facts, faces and promises owed to the reader, by chapter (below)
+    timeline.md           the world's clock: what the opposition and the world do on their own
   state/                  written by the clerk after each accepted chapter (below)
     continuity.md         one short block per chapter: event, where everyone is, who knows what
     threads.md            the thread board: the plan's thread ids, opened / last touched / status
     timeline.md           the in-world calendar
     scenes.md             one row per scene: chapter, who, where, tempo, two-hander
+  work/init/              the init interview: round-N.md (questions, then the answers verbatim),
+                          style-beat.md, style-samples.md
   work/chNNNN/            the loop's hand-off files for the chapter in progress — beat sheet,
                           drafts per round, the writer's facts file per round, the continuity
                           editor's file and lint report per round, editor notes, the clerk's
@@ -33,6 +41,19 @@ novels/<slug>/
                           per chapter; not a backup
   chapters/NNNN-<slug>.md the accepted chapters
 ```
+
+## `novel.md`
+
+The frontmatter keeps a key only if a role or a tool reads it: `title` and `slug`; `platform` and
+`exposition` (`clear`: every premise fact lands by chapter 1, the default on Royal Road and
+webnovel.com); `genre`; `narration` and `pov` (the writer, the format spec, lint); `tone` (the
+writer, the story editor); `channels` (lint and the text tools); `mc.name` and `mc.foreknowledge`;
+`opening.promise` and `opening.contract_by_ch` (the antagonist's face is on the page by then);
+`content` (rating, romance, hard limits); `optional` (the modules each role's index switches on).
+
+The body has two sections: `# Blurb` (the platform listing, 60–120 words) and `# Style anchor`,
+the sample the user chose in init's round 5, verbatim. The style anchor is the voice every chapter
+is written in; it replaces naming authors to imitate.
 
 ## `bible/premise.md`
 

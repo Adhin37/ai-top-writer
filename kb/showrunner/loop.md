@@ -25,7 +25,7 @@ path; you do not carry it in your head.
 ## 0. Before the chapter
 
 - `plan/chapters.md` has a row for chapter N with an event, and `plan/reader-ledger.md` has the rows
-  due by N. If either is missing, the planner writes it first.
+  due by N. If either is missing, extend the plan first ([plan.md](plan.md)).
 - `state/threads.md` exists (the planner's ledger task writes it).
 
 ## 1. Beat sheet — planner

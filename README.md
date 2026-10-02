@@ -10,12 +10,38 @@ Why the rebuild, and what it keeps: [docs/roadmap/00-diagnosis.md](docs/roadmap/
 
 ## Status
 
-Plans 01 (chapter 1), 01b (the wire format) and 02 (the full loop across chapters) have run. What
-is built, and whether a run has shown it working: the *Features* table in
-[docs/roadmap/README.md](docs/roadmap/README.md), which also says which plan is next.
+Plans 01 (chapter 1), 01b (the wire format), 02 (the full loop across chapters) and 03 (the
+knowledge bases) have run. What is built, and whether a run has shown it working: the *Features*
+table in [docs/roadmap/README.md](docs/roadmap/README.md), which also says which plan is next.
 
 To run a plan, open Claude Code **in this directory** (agents register when a session starts) and
 say *"execute docs/roadmap/NN"*.
+
+## Using it
+
+Four commands, typed in a Claude Code session opened in this directory:
+
+| command | what it does |
+|---|---|
+| `/new [the story in a few sentences]` | the planner interviews you in seven rounds, each question with an answer it recommends, and writes the bible, cast, premise, reader ledger and arc plan |
+| `/write [n]` | the next chapter (or the next `n`) through the room |
+| `/plan [a direction]` | more chapter rows and ledger rows, and what the ledger owes squared with what the plan delivers |
+| `/status` | where the novel stands: chapters, what the page still owes, the reader's last click-next |
+
+```mermaid
+flowchart TD
+    S["showrunner<br/>scaffold.py new: copies novels/_template"] --> Q
+    Q["planner asks round N, each question with a recommended answer<br/>1 seed and platform · 2 genre, tone, the protagonist · 3 world and society<br/>4 cast, and when the antagonist's face reaches the page<br/>5 style · 6 premise and ledger · 7 title, blurb, arc plan"] --> U{"you answer<br/>(a test run: the answer sheet)"}
+    U -->|"answers, verbatim"| F["planner writes what the round decided<br/>into the novel's files"]
+    F -->|next round| Q
+    F -->|"after round 4: a style beat"| WR["writer drafts the beat three ways;<br/>round 5 asks which is the book's voice"]
+    WR --> Q
+    F -->|"round 6: your say-back of the premise<br/>misses a fact"| RW["planner rewrites the premise"]
+    RW --> U
+    F -->|"after round 7"| CK{"scaffold.py check"}
+    CK -->|"defects, verbatim"| F
+    CK -->|clean| W["/write: chapter 1"]
+```
 
 ## One chapter through the room
 
@@ -42,12 +68,14 @@ Every role ends on one status line; what one role needs from another travels in 
 
 ```
 .claude/agents/   thin agent definitions
+.claude/commands/ /new, /write, /plan, /status
 kb/               one knowledge base per role (OKF: index.md + typed docs)
-tools/            the loop's tools: exports and the reader's shelf, lint, state check, the path
-                  guard, hand-backs, the wire-format checker, cost traces, session handoffs
+tools/            the loop's tools: the scaffold and its check, status, exports and the reader's
+                  shelf, lint, state check, the path guard, hand-backs, the wire-format checker,
+                  cost traces, session handoffs
 tests/            python3 -m unittest discover tests
 docs/             roadmap, architecture, novel format, lessons, experiments
-novels/           the books (gitignored)
+novels/           the books (gitignored), and _template/, which /new copies
 reading/, bench/  the reader's shelf and experiment arms (gitignored)
 ```
 

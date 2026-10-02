@@ -20,7 +20,8 @@ You are given a novel directory, a chapter number, the beat sheet path, and the 
 1. **Read, in this order:**
    - the beat sheet (`novels/<slug>/work/chNNNN/beats.md`) — the chapter's event, what the reader
      learns, the scenes, the ending;
-   - `novels/<slug>/novel.md` — narration, tone, style target and sample, channels;
+   - `novels/<slug>/novel.md` — narration, tone, the style anchor (the voice you write in),
+     channels, content limits;
    - `novels/<slug>/bible/premise.md` — what a reader must hold, in plain words;
    - the speakers' rows in `bible/cast/_voices.md` and their profiles in `bible/cast/`;
    - `bible/lexicon.md` for spellings;
@@ -76,12 +77,38 @@ choices   <a staging choice the beat sheet did not ask for, one line; at most th
 you invent and do not list is a contradiction waiting to happen three chapters later. List one fact
 a line, each one a reader could check against the bible.
 
+## Style samples — a new novel
+
+During init, before any chapter, you are given a novel, a short beat
+(`work/init/style-beat.md`) and a path. Draft the beat three times, about 150 words each, in three
+registers that differ in kind, per [registers.md](registers.md). Read `novel.md` and the bible
+files the beat touches first. Write the file in this shape:
+
+```
+# Style samples
+
+## A — <the register, in a few words>
+<the sample>
+
+## B — <…>
+## C — <…>
+```
+
+If you are continued with a mix the user asked for, add it as `## D — <the mix>` and change
+nothing else.
+
 ## Your final message
 
 Exactly one line, nothing before or after it:
 
 ```
 DRAFT READY <draft path> | facts <facts path> | new <n> | stets <n> | couldn't <n>
+```
+
+For style samples the line is:
+
+```
+SAMPLES READY <samples file> | samples <n>
 ```
 
 The showrunner acts on that line alone. If the facts file cannot be written, put its lines after

@@ -27,7 +27,8 @@ The main session runs the room. It does not write the book.
 - **During a test or benchmark run**, `touch .test-run` first: `tools/guard.py` then refuses your
   writes under `novels/`. Delete it when the run is written up.
 
-The loop, step by step: [kb/showrunner/loop.md](kb/showrunner/loop.md).
+The loop, step by step: [kb/showrunner/loop.md](kb/showrunner/loop.md). A new novel:
+[kb/showrunner/init.md](kb/showrunner/init.md).
 
 ## The room
 
@@ -49,11 +50,12 @@ Why each role exists and what it may read: [docs/architecture.md](docs/architect
 | path | what |
 |---|---|
 | `.claude/agents/` | thin agent files: frontmatter + "read `kb/<role>/prompt.md`" |
+| `.claude/commands/` | `/new`, `/write`, `/plan`, `/status`: short procedures that point at `kb/showrunner/` |
 | `.claude/skills/handoff/` | the main session's procedure for handing over across a usage-limit reset, and resuming |
 | `kb/<role>/` | each role's knowledge base (OKF): `index.md`, `prompt.md`, typed docs. `kb/shared/` for docs several roles use |
-| `tools/` | Python tools: `export_prose.py` (prose-only exports), `reading.py` (the reader's shelf and each round's view of it), `lint.py` (per-chapter prose report), `state_check.py` (state against chapters and plan), `lib/` (markdown, novel and prose readers), `guard.py` (the path hook), `handback.py` (files a hand-back from a transcript, or appends it to a log), `wire.py` (parses status lines, notes, facts, continuity and fold files), `trace.py` (a session's cost per role, from its transcripts), `checkpoint.py` + `session_hooks.py` + `statusline.py` (session handoffs) |
+| `tools/` | Python tools: `scaffold.py` (a new novel from `novels/_template/`, and the check that init filled it), `status.py` (where a novel stands; the ledger's debt against the plan), `export_prose.py` (prose-only exports), `reading.py` (the reader's shelf and each round's view of it), `lint.py` (per-chapter prose report), `state_check.py` (state against chapters and plan), `kb_check.py` (the knowledge bases' shape, and a leak sweep for a novel's proper nouns), `lib/` (markdown, novel and prose readers), `guard.py` (the path hook), `handback.py` (files a hand-back from a transcript, or appends it to a log), `wire.py` (parses status lines, notes, facts, continuity and fold files), `trace.py` (a session's cost per role, from its transcripts), `checkpoint.py` + `session_hooks.py` + `statusline.py` (session handoffs) |
 | `tests/` | `python3 -m unittest discover tests` |
-| `novels/<slug>/` | a novel — format in [docs/novel-format.md](docs/novel-format.md) |
+| `novels/<slug>/` | a novel — format in [docs/novel-format.md](docs/novel-format.md); `novels/_template/` is the empty one `/new` copies |
 | `reading/<id>/` | the beta reader's shelf: accepted chapters, prose only, and its `notes.md`; `reading/<id>-chNN-rK/` is one round's view (gitignored) |
 | `bench/<experiment>/` | experiment arms and blind copies for the judge (gitignored) |
 | `docs/` | for maintainers only; no agent reads it. Roadmap, architecture, format, lessons, experiments |

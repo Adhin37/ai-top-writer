@@ -26,8 +26,9 @@ any gap you find as a `gap` line in your final message instead of filling it.
 
 Write or extend `novels/<slug>/plan/reader-ledger.md` per [reader-ledger.md](reader-ledger.md).
 
-- **Every premise fact is due by chapter 1** on webnovel platforms (Royal Road, webnovel.com), unless
-  `novel.md` says otherwise. Say in the ledger how each one will land — the moment it bites someone.
+- **Every premise fact is due by chapter 1** (`exposition: clear` in `novel.md`, the default on
+  Royal Road and webnovel.com). Say in the ledger how each one will land — the moment it bites
+  someone.
 - Other facts are scheduled where the story needs them: the chapter in which a reader must know a
   thing to feel what happens.
 - **Faces:** the antagonist — a person, not an institution — reaches the page by
@@ -55,9 +56,10 @@ Write `novels/<slug>/work/chNNNN/beats.md` per [beat-sheet.md](beat-sheet.md), f
   its path — what the story editor saw that later chapters must carry;
 - the bible files the chapter touches, and from chapter 2 on the end of the previous chapter;
 - from chapter 2 on, `state/`: the last continuity block, whose `hook` line is what the last page
-  promised (this chapter plays it, pays it or turns it on purpose), and `state/scenes.md`. If the
-  last chapters' scenes were mostly two people talking, or all one tempo, stage this one
-  differently.
+  promised (this chapter plays it, pays it or turns it on purpose), and `state/scenes.md`, the
+  shape of the last chapters' scenes ([arcs-and-chapters.md](arcs-and-chapters.md));
+- [stakes.md](stakes.md) and [threads.md](threads.md), every time, and the other docs your
+  [index](index.md) names for what this chapter does.
 
 The beat sheet is what the writer drafts from and what the story editor judges against, so write it
 in story language — what happens, what the reader learns, what they should feel — not as a list of
@@ -68,10 +70,23 @@ constraints.
 Write the facts an accepted chapter established into the bible, from the clerk's
 `work/chNNNN/fold.md`, per [fold.md](fold.md).
 
-## Tasks from later plans
+## Task: init
 
-`init` (the new-novel interview) arrives with plan 04. If asked for it before your index lists its
-doc, say so and stop.
+A new novel, from the user's seed, in seven rounds of questions: [init.md](init.md). The
+showrunner gives you the novel's path and the seed, then continues you with each round's answers.
+
+## Task: plan
+
+Extend the plan so that ten to fifteen rows lie ahead of the last accepted chapter: the next
+rows of `plan/chapters.md`, per [arcs-and-chapters.md](arcs-and-chapters.md), and the next arc in
+`plan/arcs.md` first if the current one is nearly spent. If the showrunner gives a direction from
+the user, follow it, and say in a `changed` line which planned rows it overturned.
+
+Then extend the ledger to the new rows (the ledger task, above), and check what it owes against
+what the plan delivers. The showrunner gives you the output of `tools/status.py --debt`: rows still
+owed past their chapter (reschedule each, `moved to chN — <why>`) and rows due beyond the plan
+(plan the row, or move the debt). For every row due inside the plan, name to yourself the planned
+row whose event carries it; a debt no row can carry is moved, with its reason.
 
 ## Your final message
 
@@ -82,6 +97,12 @@ One status line, then one `gap` or `changed` line each, and nothing else
 PLANNER DONE <task> | <file>, <file> | gaps <n> | changed <n>
 gap      <a fact the bible is missing that this task needed>
 changed  <what you changed from the plan row, and why>
+```
+
+During init, a round that ends on questions for the user ends on this line instead:
+
+```
+PLANNER ASKS <round file> | round <n> | questions <n>
 ```
 
 The showrunner acts on these lines alone. Everything the writer or the story editor needs is in

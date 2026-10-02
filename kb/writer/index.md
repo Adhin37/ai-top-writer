@@ -13,6 +13,7 @@ Start with [prompt.md](prompt.md) — your procedure.
 | [world-on-the-page.md](world-on-the-page.md) | a place, a custom or a rule of the world is on the page — handled, paid for, worked around |
 | [intelligence-on-the-page.md](intelligence-on-the-page.md) | someone deduces, plans, lies or misreads a person |
 | [openings-and-endings.md](openings-and-endings.md) | always — the first lines and the last, and the beat sheet's `hook` |
+| [registers.md](registers.md) | drafting style samples for a new novel: one beat in three registers that differ in kind |
 | [../shared/wire.md](../shared/wire.md) | writing the facts file and your final line — ids, short quotes, one item per line |
 | [../shared/format-spec.md](../shared/format-spec.md) | writing the file — channels, viewpoint, numbers, spellings, frontmatter |
 

@@ -54,7 +54,9 @@ class StatusTest(unittest.TestCase):
                 "DRAFT READY w/draft-r0.md | facts w/facts-r0.md | new 12 | stets 0 | couldn't 0",
                 "NOTES READY w/notes-r0.md | REVISE | notes 2 | owed 4/5",
                 "PLANNER DONE beats | w/beats.md, plan/reader-ledger.md | gaps 0 | changed 1",
-                "POLISHED ch/0003.md | changes 14 (\"X, not Y\" 9→3 · 2 thought tags) | left 1"):
+                "POLISHED ch/0003.md | changes 14 (\"X, not Y\" 9→3 · 2 thought tags) | left 1",
+                "PLANNER ASKS w/init/round-2.md | round 2 | questions 6",
+                "SAMPLES READY w/init/style-samples.md | samples 3"):
             with self.subTest(line=line):
                 verb, head, fields, found = wire.parse_status(line)
                 self.assertTrue(verb)
@@ -75,6 +77,8 @@ class StatusTest(unittest.TestCase):
         self.assertIsNone(verb)
         _, _, _, found = wire.parse_status("DRAFT READY w/draft-r0.md | facts w/facts-r0.md")
         self.assertEqual(sum(1 for f in found if f[0] == "defect"), 3)
+        _, _, _, found = wire.parse_status("PLANNER ASKS w/init/round-2.md | round 2")
+        self.assertIn("defect", levels(found))
 
 
 class HandbackTest(unittest.TestCase):

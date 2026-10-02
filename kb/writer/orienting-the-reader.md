@@ -101,7 +101,7 @@ anything.
 
 **Unglossed — three names the reader has to hold without knowing why:**
 
-> She passed the Tallyhouse and the Warden's steps and turned down Sallow Row.
+> She passed the Tallyhouse and the Reeve's steps and turned down Sallow Row.
 
 **Glossed — one name the reader needs, with what it does:**
 

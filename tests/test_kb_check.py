@@ -1,0 +1,103 @@
+"""tools/kb_check.py - the knowledge bases' shape, the leak sweep, and the counts."""
+import os
+import shutil
+import sys
+import tempfile
+import unittest
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(ROOT, "tools"))
+
+import kb_check  # noqa: E402
+
+DOC = "---\ntype: howto\ntitle: X\n---\n# X\n\nDo it. Never not do it.\n"
+LEXICON = """# Lexicon
+
+## Names
+
+| canonical | who/what | never write as |
+|---|---|---|
+| Nessa Vane | the rower | Nesa |
+
+## Terms of art
+
+| term | meaning |
+|---|---|
+| the Long Ebb | the night the sea gives back its drowned |
+| the Tally | the list of the drowned |
+"""
+WORLD = """# World
+
+| place | what |
+|---|---|
+| Merrow | the harbour town |
+"""
+
+
+class KbCheckTest(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp()
+        self.kb = os.path.join(self.tmp, "kb")
+        self.write("kb/writer/index.md", "# Writer\n\n| doc | when |\n|---|---|\n"
+                   "| [prompt.md](prompt.md) | always |\n| [a.md](a.md) | always |\n")
+        self.write("kb/writer/prompt.md", DOC)
+        self.write("kb/writer/a.md", DOC)
+        self.write(".claude/agents/writer.md", "---\nname: writer\n---\nRead `kb/writer/prompt.md`.\n")
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def write(self, rel, text):
+        path = os.path.join(self.tmp, rel)
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, "w", encoding="utf-8") as fh:
+            fh.write(text)
+        return path
+
+    def found(self, novels=()):
+        return [(lv, check) for lv, check, _d in kb_check.run(self.tmp, novels)]
+
+    def test_a_clean_tree(self):
+        self.assertEqual(self.found(), [])
+
+    def test_a_doc_with_no_type(self):
+        self.write("kb/writer/a.md", "# X\n\nNo frontmatter.\n")
+        self.assertIn(("defect", "type"), self.found())
+
+    def test_an_unlinked_doc_and_a_broken_link(self):
+        self.write("kb/writer/b.md", DOC)
+        self.write("kb/writer/a.md", DOC + "\nSee [gone](gone.md).\n")
+        found = self.found()
+        self.assertIn(("warn", "unlinked"), found)
+        self.assertIn(("defect", "link"), found)
+
+    def test_an_agent_pointing_at_a_missing_prompt(self):
+        self.write(".claude/agents/clerk.md", "---\nname: clerk\n---\nRead `kb/clerk/prompt.md`.\n")
+        self.assertIn(("defect", "agent"), self.found())
+
+    def test_the_leak_sweep(self):
+        novel = os.path.join(self.tmp, "novels", "tide")
+        self.write("novels/tide/bible/lexicon.md", LEXICON)
+        self.write("novels/tide/bible/world.md", WORLD)
+        names, terms = kb_check.novel_nouns(novel)
+        self.assertIn("Nessa", names)
+        self.assertIn("Merrow", names)
+        self.assertIn("Long Ebb", terms)
+        self.assertEqual(self.found([novel]), [])
+        self.write("kb/writer/a.md", DOC + "\nTally the boats. She checked the Tally twice.\n"
+                   "Nessa rowed out on the Long Ebb from Merrow.\n")
+        details = [d for lv, c, d in kb_check.run(self.tmp, [novel]) if c == "leak"]
+        self.assertEqual(len(details), 4, details)   # Tally mid-sentence, Nessa, Long Ebb, Merrow
+        self.assertFalse(any("line 8 names 'Tally'" in d for d in details), details)
+
+    def test_counts(self):
+        rows = dict((p, (w, n)) for p, w, n in kb_check.counts(self.kb))
+        self.assertEqual(rows["kb/writer/a.md"], (8, 2))   # "#" counts as a word
+
+    def test_the_repository_is_clean(self):
+        found = [f for f in kb_check.run() if f[0] in ("defect", "warn")]
+        self.assertEqual(found, [])
+
+
+if __name__ == "__main__":
+    unittest.main()

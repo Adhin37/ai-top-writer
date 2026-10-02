@@ -31,6 +31,8 @@ VERBS = {
                     ("learns", "new", "couldn't", "notes", "choices")),
     "NOTES READY": ("notes file", ("notes", "owed"), ()),
     "PLANNER DONE": ("task", ("gaps", "changed"), ("gap", "changed")),
+    "PLANNER ASKS": ("round file", ("round", "questions"), ()),
+    "SAMPLES READY": ("samples file", ("samples",), ()),
     "POLISHED": ("output path", ("changes", "left"), ("left", "across")),
     "CONTINUITY READY": ("continuity file", ("findings", "lint"), ()),
     "CLERK DONE": ("chapter", ("fold", "bible", "ledger", "check"), ()),

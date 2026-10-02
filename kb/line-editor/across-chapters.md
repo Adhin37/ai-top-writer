@@ -39,8 +39,11 @@ in the mouth it belongs to, and cut it from the rest.
 ### The same last line
 
 Three chapters ending on a short withheld sentence of narration with nobody speaking. Check this
-chapter's last line against the last two. If it repeats the shape, end on the line of speech or
-the action just before it.
+chapter's last line against the last two, and against the *Ending* of the beat sheet
+(`work/chNNNN/beats.md`). If the beat sheet names that last beat, it is the story's: keep what it
+says and change its shape, by putting it in a mouth or in an action, or by moving it a line
+earlier. If the beat sheet does not name it, end on the line of speech or the action just before
+it.
 
 ### The callback that earns it
 
@@ -55,5 +58,6 @@ across  "did not let go of it" ch 1, ch 3 — kept: the reversal is the point
 
 ## When to leave it
 
-A refrain the story makes on purpose (a prayer, an oath, a line from a song) recurs by design. If
-the beat sheet or the bible names it, it is not yours to thin.
+A refrain the story makes on purpose (a prayer, an oath, a line from a song) recurs by design, and
+so does the last beat the beat sheet names. If the beat sheet or the bible names it, you may
+reshape it but not remove it.

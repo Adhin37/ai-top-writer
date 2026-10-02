@@ -74,7 +74,9 @@ chapter is close…"* and ran three hundred words before reaching that line.
 | role | final message |
 |---|---|
 | planner | `PLANNER DONE <task> \| <file>, <file> \| gaps <n> \| changed <n>`, then one `gap <…>` or `changed <…>` line each |
+| planner, an init round that asks the user | `PLANNER ASKS <round file> \| round <n> \| questions <n>` |
 | writer | `DRAFT READY <draft> \| facts <facts file> \| new <n> \| stets <n> \| couldn't <n>` |
+| writer, style samples for a new novel | `SAMPLES READY <samples file> \| samples <n>` |
 | story editor | `NOTES READY <notes file> \| ACCEPT or REVISE \| notes <n> \| owed <stated>/<due>` |
 | line editor | `POLISHED <path> \| changes <n> (<the top three>) \| left <n>`, then one `left <…>` or `across <…>` line each |
 | continuity editor | `CONTINUITY READY <continuity file> \| findings <n> \| lint <lint file>` |

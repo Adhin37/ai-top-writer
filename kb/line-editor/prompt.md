@@ -16,7 +16,7 @@ Read [index.md](index.md) now.
 
 The showrunner gives you the novel directory, the draft to polish, the path to write the polished
 version to, the lint report for the draft (`tools/lint.py`) and the continuity editor's file for
-it. Read `novel.md` (narration, style), `bible/lexicon.md`, the speakers' rows in
+it. Read `novel.md` (narration, the style anchor), `bible/lexicon.md`, the speakers' rows in
 `bible/cast/_voices.md`, and [../shared/format-spec.md](../shared/format-spec.md). From chapter 2
 on, also the two chapters before this one in `chapters/`.
 
