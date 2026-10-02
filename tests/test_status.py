@@ -99,6 +99,24 @@ class DebtTest(unittest.TestCase):
             self.assertTrue(any(l.startswith("beyond   R1 due ch 6") for l in out), out)
             self.assertFalse(any("F2" in l for l in out), out)
 
+    def test_a_payoff_in_a_later_arc_is_no_chapter(self):
+        with NovelFixture() as fx:
+            fx.write("plan/chapters.md", PLAN)
+            fx.write("plan/reader-ledger.md", "# Reader ledger\n\n## Promises\n"
+                     "| id | what the page promises | made in ch | paid by ch | status |\n"
+                     "|---|---|---|---|---|\n"
+                     "| R4 | the melt | 1 | arc 2 (planned with arc 2) | owed |\n"
+                     "| R5 | a voice back | 1 | late in the book | owed |\n")
+            fx.chapter(1)
+            fx.chapter(2)
+            fx.state(blocks=(1, 2))
+            out = lines(fx)
+            self.assertIn("2 open · 0 past their chapter", line(out, "promises"))
+            self.assertTrue(any("R4 made ch 1, paid by arc 2" in l for l in out), out)
+            debt = status.debt(fx.novel())
+            self.assertTrue(any(l.startswith('beyond   R4 due "arc 2') for l in debt), debt)
+            self.assertTrue(any(l.startswith('beyond   R5 due "late in the book"') for l in debt))
+
     def test_clean(self):
         with NovelFixture() as fx:
             fx.write("plan/chapters.md", PLAN)

@@ -78,4 +78,41 @@ hand. The *Features* table in the roadmap README is updated.
 
 ## Session log
 
-*(filled in when this plan runs)*
+**2026-10-02/03, session `6cf7e805`.** Run log:
+[docs/experiments/2026-10-02-init.md](../experiments/2026-10-02-init.md).
+
+- **Step 1, the template:** `novels/_template/`. `novel.md` keeps only keys a role or tool reads
+  (listed in [novel-format.md](../novel-format.md)). The run #6 blocks are dropped: scaling, means,
+  theme, chapter length, `style.read_like`. The body is the blurb and the **style anchor**. The
+  bible is premise, world, society, lexicon and `cast/` (`_voices`, `_extras`); the plan is arcs,
+  chapters, the ledger and `timeline.md` (the world's clock, which `world-clock.md` already named);
+  `state/` has empty seeds. Every value to fill is a `{{…}}` placeholder.
+- **Two tools.** `tools/scaffold.py`: `new` copies the template, `check` reports whether init
+  finished (files, placeholders, keys, premise, ledger against premise and antagonist,
+  rows, cast, the thread board, the rounds). `tools/status.py`: where a novel stands, and `--debt`
+  for `/plan`.
+- **Step 2, the planner's init mode:** `kb/planner/init.md`, the seven rounds, with a round file
+  per round: questions for the user, then the answers verbatim, so a fresh planner can resume.
+  `title-and-blurb.md` is distilled from `title-craft`. A profile example went into
+  `cast-design.md`. `Task: init` and `Task: plan` are in the prompt.
+- **New status lines:** `PLANNER ASKS` (a round that stops for the user) and `SAMPLES READY` (the
+  writer's style samples, `kb/writer/registers.md`).
+- **Step 3, the commands:** `/new`, `/write`, `/plan`, `/status` in `.claude/commands/`, each
+  pointing at a showrunner doc (`init.md`, `loop.md`, `plan.md`, `status.md`). They registered
+  mid-session, and init ran through `/new` itself.
+- **Step 4, init only** (the user's choice, against the plan's "init and chapter 1"). The seed was
+  a bell-oath city (why this one: in the log), answered from an answer sheet written first. Seven
+  rounds, all stopped and answered. The check was clean on the first pass, nothing went back to the
+  planner, and no file was touched by hand. 24 of 34 answers took the recommendation; the other 10
+  were folded in. The premise restates the answers and adds nothing. **$8.16.**
+- **Fixed during the run:** `status.py` and `state_check.py` read "arc 2" in a ledger due cell as
+  chapter 2 (`due_chapter`). The leak sweep now ends `/new`, after it found model-default names
+  shared between the novel and the examples (lesson 26). Tests 182 → 207.
+- **Not exercised, carried to 05:** the chapter-1 check; `/write`, `/plan` and `/status` as
+  commands; the round-6 re-ask and the round-5 mix (neither arose); the `AskUserQuestion` relay,
+  which no test run uses.
+
+**Exit criteria:** init's half is met (a seed to a checked novel in one session, no file touched by
+hand). `/write` to an accepted chapter 1 moves to plan 05's first chapter. The *Features* table is
+updated. `.test-run` was removed after the write-up. `novels/varrow-bells/` is kept until 05 has
+run. Nothing committed by this session.

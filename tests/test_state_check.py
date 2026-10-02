@@ -138,5 +138,14 @@ class ScenesLedgerTest(unittest.TestCase):
             self.assertNotIn("=C0001=", buf.getvalue())
 
 
+class DueChapterTest(unittest.TestCase):
+    def test_a_ledger_cell_names_a_chapter_or_none(self):
+        for cell, want in (("4", 4), ("ch 4", 4), ("≤ 22", 22), ("partly 5 (he reached it)", 5),
+                           ("arc 2 (planned with arc 2)", None), ("Arc 3", None),
+                           ("late in the book", None), ("", None)):
+            with self.subTest(cell=cell):
+                self.assertEqual(state_check.due_chapter(cell), want)
+
+
 if __name__ == "__main__":
     unittest.main()

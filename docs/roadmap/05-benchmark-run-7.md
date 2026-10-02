@@ -55,7 +55,16 @@ Carry over the old *traps* table only where it still applies:
    - The showrunner picks the seed and logs why.
    - Write the answer sheet.
 2. **Init**, via `/new`: the interview, with the user's answers from the sheet.
+   - Plan 04 ran init once, from another seed: clean on the first check, $8.16. Choose a seed and
+     names away from the model's defaults (lesson 26).
+   - `/new` ends with the leak sweep. A hit renames the knowledge-base example before chapter 1.
+     That is `/new`'s own procedure for any user, so it is not a fix under the freeze; log it.
 3. **Five chapters** via `/write`.
+   - Plan 04 left these unexercised, and this run checks them:
+     - `/write` itself, and chapter 1 of a novel init made;
+     - `/status` after each chapter, checked against the files;
+     - `/plan`, if the rows run short;
+     - the round-6 re-ask and the round-5 mix, only if they arise.
    - The chapter-1 check: the beta reader's retell, graded against `premise.md`, must state the
      central rule. If it does not, the loop revises. This is the loop working, not an intervention.
    - Log per chapter: rounds, notes, stets, the reader's click-next, words, and model time and cost

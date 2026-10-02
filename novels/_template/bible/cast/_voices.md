@@ -1,8 +1,8 @@
 # Voice matrix
 
-One row per speaker who carries a scene. Each row makes them a different mind, not a different
-name: someone above the protagonist on each axis and someone below, no two rows alike on both
-intel and eq, at most two with wit, every cadence different.
+One row per speaker who carries a scene, so that each is a different mind and not only a
+different name. Someone above the protagonist on each axis and someone below; no two rows alike on
+both intel and eq; at most two with wit; every cadence different.
 
 intel and eq are 1–5 (eq: how well they read people, not how fast they reason) · artic 1–5 · wit
 none, dry, warm, clowning or cruel · heat flat, banked, quick or volatile · turn: words in a usual

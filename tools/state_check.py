@@ -34,6 +34,16 @@ def first_int(text):
     return int(m.group(0)) if m else None
 
 
+def due_chapter(cell):
+    """A ledger cell's chapter, or None when it names none. `4`, `≤ 22` and `partly 5 (…)` are
+    chapters; `arc 2 (planned with arc 2)` and `late in the book` are beyond the planned chapters,
+    not chapter 2."""
+    text = str(cell or "").strip()
+    if re.match(r"^arc\b", text, re.I):
+        return None
+    return first_int(text)
+
+
 class Findings(object):
     def __init__(self):
         self.found = []
@@ -181,7 +191,7 @@ def check_ledger(nov, out):
             if landed and int(landed.group(1)) > last:
                 out.add("warn", "ledger", "%s says `%s`, past the last accepted chapter (%d)"
                         % (rid, status[:30], last))
-            due = first_int(r.get(due_col))
+            due = due_chapter(r.get(due_col))
             if status.lower().startswith("owed") and due is not None and due <= last and last:
                 out.add("note", "ledger", "%s is still owed; due by ch %d" % (rid, due))
 

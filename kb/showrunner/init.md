@@ -66,10 +66,16 @@ After round 7's answers the planner ends on `PLANNER DONE init | …`. Run:
 ```
 python3 tools/scaffold.py check novels/{slug}
 python3 tools/state_check.py novels/{slug}
+python3 tools/kb_check.py --novel novels/{slug}
 ```
 
-A defect goes back to `planner-init` with the check's lines, verbatim: *"Check: <lines>. Fix
-them."* Run the check again after. A warn is yours to decide: send it back or log why it stands.
+A defect from the first two goes back to `planner-init` with the check's lines, verbatim:
+*"Check: <lines>. Fix them."* Run the check again after. A warn is yours to decide: send it back or
+log why it stands.
+
+A `leak` from `kb_check` is a name this novel shares with a knowledge-base example, and a role can
+blend the two. Before chapter 1, rename the example: invented nouns are cheap, and a name in the
+novel may be one the user chose.
 
 ## 5. Report to the user
 

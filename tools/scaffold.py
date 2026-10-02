@@ -27,7 +27,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from lib import mdio  # noqa: E402
 from lib.novel import Novel, thread_refs  # noqa: E402
-from state_check import Findings, first_int  # noqa: E402
+from state_check import Findings, due_chapter, first_int  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEMPLATE = os.path.join(ROOT, "novels", "_template")
@@ -159,7 +159,7 @@ def check_ledger(nov, out):
         if row is None:
             out.add("defect", "ledger", "premise fact %s has no row under Facts" % pid)
             continue
-        due = first_int(row.get("due by ch"))
+        due = due_chapter(row.get("due by ch"))
         if clear and due != 1:
             out.add("defect", "ledger", "%s is due by ch %s; with exposition clear every premise "
                     "fact is due by ch 1" % (pid, due))
@@ -167,7 +167,7 @@ def check_ledger(nov, out):
         if not r.get("how it lands").strip(" —-"):
             out.add("warn", "ledger", "%s has no `how it lands`" % r.first())
     contract = first_int(nov.get("opening.contract_by_ch")) or 3
-    faces = [first_int(r.get("on the page by ch")) for r in ledger["faces"]]
+    faces = [due_chapter(r.get("on the page by ch")) for r in ledger["faces"]]
     if not ledger["faces"]:
         out.add("defect", "ledger", "no Faces rows: the antagonist needs a face on the page")
     elif not any(d is not None and d <= contract for d in faces):

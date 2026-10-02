@@ -23,7 +23,7 @@ import export_prose  # noqa: E402
 import state_check  # noqa: E402
 from lib import mdio  # noqa: E402
 from lib.novel import Novel  # noqa: E402
-from state_check import first_int  # noqa: E402
+from state_check import due_chapter, first_int  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 COLD_AFTER = 5          # chapters untouched before an open thread is listed as cold
@@ -93,13 +93,17 @@ def debt(nov):
             rid, status = r.first().strip("* "), r.get("status").strip()
             if landed(status):
                 continue
-            due = first_int(r.get(DUE_COLS[kind]))
+            cell = r.get(DUE_COLS[kind]).strip()
+            due = due_chapter(cell)
             what = clip(describe(kind, r), 60)
             if due is not None and due <= last:
                 out.append("overdue  %s due ch %d, %s: %s" % (rid, due, clip(status, 40), what))
             elif due is not None and due > horizon:
                 out.append("beyond   %s due ch %d, past the last planned row (ch %d): %s"
                            % (rid, due, horizon, what))
+            elif due is None:
+                out.append("beyond   %s due \"%s\", no chapter yet: %s" % (rid, clip(cell, 30),
+                                                                         what))
     return out or ["clean: every owed row is due ahead of the last chapter and inside the plan "
                    "(ch %d)" % horizon]
 
@@ -135,7 +139,7 @@ def report(nov, reading_root):
     for kind in ("facts", "faces"):
         for r in ledger[kind]:
             rid, status = r.first().strip("* "), r.get("status").strip()
-            due = first_int(r.get(DUE_COLS[kind]))
+            due = due_chapter(r.get(DUE_COLS[kind]))
             if landed(status) or due is None:
                 continue
             if due <= last:
@@ -149,13 +153,14 @@ def report(nov, reading_root):
     out.extend(owed)
 
     promises = [r for r in ledger["promises"] if not landed(r.get("status"))]
-    overdue = [r for r in promises if (first_int(r.get("paid by ch")) or 10 ** 6) <= last]
+    overdue = [r for r in promises if (due_chapter(r.get("paid by ch")) or 10 ** 6) <= last]
     out.append("promises  %d open · %d past their chapter" % (len(promises), len(overdue)))
     for r in promises:
-        paid = first_int(r.get("paid by ch"))
+        paid = due_chapter(r.get("paid by ch"))
         flag = "  past due" if r in overdue else ""
-        out.append("  %s made ch %s, paid by ch %s: %s%s" % (
-            r.first().strip("* "), r.get("made in ch") or "?", paid if paid else "?",
+        out.append("  %s made ch %s, paid by %s: %s%s" % (
+            r.first().strip("* "), r.get("made in ch") or "?",
+            "ch %d" % paid if paid else clip(r.get("paid by ch"), 30) or "?",
             clip(r.get("what the page promises"), 70), flag))
 
     threads = nov.threads()

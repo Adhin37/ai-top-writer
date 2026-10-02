@@ -10,8 +10,8 @@ Why the rebuild, and what it keeps: [docs/roadmap/00-diagnosis.md](docs/roadmap/
 
 ## Status
 
-Plans 01 (chapter 1), 01b (the wire format), 02 (the full loop across chapters) and 03 (the
-knowledge bases) have run. What is built, and whether a run has shown it working: the *Features*
+Plans 01 (chapter 1), 01b (the wire format), 02 (the full loop across chapters), 03 (the
+knowledge bases) and 04 (setting up a new novel) have run. What is built, and whether a run has shown it working: the *Features*
 table in [docs/roadmap/README.md](docs/roadmap/README.md), which also says which plan is next.
 
 To run a plan, open Claude Code **in this directory** (agents register when a session starts) and

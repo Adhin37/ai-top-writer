@@ -102,3 +102,9 @@ as a rule.
     contradiction between chapters 2 and 3 that a fresh reader of both missed, and it also kept a
     wrong belief (a man missing, held as dead) that the page never corrected. Memory is both the
     instrument and the drift; the every-10 fresh re-read is the check (plan 02).
+26. **Model-default names turn up on both sides.** In plan 04's init run, the new novel's names
+    collided with the knowledge bases' invented ones. The showrunner's seed named the protagonist
+    "Ness" (the examples have "Nessa"). The planner chose "Pell" (a writer example) and "Vane
+    House" (the test fixture's "Nessa Vane"). Neither side copied the other: these are names a model
+    reaches for. So the leak sweep (`kb_check --novel`) runs after init too, not only after a run,
+    and a hit renames the example.
