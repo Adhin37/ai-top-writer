@@ -89,6 +89,16 @@ class TraceTest(unittest.TestCase):
         self.assertEqual((show["responses"], show["output"], show["cache_read"]), (3, 70, 6000))
         self.assertAlmostEqual(result["total"], writer["cost"] + show["cost"])
 
+    def test_an_unpriced_model_is_named_not_silently_free(self):
+        sub = os.path.join(self.base, "0123abcd-0000", "subagents", "agent-a2.jsonl")
+        row = assistant("2026-01-01T00:00:09.000Z", "s2", usage(500))
+        row["message"]["model"] = "claude-newmodel-9"
+        write(sub, [user("2026-01-01T00:00:08.500Z", "read"), row])
+        result = trace.summarise(trace.transcripts_for("0123", self.base))
+        self.assertEqual(result["unpriced"], {"claude-newmodel-9": 1})
+        self.assertIn("warn: no rate for claude-newmodel-9", trace.render(result))
+        self.assertEqual(trace.summarise(self.paths)["unpriced"], {})
+
     def test_handbacks_entering_the_showrunner(self):
         s = trace.summarise(self.paths)["showrunner"]
         self.assertEqual(s["handbacks"], 3)

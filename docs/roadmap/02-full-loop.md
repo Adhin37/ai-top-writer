@@ -138,4 +138,46 @@ before the knowledge bases are written.
 
 ## Session log
 
-*(filled in when this plan runs)*
+**2026-09-27 → 10-02, session `a21d2d62`, paused twice at usage limits (five-hour, then weekly) and
+resumed in the same session both times.** Working log and write-up:
+[docs/experiments/2026-09-27-full-loop.md](../experiments/2026-09-27-full-loop.md).
+
+- **Built (§1–4):**
+  - `tools/lib/` (`mdio`, `novel`, `textstats`), `tools/lint.py`, `tools/state_check.py`,
+    `tools/reading.py`;
+  - the continuity editor and the clerk (agents + `kb/`), `kb/shared/state-format.md`, the
+    planner's fold;
+  - the story editor's and line editor's cross-chapter inputs, and `loop.md` rewritten.
+
+  Tests 95 → 174, all passing. No dependency added.
+- **Run (§5):**
+  - ch 2 in 2 rounds (REVISE 3, ACCEPT) and ch 3 in 3 (REVISE 5, REVISE 4, ACCEPT at round 2);
+  - click-next 4 on every round;
+  - 12 notes, all acted on, 0 stets.
+- **Verification:**
+  - tests pass; `state_check` clean with 3 blocks in order;
+  - the shelf holds `ch01–03.md` and `notes.md` (712 words);
+  - the notes check agrees with a fresh read, with one drift (the running notes hold Voss dead;
+    the page only has him missing);
+  - 01b's live checks and 01's ITERATE check are all yes, except stets (untestable, 0).
+- **Exit: met.** Plan 02 is done.
+- **Cost:** $54.89, of which the showrunner $32.80 and the room $22.09 (ch 2 $8.68, ch 3 $10.53).
+
+Changed during the run, each logged with its reason:
+- **Where the reader reads.** Each round reads a fresh view of the shelf
+  (`reading/<id>-chNN-rK/`: notes, the last two chapters, `pending/chNN.md`), not the shelf
+  itself. A draft-round reader writing into the shelf would make its beliefs memory, and a report
+  filed there would show the next round's fresh reader the earlier round. The reader's calibrated
+  prompt was left unchanged.
+- **Memory cap.** The cap only holds because the accepted round's reader is continued warm with
+  its measured word count and compresses its own notes; on its own it ran to 915–976 words.
+- **The continuity editor's file** gained a `checked` line, and its judgement of a finding goes on
+  the finding's line: its first hand-backs carried both in prose nobody else reads.
+- **The clerk marks a promise `landed` only when it is paid.** The editor grades promises *made*.
+- **`trace.py` prices Sonnet 5.5 and warns on any unpriced model.** The `sonnet` alias moved to
+  `claude-sonnet-5-5` across the weekly pause and was counted as $0. 8 Sonnet-role agents ran on
+  the new model, which confounds the improvement in the Sonnet roles' final messages.
+- **New agent files registered mid-session**, about 25 minutes after they were written
+  (lessons.md #15 updated).
+
+`.test-run` was removed after the write-up. Nothing committed.

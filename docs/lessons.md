@@ -60,9 +60,11 @@ as a rule.
 
 ## About Claude Code
 
-15. **Agents register at session start.** An agent file created or edited mid-session may not take
-    effect, and the two cases look identical. Thin agent files that read their prompt at runtime
-    avoid the problem; a new repo's agents need a session opened in that repo.
+15. **Agents register at session start — and new ones can register later.** An agent file edited
+    mid-session may not take effect, and the two cases look identical. Thin agent files that read
+    their prompt at runtime avoid the problem; a new repo's agents need a session opened in that
+    repo. Plan 02: two agent files *created* mid-session were listed as spawnable about 25 minutes
+    later, by a system notice. Wait for the notice; do not assume either way.
 16. **`omitClaudeMd: true` also drops the auto-memory index** — measured both ways. Use it on the
     beta reader and the judge; it is part of what keeps them cold.
 17. **Hooks see `agent_id` and `agent_type`.** No `agent_id` means the main session. Project hooks
@@ -85,3 +87,18 @@ as a rule.
 22. **Two original-fantasy runs gave the golden finger the same cost** (nosebleed and
     disorientation) with no source in the corpus: a model default. Derive costs from how the gift
     works, and test whether the same cost would fit any other gift.
+
+## About running the room
+
+23. **A model alias can move under a running experiment.** Plan 02 paused for four days at a usage
+    limit; after it, `sonnet` meant `claude-sonnet-5-5`, not `claude-sonnet-5`. Eight agents ran
+    on the new model, which confounds what changed in the Sonnet roles, and the cost trace counted
+    them as $0 until it was made to warn. Pin full model ids for a benchmark; a tool that prices
+    by model must say when it meets one it does not know.
+24. **A model cannot count its own words.** Two beta readers told to keep their notes under 800
+    words wrote 915 and 976. One asked to compress reported success at 868. Given the measured
+    count and a target, it reached 749 (plan 02). Give a cap's number from a tool, every time.
+25. **What only a reader with memory sees.** A reader carrying notes across chapters caught a
+    contradiction between chapters 2 and 3 that a fresh reader of both missed, and it also kept a
+    wrong belief (a man missing, held as dead) that the page never corrected. Memory is both the
+    instrument and the drift; the every-10 fresh re-read is the check (plan 02).

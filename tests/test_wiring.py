@@ -17,7 +17,8 @@ AGENTS = os.path.join(ROOT, ".claude", "agents")
 KB = os.path.join(ROOT, "kb")
 LINK = re.compile(r"\]\(([^)#\s]+)(?:#[^)]*)?\)")
 COLD = {"beta-reader", "judge"}
-WIRED = ("planner", "writer", "story-editor", "line-editor", "showrunner")
+WIRED = ("planner", "writer", "story-editor", "line-editor", "continuity-editor", "clerk",
+         "showrunner")
 PLACEHOLDER = re.compile(r"<[^<>]*>")
 
 
@@ -44,7 +45,7 @@ class AgentWiringTest(unittest.TestCase):
     def test_agents_exist(self):
         names = {name for name, _, _ in agents()}
         self.assertTrue({"planner", "writer", "beta-reader", "story-editor", "line-editor",
-                         "judge"} <= names, names)
+                         "continuity-editor", "clerk", "judge"} <= names, names)
 
     def test_frontmatter_and_prompt(self):
         for name, fields, body in agents():
@@ -72,7 +73,7 @@ class AgentWiringTest(unittest.TestCase):
         models = {name: fields["model"] for name, fields, _ in agents()}
         for name in ("planner", "writer", "story-editor"):
             self.assertEqual(models[name], "opus", name)
-        for name in ("beta-reader", "line-editor"):
+        for name in ("beta-reader", "line-editor", "continuity-editor", "clerk"):
             self.assertEqual(models[name], "sonnet", name)
         self.assertEqual(models["judge"], "claude-opus-5")
 

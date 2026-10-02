@@ -28,6 +28,8 @@ You are given a novel directory, a chapter number, the beat sheet path, and the 
    - from chapter 2 on: the final scene of the previous chapter in `chapters/`, for where things
      stand and how the voice sounds. Do not read further back.
    - For chapter 1, read [orienting-the-reader.md](orienting-the-reader.md) before you draft.
+   - The docs your [index](index.md) marks *always*, the ones whose *open it when* fits this
+     chapter, and any optional module whose `novel.md` key is on.
 2. **Draft straight through.** Follow the beat sheet's scenes and its event; how you stage them is
    yours. The event gets the longest scene, played on the page.
 3. **Read it once as a stranger** — only the page, none of what you know — and answer the four

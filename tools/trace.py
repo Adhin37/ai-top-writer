@@ -47,6 +47,7 @@ RATES = {
     "claude-fable-5-1": (10.00, 50.00, 0.25),
     "claude-opus-5-5": (4.00, 20.00, 0.20),
     "claude-opus-5": (5.00, 25.00, 0.50),
+    "claude-sonnet-5-5": (2.00, 10.00, 0.20),
     "claude-sonnet-5": (2.00, 10.00, 0.20),
     "claude-haiku-4-5": (1.00, 5.00, 0.10),
 }
@@ -329,9 +330,15 @@ def summarise(paths, since=None, until=None, match=None):
                                         for stamp, n in hb),
                 "cache_read_tokens": row["cache_read"],
             }
+    unpriced = {}
+    for a in agents:
+        for m in a["models"]:
+            if m not in RATES and m not in SYNTHETIC:
+                unpriced[m] = unpriced.get(m, 0) + a["responses"]
     return {"roles": roles, "agents": agents, "showrunner": showrunner,
             "total": sum(r["cost"] for r in roles.values()),
-            "unrecorded_usd": sum(r["unrecorded_usd"] for r in roles.values())}
+            "unrecorded_usd": sum(r["unrecorded_usd"] for r in roles.values()),
+            "unpriced": unpriced}
 
 
 def render(result, show_agents=False):
@@ -348,6 +355,10 @@ def render(result, show_agents=False):
                       r["cache_write"], r["cache_read"], r["output_usd"], r["cache_write_usd"],
                       r["cache_read_usd"], r["cost"]))
     out.append("%-14s %s %9.2f" % ("total", " " * 110, result["total"]))
+    for model, n in sorted(result.get("unpriced", {}).items()):
+        # A model with no rate would cost 0 and look cheap: say so rather than fall silent.
+        out.append("warn: no rate for %s (agents with %d responses on it); their cost is "
+                   "counted as $0 - add it to RATES" % (model, n))
     missing = [(role, r) for role, r in order if r["unrecorded"]]
     if missing:
         out.append("unrecorded final responses, a lower bound from hand-back length: "

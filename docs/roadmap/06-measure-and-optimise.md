@@ -14,6 +14,11 @@ reads and writes, cost, the showrunner's context, and hand-back sizes, scoped by
 - **Per role:** model seconds against tool seconds (from timestamps), and which `kb/` docs were
   opened.
 - **Per chapter:** the same, plus loop rounds.
+- **An unpriced model is flagged** (done in plan 02): it used to count as $0 without a word.
+- **The Sonnet roles' final messages.** In plan 02 the continuity editor wrapped its status line in
+  a recap three times, through two template fixes, then was clean twice, but only after the
+  `sonnet` alias moved to Sonnet 5.5. Find out which of the two did it before tuning the
+  templates further.
 - **The known under-count is flagged** (done after 01's ITERATE re-run). Every agent's final
   response, the one that calls `SubagentHandback`, is written to its transcript before its usage
   lands. `trace.py` reports it on its own line: tokens estimated from the hand-back's length, a
@@ -48,6 +53,9 @@ one lever at a time, on the same beat sheets.
    lever: **one chapter per showrunner context**, handed over with the existing `handoff` skill,
    plus 01b's status-line reads. The showrunner writes no prose, so the risk is to routing, not to
    the book. Measure the showrunner's cost per chapter before and after.
+   Plan 02 again: $32.80 of $54.89, a context of mean 425k and peak 631k tokens. That session
+   built the tools and ran the loop in one context, and hand-backs were only 3% of its cache
+   reads, so the cost was the context's length, not the room's traffic.
 1. **Warm writer across chapters.** Continue the same writer via `SendMessage` for an arc, instead of
    a fresh one per chapter. Run #6 measured this once: drafter time halved (755 s against 1,531 s).
 2. **Effort per role: the largest subagent lever.** In plan 01, thinking was 53–69% of the Opus

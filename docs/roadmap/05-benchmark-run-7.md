@@ -49,6 +49,9 @@ Carry over the old *traps* table only where it still applies:
 
 1. **Pre-flight.**
    - Tests and `kb_check` pass. Record the commit SHA, the UTC start time and the configuration table.
+   - **Pin full model ids** in every agent's frontmatter for the run (`claude-opus-5-5`, not `opus`).
+     In plan 02 the `sonnet` alias moved across a usage-limit pause, and eight agents ran on a
+     different model.
    - The showrunner picks the seed and logs why.
    - Write the answer sheet.
 2. **Init**, via `/new`: the interview, with the user's answers from the sheet.

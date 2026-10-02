@@ -44,8 +44,8 @@ What carries over from skilled-writer: [lessons.md](lessons.md).
 | **beta reader** | `beta-reader` | sonnet | its reading folder only | its reading folder | retell, world-as-understood, who's who, terms guessed, confusion and skim quotes, best moment, predictions, click-next; keeps its notes |
 | **story editor** | `story-editor` | opus | novel, reading reports | `work/` | grades the retell against the ledger; merges reader (and continuity) reports against the beat sheet's intent; ACCEPT or ≤5 notes |
 | **line editor** | `line-editor` | sonnet | novel (not `reading/`) | `work/`, `chapters/` | one polish pass after ACCEPT: AI-default tells, tics, format, numerals, lexicon, voice cadence |
-| **continuity editor** | `continuity-editor` (plan 02) | sonnet | novel | `work/` | contradictions with bible and state, timeline, travel, provenance |
-| **clerk** | `clerk` (plan 02) | sonnet | novel, reading folder | `state/`, ledger status, reader notes | the state write after acceptance; lists new facts for the planner's fold |
+| **continuity editor** | `continuity-editor` | sonnet | novel (not `reading/`) | `work/` | every round, beside the reader: contradictions with the bible and state, time and travel, spelling and number drift, who could know what; runs `tools/lint.py` |
+| **clerk** | `clerk` | sonnet | novel, reading folder | `state/`, ledger status, the reader's shelf, `work/` | the state write after the line pass; copies the accepted round's reader notes into memory; lists new facts for the planner's fold |
 | **judge** | `judge` | opus (`claude-opus-5`, pinned) | `bench/*/blind/` only | nothing | not in the loop: the blind benchmark reader, with a different questionnaire from the beta reader's so the loop cannot tune itself to its judge |
 
 ## The loop, per chapter
@@ -55,7 +55,7 @@ planner ──> beats.md ──(showrunner approves)──> writer ──> draft
                                                             │
                          ┌──────────────────────────────────┤ export prose-only
                          v                                  v
-                    beta reader                    continuity editor (plan 02)
+                    beta reader                    continuity editor
                          └──────────────┬───────────────────┘
                                         v
                                   story editor ── ACCEPT ──> line editor ──> chapters/NNNN-*.md
@@ -85,6 +85,12 @@ and anything for the user. [roadmap/01b](roadmap/01b-wire-format.md) says why.
 **Why a fresh beta reader each round:** a reader who has read round 0 knows what round 1 is trying
 to say. The *notes* that become the reader's memory come only from the reader of the accepted
 round.
+
+**The reader's memory is serial.** The accepted chapters and the reader's `notes.md` live on one
+shelf per novel, `reading/<id>/`. Each round's reader works in a fresh view of it
+(`reading/<id>-chNN-rK/`: the notes, the last two chapters, the draft in `pending/`), and the clerk
+copies only the accepted round's notes back. Every 10 chapters a fresh reader re-reads everything,
+and its notes replace the running ones, which catches drift. `tools/reading.py` does all of it.
 
 **Why the line editor runs once, after ACCEPT:** polishing a draft that is about to be rewritten is
 wasted work, and a committee that polishes every round sands the voice off.
@@ -129,7 +135,9 @@ reader's questionnaire, or the planner designing toward the judge's, is the loop
 instrument instead of the craft.
 
 **What this does not cover:** `Bash`. The beta reader and the judge are given no `Bash` tool, which
-is the real wall for them. Other roles are routed, not sandboxed.
+is the real wall for them. Other roles are routed, not sandboxed. The continuity editor and the
+clerk have `Bash` to run the tools (`lint.py`, `state_check.py`, `reading.py`); their `Read` and
+`Write` are still routed.
 
 **Why not agent teams:** they are experimental, teammates load `CLAUDE.md` and every skill (fatal for
 a cold reader), and they do not spawn in non-interactive runs. Named subagents plus `SendMessage`

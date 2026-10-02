@@ -21,15 +21,16 @@ novels/<slug>/
     arcs.md               arc-level design, including when the antagonist reaches the page
     chapters.md           one row per chapter: title, pov, temp, hook, goal, obstacle, turn, event, cost
     reader-ledger.md      NEW — facts, faces and promises owed to the reader, by chapter (below)
-  state/
-    continuity.md         one short block per chapter (plan 02 defines it)
-    threads.md            open promises and foreshadowing, with ages
+  state/                  written by the clerk after each accepted chapter (below)
+    continuity.md         one short block per chapter: event, where everyone is, who knows what
+    threads.md            the thread board: the plan's thread ids, opened / last touched / status
     timeline.md           the in-world calendar
-    scenes.md             one row per scene: chapter, who, where, tempo (plan 02)
+    scenes.md             one row per scene: chapter, who, where, tempo, two-hander
   work/chNNNN/            the loop's hand-off files for the chapter in progress — beat sheet,
-                          drafts per round, the writer's facts file per round, editor notes.
-                          Written in the wire format (kb/shared/wire.md). Overwritten per
-                          chapter; not a backup
+                          drafts per round, the writer's facts file per round, the continuity
+                          editor's file and lint report per round, editor notes, the clerk's
+                          fold file. Written in the wire format (kb/shared/wire.md). Overwritten
+                          per chapter; not a backup
   chapters/NNNN-<slug>.md the accepted chapters
 ```
 
@@ -111,6 +112,51 @@ goal / obstacle / turn
 
 ## Ending
 <the last beat and the question it leaves>
+```
+
+## `state/`
+
+What is true *now*, after the last accepted chapter, and who knows it. The clerk writes it; the
+continuity editor checks each draft against it; the planner and the story editor read what the last
+page promised. The full format, with examples, is agent-facing:
+[kb/shared/state-format.md](../kb/shared/state-format.md). `tools/state_check.py` checks that the
+files agree with the chapters, the plan and each other.
+
+A continuity block is a header and seven keyed lines at most. It replaces skilled-writer's CCS
+block (up to 18 lines, with lines that existed to prove a gate had run):
+
+```
+=C0003= day 12, dusk to night | words 2410
+ev    Nessa rows the Harrow boy out past the bar alone, against the harbourmaster's order
+at    Nessa: the boathouse · Quell: the harbour office · Tam: the quay steps
+kno   Nessa+ the tally was signed before the boy drowned (the date on it) · Quell? suspects she has seen it
+has   Nessa: the Harrow tally, folded in her boot · Tam: the boathouse key
+cost  Nessa: two fingers frostbitten, no grip in her left hand for days
+thr   ^T2 ~T4
+hook  Quell's lamp is lit in the office window when she comes back in
+```
+
+`kno` carries each item's source, so a character can be caught stating what they could not know.
+`hook` is what the last page promised; the next chapter plays it, pays it or turns it on purpose.
+
+After the block, the clerk lists the chapter's new facts in `work/chNNNN/fold.md`, and the planner
+folds them into the bible. The clerk never edits `bible/`.
+
+## The reader's shelf — `reading/<id>/`
+
+The beta reader's serial memory, outside the novel (`tools/reading.py`):
+
+```
+reading/<id>/             the shelf: the accepted chapters, prose only, and the reader's memory
+  ch01.md … chNN.md
+  notes.md                in the reader's own words, under 800 words; the reader compresses it
+reading/<id>-chNN-rK/     one draft round's view: a copy of notes.md, the last two accepted
+  notes.md                chapters, and the draft. The round's fresh reader updates notes.md
+  chNN-2.md, chNN-1.md    here, and its report is filed here. Only the accepted round's notes
+  pending/chNN.md         are copied onto the shelf (by the clerk, byte for byte)
+  report.md
+reading/<id>-fresh-chNN/  every 10 chapters: ch01 … chNN and no notes; a fresh reader's notes
+                          replace the running ones
 ```
 
 ## Chapter files

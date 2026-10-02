@@ -17,8 +17,8 @@ in `docs/sessions/`, and the `handoff` skill resumes it (the same session, or a 
 | — | Session 1: foundation (this repo, the docs, the roadmap, the spike's agents and tools) | **done** 2026-09-26 | — |
 | 01 | [Session 2: vertical slice, chapter 1 A/B/C](01-vertical-slice.md) | **closed** 2026-09-27: ITERATE done. Comprehension holds; not GO on one lecture paragraph, whose lever moved to the planner. Chapter 1 = C3 | session 1 |
 | 01b | [Session 2b: the wire format, terse hand-offs between agents](01b-wire-format.md) | **built** 2026-09-27; L3's live checks done (two templates fixed, the trace fixed); the rest in 02 and 05 | 01 |
-| 02 | [Session 3: the full loop and serial memory](02-full-loop.md) | **next** | 01 (closed), 01b |
-| 03 | [Session 4: the knowledge bases](03-knowledge-bases.md) | planned | 02 |
+| 02 | [Session 3: the full loop and serial memory](02-full-loop.md) | **done** 2026-10-02: ch 2–3 through the full loop, click-next 4 every round; state clean; memory agrees with a fresh read (one drift) | 01 (closed), 01b |
+| 03 | [Session 4: the knowledge bases](03-knowledge-bases.md) | **next** | 02 |
 | 04 | [Session 5: novel setup and planning from scratch](04-front-end.md) | planned | 03 |
 | 05 | [Session 6: benchmark run #7](05-benchmark-run-7.md) | planned | 04 |
 | 06 | [Session 7: measurement, then optimisation](06-measure-and-optimise.md) | planned | 05 |
@@ -62,14 +62,14 @@ table: it is what the user reads.
 | story editor notes and ACCEPT; warm writer revisions; one line pass | 1 | yes | yes (01) |
 | blind judge: read, compare, grade | 1 | yes | yes (01) |
 | hand-backs filed verbatim (`tools/handback.py`) | 01 | yes | yes (01) |
-| session handoff across usage limits (hooks, `checkpoint.py`, status line, `handoff` skill) | — | yes | hooks run every turn; not yet resumed across a limit |
-| wire format: one status line per role, notes and facts files (`kb/shared/wire.md`, `tools/wire.py`) | 01b | yes | yes for writer, story editor, line editor (L3). Planner lines: in 02 |
-| cost and context trace (`tools/trace.py`), with the unrecorded-output flag | 01b | yes | yes (L3) |
-| lecture fixes: writer example, briefing notes, beat-sheet `learns` carriers | 01 | yes | writer and editor yes (L3); planner check first runs in 02 |
-| ported core: `mdio`, novel paths, text stats, lint, state check | 02 | no | — |
-| continuity editor and clerk; planner fold mode | 02 | no | — |
-| serial memory: one reading folder, capped notes, re-read every 10 chapters | 02 | no | — |
-| cross-chapter lens: scene log, line editor reads the last two chapters, promises carried | 02 | no | — |
+| session handoff across usage limits (hooks, `checkpoint.py`, status line, `handoff` skill) | — | yes | yes (02): resumed twice, after a five-hour and a weekly limit, with the agent in flight named and continued warm |
+| wire format: one status line per role, notes and facts files (`kb/shared/wire.md`, `tools/wire.py`) | 01b | yes | yes for writer, story editor, line editor, planner (02). Continuity editor and clerk: the file always parses; their final message needed two fixes and is confounded with a model change (02) |
+| cost and context trace (`tools/trace.py`), with the unrecorded-output flag | 01b | yes | yes (L3, 02); now warns on an unpriced model |
+| lecture fixes: writer example, briefing notes, beat-sheet `learns` carriers | 01 | yes | yes: the planner check held 11 of 11 in ch 2–3, and no editor found a briefing (02) |
+| ported core: `mdio`, novel paths, text stats, lint, state check | 02 | yes | yes (02): lint every round, `state_check` clean after each chapter |
+| continuity editor and clerk; planner fold mode | 02 | yes | yes (02): two real catches nobody else made; 4 clean state writes; 3 folds |
+| serial memory: one reading folder, capped notes, re-read every 10 chapters | 02 | yes | yes (02), with a warm compression step for the cap; the re-read is built, checked once by hand at ch 3, and first due at ch 10 |
+| cross-chapter lens: scene log, line editor reads the last two chapters, promises carried | 02 | yes | yes (02): 4 recurring habits thinned; the scene log steered the next chapter; no promise skipped |
 | rewritten knowledge bases and `tools/kb_check.py` | 03 | no | — |
 | novel setup: planner init interview; `/new`, `/plan`, `/write`, `/status` | 04 | no | — |
 | benchmark run #7 against run #6 | 05 | no | — |

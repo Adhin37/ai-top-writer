@@ -37,11 +37,12 @@ The loop, step by step: [kb/showrunner/loop.md](kb/showrunner/loop.md).
 | writer | `writer` | opus | drafts from the beat sheet; revises warm against notes; may stet a note with a reason |
 | beta reader | `beta-reader` | sonnet | reads prose-only exports with no bible; retells, reports confusion and skimming, keeps its own notes |
 | story editor | `story-editor` | opus | grades the retell against what the chapter owed; ACCEPT, or at most five specific notes |
-| line editor | `line-editor` | sonnet | one polish pass after ACCEPT |
+| continuity editor | `continuity-editor` | sonnet | every round, beside the reader: the draft against the bible and state; one finding a line |
+| line editor | `line-editor` | sonnet | one polish pass after ACCEPT; reads the last two chapters for recurring habits |
+| clerk | `clerk` | sonnet | after the line pass: state, ledger status, the reader's memory; lists new facts for the fold |
 | judge | `judge` | opus | benchmark only, never in the loop; blind; a different questionnaire |
 
-Continuity editor and clerk arrive in plan 02. Why each role exists and what it may read:
-[docs/architecture.md](docs/architecture.md).
+Why each role exists and what it may read: [docs/architecture.md](docs/architecture.md).
 
 ## Where things live
 
@@ -50,10 +51,10 @@ Continuity editor and clerk arrive in plan 02. Why each role exists and what it 
 | `.claude/agents/` | thin agent files: frontmatter + "read `kb/<role>/prompt.md`" |
 | `.claude/skills/handoff/` | the main session's procedure for handing over across a usage-limit reset, and resuming |
 | `kb/<role>/` | each role's knowledge base (OKF): `index.md`, `prompt.md`, typed docs. `kb/shared/` for docs several roles use |
-| `tools/` | Python tools: `export_prose.py` (prose-only exports to `reading/`), `guard.py` (the path hook), `handback.py` (files a hand-back from a transcript, or appends it to a log), `wire.py` (parses status lines, notes and facts files), `trace.py` (a session's cost per role, from its transcripts), `checkpoint.py` + `session_hooks.py` + `statusline.py` (session handoffs) |
+| `tools/` | Python tools: `export_prose.py` (prose-only exports), `reading.py` (the reader's shelf and each round's view of it), `lint.py` (per-chapter prose report), `state_check.py` (state against chapters and plan), `lib/` (markdown, novel and prose readers), `guard.py` (the path hook), `handback.py` (files a hand-back from a transcript, or appends it to a log), `wire.py` (parses status lines, notes, facts, continuity and fold files), `trace.py` (a session's cost per role, from its transcripts), `checkpoint.py` + `session_hooks.py` + `statusline.py` (session handoffs) |
 | `tests/` | `python3 -m unittest discover tests` |
 | `novels/<slug>/` | a novel — format in [docs/novel-format.md](docs/novel-format.md) |
-| `reading/<id>/` | what the beta reader sees: prose only, neutral folder name (gitignored) |
+| `reading/<id>/` | the beta reader's shelf: accepted chapters, prose only, and its `notes.md`; `reading/<id>-chNN-rK/` is one round's view (gitignored) |
 | `bench/<experiment>/` | experiment arms and blind copies for the judge (gitignored) |
 | `docs/` | for maintainers only; no agent reads it. Roadmap, architecture, format, lessons, experiments |
 | `docs/sessions/` | each session's handoff, rebuilt by hooks every turn and at a usage limit (gitignored) |

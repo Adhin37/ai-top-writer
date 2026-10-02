@@ -101,6 +101,10 @@ class NotesTest(unittest.TestCase):
         self.assertEqual([f for f in found if f[0] != "note"], [])
         self.assertIn(("note", "words", "Keep: 17"), found)
 
+    def test_a_beat_line_under_owed_is_not_a_ledger_row(self):
+        text = NOTES.replace('R5 missing\n', 'R5 missing\nbeat currency stated "a mark is 20 tallies"\n')
+        self.assertEqual([f for f in wire.check_notes(text) if f[0] != "note"], [])
+
     def test_a_note_needs_where_ev_and_eff(self):
         found = wire.check_notes(NOTES.replace("eff   the reader didn't", "the reader didn't"))
         self.assertIn(("defect", "note", "N1 has no `eff`"), found)
@@ -132,6 +136,56 @@ class FactsTest(unittest.TestCase):
         found = wire.check_facts(FACTS + "staging  I moved the fight\n" + "choices x\n" * 3)
         self.assertIn(("warn", "facts", "4 choices; at most 3"), found)
         self.assertTrue(any(f[1] == "facts" and "unknown key" in f[2] for f in found))
+
+
+CONTINUITY = """# Continuity — chapter 4, round 0
+lint  novels/tidewater/work/ch0004/lint-r0.txt · 1 defect · 0 warn
+checked  lexicon, world.md §Places; C0001–C0003
+F1 know    "Nessa knew Quell had signed the Harrow tally himself" | C0003 kno: "Nessa+ the tally was signed" | nothing on the page tells her who signed it
+F2 travel  "By noon she was at the salt pans" | bible/world.md §Places: "a day's walk north" | she left at dawn the same day
+"""
+
+FOLD = """# Fold — chapter 3
+new    the bar can be crossed on foot for an hour at the lowest ebb | bible/world.md | "the bar was dry for the length of a prayer"
+stale  "the Long Ebb — first appears ch 4" | bible/lexicon.md | on the page from ch 1
+"""
+
+
+class NewRolesTest(unittest.TestCase):
+    def test_the_new_status_lines_parse(self):
+        for line in (
+                "CONTINUITY READY w/continuity-r0.md | findings 2 | lint w/lint-r0.txt",
+                "CLERK DONE ch/0003-x.md | fold w/fold.md | bible 2 | ledger 3 | check clean",
+                "PLANNER DONE fold | bible/world.md, bible/lexicon.md | gaps 0 | changed 1"):
+            with self.subTest(line=line):
+                self.assertEqual(wire.parse_status(line)[3], [])
+        _, _, _, found = wire.parse_status("CLERK DONE ch/0003-x.md | fold w/fold.md | bible 2")
+        self.assertEqual(sum(1 for f in found if f[0] == "defect"), 2)
+
+    def test_the_line_editor_may_add_across_lines(self):
+        self.assertEqual(wire.check_handback(
+            "POLISHED ch/0003.md | changes 4 (x) | left 1\n"
+            "left    the ledger scene's triad, Ruck's own cadence\n"
+            "across  \"The stone held.\" ch 1, ch 3 — thinned here"), [])
+
+    def test_a_continuity_file(self):
+        found = wire.check_continuity(CONTINUITY)
+        self.assertEqual([f for f in found if f[0] != "note"], [])
+        self.assertIn("findings: 2", found[-1][2])
+        self.assertEqual([f for f in wire.check_continuity("# C\nlint x · 0 defect\nnone\n")
+                          if f[0] != "note"], [])
+        bad = wire.check_continuity(CONTINUITY.replace(' | she left at dawn the same day', '')
+                                    .replace("F1 know ", "F1 vibe "))
+        self.assertIn("defect", levels(bad))
+        self.assertTrue(any("`vibe`" in f[2] for f in bad))
+
+    def test_a_fold_file(self):
+        found = wire.check_fold(FOLD)
+        self.assertEqual([f for f in found if f[0] != "note"], [])
+        self.assertIn("new: 1, stale: 1", found[-1][2])
+        bad = wire.check_fold("new  a fact with nothing else\nbible something\n")
+        self.assertIn("defect", levels(bad))
+        self.assertIn("warn", levels(bad))
 
 
 class CliTest(unittest.TestCase):

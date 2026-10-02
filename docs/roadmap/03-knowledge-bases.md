@@ -91,6 +91,15 @@ have no knowledge base.
 
 - **Order:** writer → story editor → line editor → continuity editor → planner → clerk. The writer and
   story editor come first because the chapter's quality moves through them.
+- **From plan 02's run** ([write-up](../experiments/2026-09-27-full-loop.md), *What changes
+  next*), each one an example or a routing, not a new rule:
+  - the clerk's `kno` line grew to 16 items in one block; it needs a worked short block;
+  - an editor's *For the planner* line saying a ledger row "can be marked landed" reaches no rule
+    the clerk follows, so give it a route;
+  - beat-sheet items with no ledger id (T7 settles, the currency) need a home in the notes
+    template;
+  - the continuity editor missed a "that afternoon" slip the reader caught; that is a worked
+    example for its doc.
 - **For each doc:** read the old sources, keep the best worked examples (made genre-neutral),
   rewrite the idea in three sentences, and drop the rest.
 - **Expected size:** about 8–15 docs per role, most under 600 words. This is a sense of scale, not a

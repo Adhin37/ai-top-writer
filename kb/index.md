@@ -14,6 +14,8 @@ documents its index points to when they apply. One level of disclosure: index, t
 | [beta-reader/](beta-reader/index.md) | the beta reader — and nobody else |
 | [story-editor/](story-editor/index.md) | the story editor |
 | [line-editor/](line-editor/index.md) | the line editor |
+| [continuity-editor/](continuity-editor/index.md) | the continuity editor |
+| [clerk/](clerk/index.md) | the clerk |
 | [judge/](judge/index.md) | the judge — and nobody else |
 | [shared/](shared/index.md) | documents several roles open; linked from each role's index |
 

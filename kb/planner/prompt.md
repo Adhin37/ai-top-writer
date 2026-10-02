@@ -37,6 +37,10 @@ Write or extend `novels/<slug>/plan/reader-ledger.md` per [reader-ledger.md](rea
   paid.
 - If the reader's notes are available (the showrunner gives the path), compare them with the
   ledger: anything marked landed that the notes do not show is **not** landed. Reschedule it.
+- **The thread board.** If `state/threads.md` does not exist, write it: one row per thread id the
+  plan rows name, `planned` until a chapter opens it
+  ([state-format.md](../shared/state-format.md)). If the showrunner gives you a source that says
+  what the ids mean, take their meanings from it.
 
 ## Task: beats
 
@@ -49,16 +53,25 @@ Write `novels/<slug>/work/chNNNN/beats.md` per [beat-sheet.md](beat-sheet.md), f
   they are confused about;
 - the *For the planner* lines of the previous chapter's last notes file, if the showrunner gives
   its path — what the story editor saw that later chapters must carry;
-- the bible files the chapter touches, and from chapter 2 on the end of the previous chapter.
+- the bible files the chapter touches, and from chapter 2 on the end of the previous chapter;
+- from chapter 2 on, `state/`: the last continuity block, whose `hook` line is what the last page
+  promised (this chapter plays it, pays it or turns it on purpose), and `state/scenes.md`. If the
+  last chapters' scenes were mostly two people talking, or all one tempo, stage this one
+  differently.
 
 The beat sheet is what the writer drafts from and what the story editor judges against, so write it
 in story language — what happens, what the reader learns, what they should feel — not as a list of
 constraints.
 
+## Task: fold
+
+Write the facts an accepted chapter established into the bible, from the clerk's
+`work/chNNNN/fold.md`, per [fold.md](fold.md).
+
 ## Tasks from later plans
 
-`fold` (writing a chapter's new facts into the bible) arrives with plan 02; `init` (the new-novel
-interview) with plan 04. If asked for either before your index lists its doc, say so and stop.
+`init` (the new-novel interview) arrives with plan 04. If asked for it before your index lists its
+doc, say so and stop.
 
 ## Your final message
 

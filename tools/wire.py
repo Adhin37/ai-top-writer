@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 """Parse and check what roles write for each other, in the wire format (`kb/shared/wire.md`).
 
-Four things can be checked:
+What can be checked:
 
   * a **status line**, the one line a role's final message is: `VERB <head> | key value | ...`;
   * a **hand-back**, a whole final message: the status line must come first, and only the lines
-    its role may add (`gap`, `changed`, `left`) may follow it;
+    its role may add (`gap`, `changed`, `left`, `across`) may follow it;
   * a **notes file** (`notes-rK.md`, the story editor's);
-  * a **facts file** (`facts-rK.md`, the writer's).
+  * a **facts file** (`facts-rK.md`, the writer's);
+  * a **continuity file** (`continuity-rK.md`, the continuity editor's);
+  * a **fold file** (`fold.md`, the clerk's list of new facts for the bible).
 
 Findings print as `level check: detail`, where level is `defect`, `warn` or `note`, plus words per
 section as notes. It reports and never gates: the exit status is 0 whatever it finds, unless the
@@ -16,7 +18,7 @@ input cannot be read.
 Usage:
   wire.py status "<line>"
   wire.py handback FILE          (a filed hand-back, e.g. from tools/handback.py)
-  wire.py check FILE...          (notes-rK.md or facts-rK.md, by name)
+  wire.py check FILE...          (notes-, facts-, continuity-rK.md or fold.md, by name)
 """
 import argparse
 import os
@@ -29,7 +31,9 @@ VERBS = {
                     ("learns", "new", "couldn't", "notes", "choices")),
     "NOTES READY": ("notes file", ("notes", "owed"), ()),
     "PLANNER DONE": ("task", ("gaps", "changed"), ("gap", "changed")),
-    "POLISHED": ("output path", ("changes", "left"), ("left",)),
+    "POLISHED": ("output path", ("changes", "left"), ("left", "across")),
+    "CONTINUITY READY": ("continuity file", ("findings", "lint"), ()),
+    "CLERK DONE": ("chapter", ("fold", "bible", "ledger", "check"), ()),
 }
 STATUS = re.compile(r"^(%s)\s+(.*)$" % "|".join(re.escape(v) for v in VERBS))
 VERDICTS = ("ACCEPT", "REVISE")
@@ -42,6 +46,9 @@ FACT_KEYS = ("learns", "new", "couldn't", "notes", "choices")
 LONG_QUOTE = 25     # words: a quote this long is proving, not locating
 MAX_NOTES = 5
 MAX_CHOICES = 3
+FINDING = re.compile(r"^F(\d+)\s+(\S+)\s+(.*)$")
+FINDING_KINDS = ("bible", "state", "time", "travel", "lexicon", "number", "know")
+FOLD_KEYS = ("new", "stale")
 
 
 def finding(level, check, detail):
@@ -139,6 +146,8 @@ def check_notes(text):
             found.append(finding("defect", "notes", "no `## %s` section" % name))
 
     for line in secs.get("Owed", []):
+        if line.strip().startswith("beat "):
+            continue                    # a beat-sheet item with no ledger id: not counted
         m = OWED.match(line.strip())
         if not m or m.group(2) not in GRADES:
             found.append(finding("warn", "owed", "not `<id> <grade> \"<retell>\"`: %r"
@@ -200,15 +209,88 @@ def check_facts(text):
     return found
 
 
+def check_continuity(text):
+    """The continuity editor's file: a `lint` line, a `checked` line, then one `F<n> <kind>
+    "<quote>" | <source>: "<line>" | <defect>` line each, or `none`."""
+    found, count = [], 0
+    has_lint = False
+    for line in text.splitlines():
+        s = line.strip()
+        if not s or s.startswith("#"):
+            continue
+        if s.startswith("lint "):
+            has_lint = True
+            continue
+        if s.startswith("checked "):
+            continue
+        if s == "none":
+            continue
+        m = FINDING.match(s)
+        if not m:
+            found.append(finding("warn", "continuity", "not a finding line: %r" % s[:60]))
+            continue
+        count += 1
+        tag, kind, rest = "F" + m.group(1), m.group(2), m.group(3)
+        if kind not in FINDING_KINDS:
+            found.append(finding("warn", "finding", "%s kind `%s` is not one of %s"
+                                 % (tag, kind, " ".join(FINDING_KINDS))))
+        parts = [p.strip() for p in rest.split(" | ")]
+        if len(parts) != 3:
+            found.append(finding("defect", "finding", "%s needs three parts, quote | source | "
+                                 "defect; has %d" % (tag, len(parts))))
+            continue
+        if not QUOTE.search(parts[0]):
+            found.append(finding("defect", "finding", "%s has no quote from the draft" % tag))
+        if ":" not in parts[1]:
+            found.append(finding("warn", "finding", "%s source should read `<file or id>: "
+                                 "\"<line>\"`" % tag))
+        for q in long_quotes(line):
+            found.append(finding("note", "quote", "%s quotes %d words" % (tag, len(q.split()))))
+    if not has_lint:
+        found.append(finding("warn", "continuity", "no `lint` line"))
+    found.append(finding("note", "words", "findings: %d, words: %d"
+                         % (count, words(text.splitlines()))))
+    return found
+
+
+def check_fold(text):
+    """The clerk's fold file: `new <fact> | <bible file> | "<quote>"` and `stale <bible line> |
+    <bible file> | <why>` lines, one fact a line."""
+    found, counts = [], {}
+    for line in text.splitlines():
+        s = line.strip()
+        if not s or s.startswith("#") or s == "none":
+            continue
+        key = s.split(" ", 1)[0]
+        if key not in FOLD_KEYS:
+            found.append(finding("warn", "fold", "unknown key: %r" % s[:60]))
+            continue
+        counts[key] = counts.get(key, 0) + 1
+        parts = [p.strip() for p in s[len(key):].split(" | ")]
+        if len(parts) != 3:
+            found.append(finding("defect", "fold", "%s line needs three parts: %r"
+                                 % (key, s[:60])))
+            continue
+        if not parts[1].startswith("bible/"):
+            found.append(finding("warn", "fold", "%s names no bible file: %r" % (key, parts[1])))
+        if key == "new" and not QUOTE.search(parts[2]):
+            found.append(finding("warn", "fold", "new fact with no quote from the chapter: %r"
+                                 % parts[0][:40]))
+    found.append(finding("note", "words", "new: %d, stale: %d"
+                         % (counts.get("new", 0), counts.get("stale", 0))))
+    return found
+
+
 def check_file(path):
     with open(path, encoding="utf-8") as fh:
         text = fh.read()
     name = os.path.basename(path)
-    if name.startswith("notes-"):
-        return check_notes(text)
-    if name.startswith("facts-"):
-        return check_facts(text)
-    return [finding("warn", "file", "%s is neither notes-rK.md nor facts-rK.md" % name)]
+    for prefix, check in (("notes-", check_notes), ("facts-", check_facts),
+                          ("continuity-", check_continuity), ("fold", check_fold)):
+        if name.startswith(prefix):
+            return check(text)
+    return [finding("warn", "file", "%s is not a notes-, facts- or continuity-rK.md, or fold.md"
+                    % name)]
 
 
 def render(found):
