@@ -112,6 +112,14 @@ hand. The *Features* table in the roadmap README is updated.
   commands; the round-6 re-ask and the round-5 mix (neither arose); the `AskUserQuestion` relay,
   which no test run uses.
 
+- **Readied for 05, after the run:**
+  - chapter 1's tools dry-run on a copy of the new novel: the first round with no shelf,
+    `accept` creating it, lint, `state_check`, `status`. All behave;
+  - every agent pinned to a full model id, now so that 05's fresh session registers them;
+    `test_models` accepts an alias or a pinned id;
+  - `/write` says what counts as debt (rows past due, not later-arc promises);
+  - 05 names the novel in every command, since `novels/` holds more than one.
+
 **Exit criteria:** init's half is met (a seed to a checked novel in one session, no file touched by
 hand). `/write` to an accepted chapter 1 moves to plan 05's first chapter. The *Features* table is
 updated. `.test-run` was removed after the write-up. `novels/varrow-bells/` is kept until 05 has

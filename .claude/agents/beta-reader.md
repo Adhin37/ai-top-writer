@@ -2,7 +2,7 @@
 name: beta-reader
 description: Reads a serial's chapters cold, from a reading folder, and reports what it understood, what confused it and whether it would keep reading. Spawned by the showrunner with a reading folder.
 tools: Read, Write, Glob, Grep
-model: sonnet
+model: claude-sonnet-5-5
 effort: high
 omitClaudeMd: true
 color: cyan

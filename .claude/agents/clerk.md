@@ -2,7 +2,7 @@
 name: clerk
 description: Writes the story's state after a chapter is accepted and polished - the continuity block, threads, timeline, scene log, the reader ledger's status and the reader's memory - and lists the chapter's new facts for the bible. Spawned by the showrunner after the line pass.
 tools: Read, Write, Edit, Grep, Glob, Bash
-model: sonnet
+model: claude-sonnet-5-5
 effort: high
 omitClaudeMd: true
 color: pink

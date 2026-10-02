@@ -70,11 +70,13 @@ class AgentWiringTest(unittest.TestCase):
                 self.assertIn("read_only", guard.ROLES[name])
 
     def test_models(self):
+        """Opus for the hard roles, Sonnet for the rest: the alias, or a full id pinned for a
+        benchmark (an alias can move under a running experiment)."""
         models = {name: fields["model"] for name, fields, _ in agents()}
         for name in ("planner", "writer", "story-editor"):
-            self.assertEqual(models[name], "opus", name)
+            self.assertRegex(models[name], r"^(opus|claude-opus-[\d-]+)$", name)
         for name in ("beta-reader", "line-editor", "continuity-editor", "clerk"):
-            self.assertEqual(models[name], "sonnet", name)
+            self.assertRegex(models[name], r"^(sonnet|claude-sonnet-[\d-]+)$", name)
         self.assertEqual(models["judge"], "claude-opus-5")
 
     def test_settings_wire_the_guard(self):
