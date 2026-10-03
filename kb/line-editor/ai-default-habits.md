@@ -26,7 +26,7 @@ plain on purpose**: something described because it is there, a line said and mea
 | **The rule of three** | "It was cold, it was quiet, and it was wrong." | two, or four; three is the default cadence |
 | **The default gestures** | nodding, shrugging, sighing, raised eyebrows, released breaths | a gesture this character would make, or none |
 | **The echoed phrase** | the same simile or image in several scenes ("soft as cloth" three times) | keep the best one |
-| **The explained subtext** | a marked thought restating what the scene just showed | cut the thought; trust the scene |
+| **The explained subtext** | a marked thought, or a line of narration, that restates or grades what the scene just showed: "She had told him nothing false. That was the cruelty of it." · "The deck called it theft, and the deck was wrong." | cut it; trust the scene |
 
 ## Stock phrases — cut on sight
 

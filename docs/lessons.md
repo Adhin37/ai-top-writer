@@ -107,4 +107,21 @@ as a rule.
     "Ness" (the examples have "Nessa"). The planner chose "Pell" (a writer example) and "Vane
     House" (the test fixture's "Nessa Vane"). Neither side copied the other: these are names a model
     reaches for. So the leak sweep (`kb_check --novel`) runs after init too, not only after a run,
-    and a hit renames the example.
+    and a hit renames the example. Run #7, a third init from a seed that named nobody, gave Pell,
+    Aurel, Vane, Wren, Bram and Orrin: every one a name from an earlier novel or fixture. The sweep
+    catches the knowledge bases' side; a name shared only with another novel is invisible to it,
+    and no reader of a single novel can see it.
+27. **Every agent sees the working tree's git status, judges included.** `omitClaudeMd` keeps out
+    `CLAUDE.md` and the memory index, not the harness's git-status block. In run #7 it showed the
+    leak sweep's two renamed `kb/writer/` docs as modified, and all three blind judges inferred "an
+    AI writing system… against craft guidance in `kb/writer/`" before reading a word. Untracked
+    files can be hidden with `.git/info/exclude`; modified tracked files cannot. Judge from a
+    committed tree.
+28. **A per-chapter window cannot see a refrain's fourth use.** The line editor reads two chapters
+    back and was right each time it kept "Old ones hold their shape" as a callback (ch 3, ch 5);
+    the judges counted four uses across five chapters and all three named it. A habit check has to
+    search every earlier chapter before it keeps a line, not only the two beside it (run #7).
+29. **The in-loop reader tracked the blind judges.** Fourteen beta-reader rounds gave click-next 4–5;
+    three blind judges gave 4.5. The showrunner's own impression, written first, guessed 3.5–4 and
+    over-weighted length, which no judge named. On a verdict, trust the cold reader over the
+    showrunner who has read every report (run #7).

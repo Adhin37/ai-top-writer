@@ -39,6 +39,16 @@ def landed(status):
     return str(status or "").strip().lower().startswith("landed")
 
 
+MOVED = re.compile(r"^moved to ch\s?(\d+)", re.I)
+
+
+def row_due(row, col):
+    """A ledger row's chapter: the one its status moved it to (`moved to ch3 — why`), else the
+    chapter its due cell names, else None."""
+    m = MOVED.match(str(row.get("status") or "").strip())
+    return int(m.group(1)) if m else due_chapter(row.get(col))
+
+
 def describe(kind, row):
     if kind == "faces":
         return row.get("who")
@@ -94,7 +104,7 @@ def debt(nov):
             if landed(status):
                 continue
             cell = r.get(DUE_COLS[kind]).strip()
-            due = due_chapter(cell)
+            due = row_due(r, DUE_COLS[kind])
             what = clip(describe(kind, r), 60)
             if due is not None and due <= last:
                 out.append("overdue  %s due ch %d, %s: %s" % (rid, due, clip(status, 40), what))
@@ -139,7 +149,7 @@ def report(nov, reading_root):
     for kind in ("facts", "faces"):
         for r in ledger[kind]:
             rid, status = r.first().strip("* "), r.get("status").strip()
-            due = due_chapter(r.get(DUE_COLS[kind]))
+            due = row_due(r, DUE_COLS[kind])
             if landed(status) or due is None:
                 continue
             if due <= last:
@@ -153,10 +163,10 @@ def report(nov, reading_root):
     out.extend(owed)
 
     promises = [r for r in ledger["promises"] if not landed(r.get("status"))]
-    overdue = [r for r in promises if (due_chapter(r.get("paid by ch")) or 10 ** 6) <= last]
+    overdue = [r for r in promises if (row_due(r, "paid by ch") or 10 ** 6) <= last]
     out.append("promises  %d open · %d past their chapter" % (len(promises), len(overdue)))
     for r in promises:
-        paid = due_chapter(r.get("paid by ch"))
+        paid = row_due(r, "paid by ch")
         flag = "  past due" if r in overdue else ""
         out.append("  %s made ch %s, paid by %s: %s%s" % (
             r.first().strip("* "), r.get("made in ch") or "?",

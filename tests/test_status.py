@@ -117,6 +117,21 @@ class DebtTest(unittest.TestCase):
             self.assertTrue(any(l.startswith('beyond   R4 due "arc 2') for l in debt), debt)
             self.assertTrue(any(l.startswith('beyond   R5 due "late in the book"') for l in debt))
 
+    def test_a_moved_row_is_due_at_its_new_chapter(self):
+        # A row the planner moved (`moved to chN`, with the reason) is due at N, not at its old
+        # chapter: /write and /plan must not send it back as overdue (run #7, F2).
+        with NovelFixture() as fx:
+            fx.write("plan/chapters.md", PLAN)
+            fx.write("plan/reader-ledger.md", "# Reader ledger\n\n## Facts\n"
+                     "| id | fact, in plain words | due by ch | how it lands | status |\n"
+                     "|---|---|---|---|---|\n"
+                     "| P3 | the guild sells the plot | 1 | the chalked gatepost | "
+                     "moved to ch2 — the sale did not register |\n")
+            fx.chapter(1)
+            fx.state()
+            self.assertTrue(status.debt(fx.novel())[0].startswith("clean"), status.debt(fx.novel()))
+            self.assertIn("0 past due and not landed · due ch 2: P3", line(lines(fx), "ledger"))
+
     def test_clean(self):
         with NovelFixture() as fx:
             fx.write("plan/chapters.md", PLAN)

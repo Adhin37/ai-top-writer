@@ -164,6 +164,8 @@ def check_notes(text):
             current = {"id": line.strip().split()[0], "fields": set()}
             notes.append(current)
             continue
+        if line.strip().lower() == "none" and not notes:
+            continue    # an ACCEPT with no notes says so
         key = line.strip().split(" ", 1)[0]
         if current is not None and key in NOTE_FIELDS:
             current["fields"].add(key)

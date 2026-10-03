@@ -6,11 +6,12 @@ roles: [line-editor]
 ---
 # Habits across chapters
 
-Read the two chapters before this one beside it. A move used once in each chapter is invisible to
-any check of one chapter, and a reader still feels it by the third: the same gesture, the same image,
-the same piece of wisdom in a new mouth, the same shape of last line. Thin it in this chapter.
-Keep it only if it is a deliberate callback, one whose second use means something the first did
-not. Report each as an `across` line.
+Read the two chapters before this one beside it, and before you keep a line as a callback, search
+every earlier chapter in `chapters/` for it: two chapters back cannot see its first use. A move used
+once in each chapter is invisible to any check of one chapter, and a reader still feels it by the
+third: the same gesture, the same image, the same piece of wisdom in a new mouth, the same shape of
+last line. Thin it in this chapter. Keep it only if it is a deliberate callback, one whose second
+use means something the first did not. Report each as an `across` line.
 
 ## Patterns
 

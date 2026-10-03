@@ -113,4 +113,48 @@ Then fix what the run found, after the run, each fix following the routing rule 
 
 ## Session log
 
-*(filled in when this plan runs)*
+**2026-10-03, session `9ae41156`.** Run log and write-up:
+[docs/experiments/2026-10-03-run-7.md](../experiments/2026-10-03-run-7.md). Protocol:
+[docs/test-run-protocol.md](../test-run-protocol.md).
+
+- **Step 1, the protocol:** written first, a slim port of skilled-writer's (~170 lines from 504),
+  keeping only what a run has cost before.
+- **Step 2, the run:**
+  - **Pre-flight:** 207 tests, `kb_check` clean, every agent on a full model id. Seven probes:
+    none carried `CLAUDE.md` or a memory index.
+  - **The probes found one contaminant (C0):** the git status named this run's log and protocol.
+    Both were hidden with `.git/info/exclude` for the run.
+  - **The seed** was grown houses that starve, chosen away from the room's earlier worlds and naming
+    nobody. The answer sheet was written first.
+  - **Init:** `/new` in 7 rounds, check clean first pass, $6.70. The leak sweep renamed two writer
+    examples (Pell, Sallow): `/new`'s own step, the only `kb/` edits during the run.
+  - **Five chapters** through `/write` and the loop, no file touched by hand: 13 rounds, 31 notes,
+    no stets, click-next 4, 4, 5, 4, 5. Chapter 1 was accepted at round 0, with the central rule
+    `stated` in the reader's retell. Every other chapter went to round 2.
+  - **`/status`** ran after each chapter and matched the files but for one line (F2). **`/plan`**
+    ran once.
+  - **Two usage limits**, both resumed warm in the same session; one `/handoff` by the user.
+- **Step 3, judging:**
+  - The showrunner's impression was written before any judge.
+  - **Three fresh blind judges gave 4.5, 4.5, 4.5.** Their retells, graded by three more, state
+    **18 of 18** premise facts.
+  - **Contaminants:** each judge, asked after its verdict, named the git status (C1). The
+    leak-sweep renames showed as modified `kb/writer/` files.
+- **Step 4, the write-up:**
+  - the feature table (every 01–04 feature ran but four paths that did not arise), the comparison
+    with run #6 and its confounds, and every finding routed;
+  - **fixed after the write-up, by the routing rule:**
+    - five knowledge-base changes: three examples (`toggle-mystery`, `stakes`, `world-clock`) and
+      two rules that replace one (`ai-default-habits`, `across-chapters`);
+    - two tools, each with a test that fails on the old code: `status.py` reads `moved to chN`;
+      `wire.py` accepts `none`;
+    - the protocol's judging step and traps; lessons 26–29;
+  - tests 207 → 209.
+
+**Exit criteria:** met.
+- The feature table is complete, and the README's *Features* table is updated from it.
+- Every finding is routed.
+- The comparison with run #6 is written, its confounds named.
+
+`.test-run` and the `.git/info/exclude` lines were removed after the write-up. `novels/grown-houses/`
+and `novels/varrow-bells/` are kept (gitignored). Nothing committed.

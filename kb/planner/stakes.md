@@ -50,6 +50,16 @@ The reader has not yet seen what Security does to anyone, so the arrest reads as
 dread. Schedule the bystander first: in chapter 3, a fitter the reader has met is taken by Security
 for less. Now chapter 4's arrest has a price.
 
+### The step she pays for
+
+> Ch 6: Ossie has kept three pressure logs for a year, sealed and dated, and shows Tovi all three:
+> the readings were faked at the main.
+
+The investigation's biggest step, handed over complete by the second person asked; the protagonist
+pays nothing and the reader is only told. Give her half: Ossie has kept one log; the other two are
+on Deck Nine, in a fitter's locker, and getting them costs Tovi a shift she cannot spare. An ally
+who helps is welcome. An ally who finishes the protagonist's work is a shortcut.
+
 ### What the chapter gives back
 
 Every row has a `keeps` beside its `cost`: something small and real the reader would not want taken,

@@ -20,8 +20,8 @@ in `docs/sessions/`, and the `handoff` skill resumes it (the same session, or a 
 | 02 | [Session 3: the full loop and serial memory](02-full-loop.md) | **done** 2026-10-02: ch 2–3 through the full loop, click-next 4 every round; state clean; memory agrees with a fresh read (one drift) | 01 (closed), 01b |
 | 03 | [Session 4: the knowledge bases](03-knowledge-bases.md) | **done** 2026-10-02: 51 docs from 44 skills; `kb_check` clean, zero leaks; ch 4 at least as good as ch 2–3 (2 rounds, click-next 4) | 02 |
 | 04 | [Session 5: novel setup and planning from scratch](04-front-end.md) | **done** 2026-10-03: template, init interview, `/new` `/write` `/plan` `/status`; init ran end to end from a seed (7 rounds, check clean first pass, $8.16); chapter 1 moved to 05 | 03 |
-| 05 | [Session 6: benchmark run #7](05-benchmark-run-7.md) | **next** | 04 |
-| 06 | [Session 7: measurement, then optimisation](06-measure-and-optimise.md) | planned | 05 |
+| 05 | [Session 6: benchmark run #7](05-benchmark-run-7.md) | **done** 2026-10-03: five chapters from a fresh seed, no file touched by hand; **4.5 / 5 from three blind judges** (run #6: 3.5); 18/18 premise facts in their retells; $70.73 ($3.18 per 1,000 words); findings routed, two tools and five docs fixed | 04 |
+| 06 | [Session 7: measurement, then optimisation](06-measure-and-optimise.md) | **next** | 05 |
 | 07 | [Session 8: retire skilled-writer](07-retire-skilled-writer.md) | planned | 05 |
 
 ## Why this order
@@ -62,17 +62,18 @@ table: it is what the user reads.
 | story editor notes and ACCEPT; warm writer revisions; one line pass | 1 | yes | yes (01) |
 | blind judge: read, compare, grade | 1 | yes | yes (01) |
 | hand-backs filed verbatim (`tools/handback.py`) | 01 | yes | yes (01) |
-| session handoff across usage limits (hooks, `checkpoint.py`, status line, `handoff` skill) | — | yes | yes (02): resumed twice, after a five-hour and a weekly limit, with the agent in flight named and continued warm |
+| session handoff across usage limits (hooks, `checkpoint.py`, status line, `handoff` skill) | — | yes | yes (02, 05): resumed four times in all, the agents in flight continued warm, nothing re-spawned; in 05 a user-asked `/handoff` note survived the rebuilds |
 | wire format: one status line per role, notes and facts files (`kb/shared/wire.md`, `tools/wire.py`) | 01b | yes | yes for writer, story editor, line editor, planner (02). Continuity editor and clerk: the file always parses; their final message needed two fixes and is confounded with a model change (02) |
 | cost and context trace (`tools/trace.py`), with the unrecorded-output flag | 01b | yes | yes (L3, 02); now warns on an unpriced model |
-| lecture fixes: writer example, briefing notes, beat-sheet `learns` carriers | 01 | yes | yes: the planner check held 11 of 11 in ch 2–3, and no editor found a briefing (02) |
+| lecture fixes: writer example, briefing notes, beat-sheet `learns` carriers | 01 | yes | yes: the planner check held 11 of 11 in ch 2–3, and no editor found a briefing (02); every `learns` item carried in 05's five beat sheets. The judges found three narrator lines that explain or argue, a habit now in the line editor's catalogue (05) |
 | ported core: `mdio`, novel paths, text stats, lint, state check | 02 | yes | yes (02): lint every round, `state_check` clean after each chapter |
 | continuity editor and clerk; planner fold mode | 02 | yes | yes (02): two real catches nobody else made; 4 clean state writes; 3 folds |
-| serial memory: one reading folder, capped notes, re-read every 10 chapters | 02 | yes | yes (02), with a warm compression step for the cap; the re-read is built, checked once by hand at ch 3, and first due at ch 10 |
-| cross-chapter lens: scene log, line editor reads the last two chapters, promises carried | 02 | yes | yes (02): 4 recurring habits thinned; the scene log steered the next chapter; no promise skipped |
+| serial memory: one reading folder, capped notes, re-read every 10 chapters | 02 | yes | yes (02, 05): the shelf held five chapters, its notes byte-identical to each accepted round's; compression worked in 02 and was not needed in 05; the every-10 re-read is still unexercised (first due at ch 10) |
+| cross-chapter lens: scene log, line editor reads the last two chapters, promises carried | 02 | yes | partly (02, 05): 33 `across` lines thinned habits in 05, but the two-chapter window kept one refrain four times and all three judges named it. Fixed after 05: it searches every earlier chapter before keeping a callback |
 | rewritten knowledge bases and `tools/kb_check.py` | 03 | yes | yes (03): ch 4 on the new bases matched ch 2–3 (2 rounds, click-next 4, notes on reader and continuity evidence); one doc caused a line-editor error, fixed in the doc |
-| novel setup: template, planner init interview, writer style samples; `/new`, `/plan`, `/write`, `/status` | 04 | yes | partly (04): `/new` took a seed to a checked novel in 7 rounds, no file touched by hand, clean on the first check; `status.py` matched the files after one fix. `/write` from a new novel, `/plan`, the re-ask and mix paths: 05 |
-| benchmark run #7 against run #6 | 05 | no | — |
+| novel setup: template, planner init interview, writer style samples; `/new`, `/plan`, `/write`, `/status` | 04 | yes | yes (04, 05): `/new` clean on the first check twice; `/write` took a new novel's chapter 1 to ACCEPT with the central rule `stated`; `/status` matched the files after every chapter but one line (fixed); `/plan` moved an overdue fact (the tool then misread it; fixed). The round-6 re-ask and the round-5 mix have not arisen |
+| benchmark run #7 against run #6 | 05 | yes | yes (05): 4.5 / 5 from three blind judges, unanimous (run #6: 3.5 from one reader); 18/18 premise facts in their retells; ch 1's central rule `stated` in the loop; $3.18 per 1,000 words (run #6: $4.76). Novel, models and pipeline all differ |
+| test-run protocol (`docs/test-run-protocol.md`) and pre-run probes | 05 | yes | yes (05): no showrunner write under `novels/`, the toolkit frozen, every role on its pinned model; two gaps found and fixed (the judges' git status, a zsh trap) |
 | per-role measurement, then cost levers | 06 | partly (trace) | — |
 | skilled-writer retired | 07 | no | — |
 

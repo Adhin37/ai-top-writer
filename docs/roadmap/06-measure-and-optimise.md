@@ -42,9 +42,15 @@ readers named the patterns.
 
 They produce findings for a critic to weigh. They do not gate.
 
+Run #7's evidence for the motif check: "Old ones hold their shape" four times and "broad as a
+barrel-head" four times across five chapters, which all three judges named. The line editor's
+two-chapter window kept the refrain as a callback each time it met it; its doc now asks it to search
+every earlier chapter first (lesson 28). A tool that lists the repeats would give it the count.
+
 ## Part B — optimisation
 
-**Keep any change only if a blind judge panel plus the user cannot tell it from the baseline.** Test
+**Keep any change only if a blind judge panel cannot tell it from the baseline.** (The user reads
+nothing during the rebuild, a standing decision.) Test
 one lever at a time, on the same beat sheets.
 
 0. **The showrunner's context.** In plan 01 the main session cost $19.96 of $38.03. $12.86 of that
@@ -56,6 +62,9 @@ one lever at a time, on the same beat sheets.
    Plan 02 again: $32.80 of $54.89, a context of mean 425k and peak 631k tokens. That session
    built the tools and ran the loop in one context, and hand-backs were only 3% of its cache
    reads, so the cost was the context's length, not the room's traffic.
+   Run #7: $27.40 of $70.73 (39%), a context of mean 328k and peak 535k over five chapters and the
+   judging; hand-backs were 11% of its cache reads. Each usage-limit pause also cost a full cache
+   rebuild of that context (~$2.8 and ~$3.7), which one chapter per context would shrink.
 1. **Warm writer across chapters.** Continue the same writer via `SendMessage` for an arc, instead of
    a fresh one per chapter. Run #6 measured this once: drafter time halved (755 s against 1,531 s).
 2. **Effort per role: the largest subagent lever.** In plan 01, thinking was 53–69% of the Opus
@@ -71,7 +80,8 @@ one lever at a time, on the same beat sheets.
    sections in wire form, with the retell untouched. Test it as its own arm, not mixed with the
    model change.
 4. **Loop pruning.** From the round statistics: if the second revision round almost never changes
-   the verdict, cap at one. If the continuity editor rarely finds anything after chapter 3, run it
+   the verdict, cap at one. Run #7: four of five chapters went to round 2, whose ACCEPT is forced;
+   their round-1 notes numbered 3, 4, 3 and 1, and the round-2 readers gave 4, 5, 4 and 5. If the continuity editor rarely finds anything after chapter 3, run it
    every other chapter.
 5. **Read-set trimming.** From the trace's opened-docs list, drop knowledge-base docs no role opens.
    Reading costs as much as writing: each Opus role's cache writes roughly equalled its output in

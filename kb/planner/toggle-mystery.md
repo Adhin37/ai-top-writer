@@ -33,6 +33,16 @@ is planned.
 Fully explained by the innocent reading (they have worked on the same deck for twenty years) and
 fully explained by the true one. The best clue is one the reader has already accepted as true.
 
+### Too many fingerprints in one scene
+
+> Ch 2: Kell stands in front of the one locked store, lends Tovi's family air on credit nobody
+> asked for, holds a promotion over a fitter, and says he is sorry about the brother before anyone
+> told him.
+
+Each is a fair clue, and four of them in one scene solve the mystery by chapter 2. Plant one sign a
+scene, and give the culprit a scene in which he is right, at a price he pays himself, so the reader
+has to weigh him rather than file him.
+
 ### A red herring that plays fair
 
 A false trail is fair only if it is genuinely suggestive, it is cleared on the page by something

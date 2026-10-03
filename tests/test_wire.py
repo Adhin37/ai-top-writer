@@ -109,6 +109,12 @@ class NotesTest(unittest.TestCase):
         text = NOTES.replace('R5 missing\n', 'R5 missing\nbeat currency stated "a mark is 20 tallies"\n')
         self.assertEqual([f for f in wire.check_notes(text) if f[0] != "note"], [])
 
+    def test_an_accept_with_none_under_notes_is_clean(self):
+        # The story editor writes `none` under `## Notes` when it accepts (run #7, F3).
+        start, end = NOTES.index("## Notes"), NOTES.index("## Keep")
+        text = (NOTES[:start] + "## Notes\nnone\n\n" + NOTES[end:]).replace("REVISE", "ACCEPT")
+        self.assertEqual([f for f in wire.check_notes(text) if f[0] != "note"], [])
+
     def test_a_note_needs_where_ev_and_eff(self):
         found = wire.check_notes(NOTES.replace("eff   the reader didn't", "the reader didn't"))
         self.assertIn(("defect", "note", "N1 has no `eff`"), found)

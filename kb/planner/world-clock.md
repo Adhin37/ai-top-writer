@@ -33,6 +33,14 @@ The night chief misread what she did. Now she must decide whether to correct the
 herself, or let Ossie pay. A world that always reads the protagonist correctly gives her nothing to
 decide.
 
+### A clock the reader can see
+
+> Ch 1: Tovi's gauge reads eleven days of air. Ch 3: eleven. Ch 5: eleven.
+
+A clock nobody looks at again is a date. Give the threat one visible step a chapter, on the page:
+the gauge at nine in chapter 3, and in chapter 5 the reading she was afraid of, in a room she did not
+think to check.
+
 ### Latency is preparation time
 
 The council's file was opened in chapter 4 and answers in chapter 15. Between them the reader
