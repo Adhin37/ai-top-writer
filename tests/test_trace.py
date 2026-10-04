@@ -176,6 +176,19 @@ class TraceTest(unittest.TestCase):
         self.assertEqual(trace.summarise(self.paths, until="2026-01-01T00:00:25")
                          ["roles"]["writer"]["compactions"], 0)
 
+    def test_reprice_a_role_token_for_token(self):
+        result = trace.summarise(self.paths, reprice={"writer": "claude-sonnet-5-5"})
+        r = result["repriced"]["writer"]
+        self.assertEqual((r["from"], r["model"]), (["claude-opus-5-5"], "claude-sonnet-5-5"))
+        self.assertAlmostEqual(r["usd"], result["roles"]["writer"]["cost"])
+        # output 1000 x $10 + 1-hour write 500 x $2 x 2, per million
+        self.assertAlmostEqual(r["as"], (1000 * 10 + 500 * 4) / 1e6)
+        self.assertNotIn("showrunner", result["repriced"])
+        self.assertIn("writer claude-opus-5-5 -> claude-sonnet-5-5", trace.render(result))
+        with contextlib.redirect_stderr(io.StringIO()):
+            self.assertEqual(trace.main(["0123", "--transcripts", self.base,
+                                         "--reprice", "writer=gpt"]), 1)
+
     def test_window_and_match(self):
         early = trace.summarise(self.paths, until="2026-01-01T00:00:15")
         self.assertEqual(early["roles"]["showrunner"]["responses"], 2)

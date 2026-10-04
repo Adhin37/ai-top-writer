@@ -50,7 +50,7 @@ git status, reminders). Sized in characters; whether each kind reaches the model
 
 Usage:
   trace.py SESSION [--transcripts DIR] [--since ISO] [--until ISO] [--match REGEX]
-                   [--agents] [--chapters] [--docs] [--json]
+                   [--agents] [--chapters] [--docs] [--reprice ROLE=MODEL] [--json]
 
 SESSION is a session id or its prefix. --match keeps only subagents whose spawn description
 matches (and leaves the showrunner out, since it cannot be split by run).
@@ -241,19 +241,21 @@ class Response(object):
             return 0.0
         return max(0.0, self.content_chars / CHARS_PER_TOKEN - self.output)
 
-    def rates(self):
-        return RATES.get(self.model, (0.0, 0.0, 0.0))
+    def rates(self, model=None):
+        return RATES.get(model or self.model, (0.0, 0.0, 0.0))
 
-    def unrecorded_cost(self):
-        return self.unrecorded * self.rates()[1] / MILLION
+    def unrecorded_cost(self, model=None):
+        return self.unrecorded * self.rates(model)[1] / MILLION
 
-    def write_cost(self):
-        return (self.write_5m * WRITE_5M + self.write_1h * WRITE_1H) * self.rates()[0] / MILLION
+    def write_cost(self, model=None):
+        return ((self.write_5m * WRITE_5M + self.write_1h * WRITE_1H) * self.rates(model)[0]
+                / MILLION)
 
-    def cost(self):
-        """(output $, cache-write $, cache-read $, input $). An unpriced model costs 0."""
-        rin, rout, rread = self.rates()
-        return (self.output * rout / MILLION, self.write_cost(), self.read * rread / MILLION,
+    def cost(self, model=None):
+        """(output $, cache-write $, cache-read $, input $), at `model`'s rates if given, else at
+        its own. An unpriced model costs 0."""
+        rin, rout, rread = self.rates(model)
+        return (self.output * rout / MILLION, self.write_cost(model), self.read * rread / MILLION,
                 self.input * rin / MILLION)
 
 
@@ -563,9 +565,10 @@ def kb_docs(root=ROOT):
 # --------------------------------------------------------------- summarise
 
 
-def summarise(paths, since=None, until=None, match=None, log=None):
+def summarise(paths, since=None, until=None, match=None, log=None, reprice=None):
     """Per-role and per-chapter totals, per-agent rows, the showrunner's context, and the
-    cross-check against Claude Code's own count, as a plain dict."""
+    cross-check against Claude Code's own count, as a plain dict. `reprice` maps a role to the
+    model to price its tokens at as well (`repriced`)."""
     pattern = re.compile(match) if match else None
     transcripts = [Transcript(p) for p in paths]
     rounds = assign_chapters(transcripts)
@@ -656,6 +659,7 @@ def summarise(paths, since=None, until=None, match=None, log=None):
                 unpriced[m] = unpriced.get(m, 0) + a["responses"]
     whole = not (since or until or match)
     main = next((t for t in transcripts if t.role == "showrunner"), None)
+    cc = crosscheck(transcripts, main.cost_state if main else None) if whole else None
     return {"roles": roles, "agents": agents, "showrunner": showrunner,
             "total": sum(r["cost"] for r in roles.values()),
             "unrecorded_usd": sum(r["unrecorded_usd"] for r in roles.values()),
@@ -667,8 +671,38 @@ def summarise(paths, since=None, until=None, match=None, log=None):
             "docs": dict((role, dict((p, len(s)) for p, s in d.items()))
                          for role, d in docs.items()),
             "docs_source": "guard log" if log is not None else "transcripts",
-            "crosscheck": crosscheck(transcripts, main.cost_state if main else None)
-            if whole else None}
+            "crosscheck": cc,
+            "repriced": repriced(transcripts, reprice or {}, since, until, match, cc)}
+
+
+def repriced(transcripts, swaps, since=None, until=None, match=None, cc=None):
+    """Each role in `swaps` priced at another model's rates, token for token: what the same work
+    would have cost had the same tokens been billed there. A change of model or effort changes the
+    token counts too; nothing here can predict that, so this is the price side alone. With the
+    cross-check, the role's allotted unrecorded output is repriced as well (by the output rates)."""
+    pattern = re.compile(match) if match else None
+    out = {}
+    for t in transcripts:
+        model = swaps.get(t.role)
+        if not model or (pattern and (t.role == "showrunner" or not pattern.search(t.description))):
+            continue
+        row = out.setdefault(t.role, {"model": model, "from": [], "usd": 0.0, "as": 0.0,
+                                      "parts": [0.0] * 4, "parts_as": [0.0] * 4})
+        for r in t.responses:
+            if not within(r.timestamp, since, until):
+                continue
+            if r.model not in row["from"]:
+                row["from"].append(r.model)
+            for i, (a, b) in enumerate(zip(r.cost(), r.cost(model))):
+                row["parts"][i] += a
+                row["parts_as"][i] += b
+    for role, row in out.items():
+        row["usd"], row["as"] = sum(row["parts"]), sum(row["parts_as"])
+        allotted = ((cc or {}).get("roles") or {}).get(role, {}).get("allotted", 0.0)
+        old = RATES.get(row["from"][0], (0, 0, 0))[1] if len(row["from"]) == 1 else 0
+        row["allotted"] = allotted
+        row["allotted_as"] = allotted * RATES[row["model"]][1] / old if old else None
+    return out
 
 
 def totals(rs):
@@ -875,6 +909,19 @@ def render(result, show_agents=False, show_chapters=False, show_docs=False):
                                                                 r["allotted"])
                                 for role, r in sorted(cc["roles"].items(),
                                                       key=lambda kv: -kv[1]["usd"])))
+    if result.get("repriced"):
+        out.append("")
+        out.append("repriced, the same tokens at another model's rates (a change of model or effort "
+                   "also changes the token counts; this cannot):")
+    for role, r in sorted((result.get("repriced") or {}).items()):
+        names = ("output", "cache write", "cache read", "input")
+        line = "  %s %s -> %s: $%.2f -> $%.2f (%s)" % (
+            role, "+".join(r["from"]) or "?", r["model"], r["usd"], r["as"], " · ".join(
+                "%s %.2f -> %.2f" % (n, a, b) for n, a, b in zip(names, r["parts"], r["parts_as"])))
+        if r["allotted"] and r["allotted_as"] is not None:
+            line += "; with the unrecorded output allotted: $%.2f -> $%.2f" % (
+                r["usd"] + r["allotted"], r["as"] + r["allotted_as"])
+        out.append(line)
     if show_chapters:
         out.append("")
         out.extend(render_chapters(result))
@@ -939,14 +986,24 @@ def main(argv=None):
     ap.add_argument("--agents", action="store_true", help="one line per agent as well")
     ap.add_argument("--chapters", action="store_true", help="the per-chapter table as well")
     ap.add_argument("--docs", action="store_true", help="the kb docs each role opened, and not")
+    ap.add_argument("--reprice", action="append", default=[], metavar="ROLE=MODEL",
+                    help="also price ROLE's tokens at MODEL's rates, token for token (repeatable)")
     ap.add_argument("--json", action="store_true")
     args = ap.parse_args(argv)
+    swaps = {}
+    for spec in args.reprice:
+        role, _, model = spec.partition("=")
+        if not role or model not in RATES:
+            sys.stderr.write("trace: --reprice wants ROLE=MODEL with MODEL one of %s, not %r\n"
+                             % (", ".join(sorted(RATES)), spec))
+            return 1
+        swaps[role] = model
     try:
         paths = transcripts_for(args.session, args.transcripts or default_transcripts())
     except (FileNotFoundError, ValueError) as exc:
         sys.stderr.write("trace: %s\n" % exc)
         return 1
-    result = summarise(paths, args.since, args.until, args.match)
+    result = summarise(paths, args.since, args.until, args.match, reprice=swaps)
     print(json.dumps(result, indent=1) if args.json
           else render(result, args.agents, args.chapters, args.docs))
     return 0

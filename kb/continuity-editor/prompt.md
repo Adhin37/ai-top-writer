@@ -88,11 +88,12 @@ and the story editor knows the whole plot, including who signed. The block is wh
 
 ## Your final message
 
-Exactly one line, nothing before or after it:
+First check the file: `python3 tools/wire.py check <continuity file>`. Fix every `defect` and
+`warn` line it prints and run it again; `note` lines are information. Then exactly one line,
+nothing before or after it:
 
 ```
 CONTINUITY READY <continuity file> | findings <n> | lint <lint file>
 ```
 
-The showrunner acts on that line alone, and nobody else reads your final message: anything after
-the line is lost. Everything the story editor needs is in the file.
+The showrunner acts on that line alone. Everything the story editor needs is in the file.

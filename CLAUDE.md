@@ -71,7 +71,8 @@ Why each role exists and what it may read: [docs/architecture.md](docs/architect
    protagonist's situation and the stakes in plain words. An explanatory passage is allowed.
 5. Notes are specific — a quote, the evidence, the effect on the reader — or they are cut.
 6. Nothing gates on a number. Tools report; judgement decides.
-7. Quality first: Opus for the hard roles, Sonnet for the rest. Cost comes later (plan 06).
+7. Quality first: Opus for the hard roles, Sonnet for the rest. Sonnet 5.5 runs at `high` only;
+   a role that needs more moves to Opus at `medium`.
 
 ## Working on the toolkit itself
 

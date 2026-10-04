@@ -54,6 +54,8 @@ credited to the level it actually ran at.
    models; every role was raised to `high`. Thinking was 71% of the continuity editor's output,
    69% of the story editor's and 59% of the line editor's. Test by agreement on frozen rounds,
    continuity editor first, then story editor and line editor. `low` only if `medium` holds.
+   **06d drops the line editor's arm (2c):** Sonnet below `high` is the cliff 2a hit, and the
+   standing rule now keeps Sonnet at `high`.
 3. **The continuity editor's read-set.** It reads ~65k tokens a spawn, and its cache writes ($2.29)
    are four times its output ($0.55). Give it the lint and `state_check` output and the bible
    entries the draft's names touch, not the whole bible. Test by findings agreement.
@@ -65,8 +67,10 @@ credited to the level it actually ran at.
      calibration (plan 01's).
    - That calibration run can also take 01b's deferred change, the report's lists in wire form,
      as its own arm.
-5. **The writer's revisions on Sonnet**, round 0 staying on Opus. Blind pairwise on each revised
-   draft. Do it only if lever 1 keeps revision rounds alive.
+5. **The writer's revisions at Opus `medium`**, round 0 staying at `high`. Blind pairwise on each
+   revised draft. Do it only if lever 1 keeps revision rounds alive. (Re-aimed by 06d from Sonnet:
+   Sonnet `high` scores under Opus `medium` on the public index and saves little on output-heavy
+   work, [2026-10-04-model-effort.md](../experiments/2026-10-04-model-effort.md).)
 6. **Planner effort `high` → `medium`** (thinking 56%, $5.69 of output). Test beat sheets through
    the story editor's reading of the resulting chapter. Last, because a beat sheet's effect shows
    only a chapter later.
@@ -109,5 +113,6 @@ money), an advisor model, and a 1-hour cache for the writer (break-even).
   - 4, clerk on Haiku: **lost.** It misdated a ledger landing, put beat-sheet-only names in `at`,
     and wrote a thin `ev`. `state_check` passed all of it.
 - Not run: 2c, the line editor at `medium` (it needed 2a to hold); 5, the writer's revisions on
-  Sonnet (live, ~$5, not approved in this wave); 6, planner effort; 7, the warm writer. The next
+  Sonnet (live, ~$5, not approved in this wave); 6, planner effort; 7, the warm writer.
+- **Re-aimed by 06d:** 2c dropped; 5 becomes the writer's revisions at Opus `medium`. The next
   full run measures the kept lever against run #7's $3.18 per 1,000 words.

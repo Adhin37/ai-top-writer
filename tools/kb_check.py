@@ -5,7 +5,11 @@ Checks (OKF, and this repo's wiring):
   * every `.md` under `kb/` except an `index.md` has frontmatter with a non-empty `type`;
   * every doc in a role's folder is linked from that role's `index.md`, and every link in an index
     resolves;
-  * every `.claude/agents/*.md` names a `kb/<role>/prompt.md` that exists;
+  * every `.claude/agents/*.md` names a `kb/<role>/prompt.md` that exists, and an agent on a
+    Sonnet model runs at effort `high` (warn: below it Sonnet 5.5 loses more than it saves, above
+    it Opus at `medium` is cheaper for the same score; docs/experiments/2026-10-04-model-effort.md);
+  * no doc carries dated text (a date, a run, plan, session or lesson number; warn): an agent
+    reading why a rule exists spends attention on the past, and the history lives in `docs/`;
   * with --novel, no doc names the novel's own proper nouns (its lexicon's Names table, and its
     capitalised terms of art): the last novel leaks into the examples written right after it.
 
@@ -33,6 +37,9 @@ NEGATION = re.compile(
     r"\b(?:not|never|no|nothing|nobody|none|nor|cannot|can't|won't|don't|doesn't|didn't|isn't|"
     r"aren't|wasn't|weren't|shouldn't|mustn't)\b", re.I)
 RESERVED = ("index.md",)
+DATED = re.compile(r"\b20\d\d-[01]\d\b|\brun #\d|\bplan 0?\d{1,2}[a-z]?\b|\bsession \d+\b|"
+                   r"\blesson \d+", re.I)
+SONNET_EFFORT = "high"
 
 
 def docs(kb):
@@ -95,6 +102,22 @@ def check_agents(agents, root, out):
         elif not os.path.isfile(os.path.join(root, m.group(0))):
             out.append(("defect", "agent", "%s names %s, which does not exist"
                         % (name, m.group(0))))
+        fm, _ = mdio.frontmatter(text)
+        model, effort = str(fm.get("model") or ""), str(fm.get("effort") or "")
+        if "sonnet" in model and effort != SONNET_EFFORT:
+            out.append(("warn", "effort", "%s runs %s at effort %s: Sonnet runs at %s; a role that "
+                        "needs more moves to Opus at medium" % (name, model, effort or "(default)",
+                                                                SONNET_EFFORT)))
+
+
+def check_dated(kb, out):
+    for path in docs(kb):
+        for i, line in enumerate(mdio.read_text(path).splitlines(), 1):
+            m = DATED.search(line)
+            if m:
+                out.append(("warn", "dated", "%s:%d: %r - history belongs in docs/, not in a "
+                            "knowledge base" % (os.path.relpath(path, os.path.dirname(kb)), i,
+                                                m.group(0))))
 
 
 def _table_nouns(text, first_headers):
@@ -171,6 +194,7 @@ def run(root=ROOT, novels=()):
     check_types(kb, out)
     check_indexes(kb, out)
     check_agents(os.path.join(root, ".claude", "agents"), root, out)
+    check_dated(kb, out)
     for novel in novels:
         check_leaks(kb, novel, out)
     return out

@@ -75,6 +75,18 @@ class KbCheckTest(unittest.TestCase):
         self.write(".claude/agents/clerk.md", "---\nname: clerk\n---\nRead `kb/clerk/prompt.md`.\n")
         self.assertIn(("defect", "agent"), self.found())
 
+    def test_a_sonnet_agent_off_high_effort(self):
+        self.write(".claude/agents/clerk.md", "---\nname: clerk\nmodel: claude-sonnet-5-5\n"
+                   "effort: medium\n---\nRead `kb/writer/prompt.md`.\n")
+        self.assertIn(("warn", "effort"), self.found())
+        self.write(".claude/agents/clerk.md", "---\nname: clerk\nmodel: claude-sonnet-5-5\n"
+                   "effort: high\n---\nRead `kb/writer/prompt.md`.\n")
+        self.assertNotIn(("warn", "effort"), self.found())
+
+    def test_dated_text(self):
+        self.write("kb/writer/a.md", DOC + "\nAs run #7 showed on 2026-10-03.\n")
+        self.assertIn(("warn", "dated"), self.found())
+
     def test_the_leak_sweep(self):
         novel = os.path.join(self.tmp, "novels", "tide")
         self.write("novels/tide/bible/lexicon.md", LEXICON)

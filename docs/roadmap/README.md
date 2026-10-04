@@ -23,7 +23,8 @@ in `docs/sessions/`, and the `handoff` skill resumes it (the same session, or a 
 | 05 | [Session 6: benchmark run #7](05-benchmark-run-7.md) | **done** 2026-10-03: five chapters from a fresh seed, no file touched by hand; **4.5 / 5 from three blind judges** (run #6: 3.5); 18/18 premise facts in their retells; $70.73 ($3.18 per 1,000 words); findings routed, two tools and five docs fixed | 04 |
 | 06 | [Session 7: measurement](06-measure-and-optimise.md) | **done** 2026-10-04: the trace per role and per chapter (time, effort, cache expiries, injected context, docs opened, a cross-check against Claude Code's own count); `tools/history.py` in the loop from ch 3. [Run #7's baseline](../experiments/2026-10-04-trace-run-7.md): the trace was 5.9% under on output (Sonnet's usage lands late); the showrunner is 41% allotted. No agent spawned | 05 |
 | 06b | [Session 7b: the showrunner's cost, and noise in agents' contexts](06b-showrunner-cost.md) | **built** 2026-10-04: markdownlint and the connector out of agents' contexts; the showrunner at `medium`; `tools/room.py` (one call per step, the dispatches printed: −42% turns predicted); auto-compaction at 250k (candidate B; A needs workflows switched on); a pause at chapter boundaries. No agent spawned: the [checklist](../experiments/2026-10-04-optimisation.md) rides on the next full run | 06 |
-| 06c | [Session 7c: the roles' levers, tested blind and cheaply](06c-role-levers.md) | **done** 2026-10-04: `tools/bench.py` (frozen rounds, arms, blind pairs, agreement); story editor at `medium` kept (−26% a spawn, agreement at the A/A level); loop cap, continuity editor at `medium` and clerk on Haiku lost; the writer's revisions on Sonnet still to test | 06, 06b |
+| 06c | [Session 7c: the roles' levers, tested blind and cheaply](06c-role-levers.md) | **done** 2026-10-04: `tools/bench.py` (frozen rounds, arms, blind pairs, agreement); story editor at `medium` kept (−26% a spawn, agreement at the A/A level); loop cap, continuity editor at `medium` and clerk on Haiku lost; the writer's revisions (re-aimed by 06d to Opus `medium`) still to test | 06, 06b |
+| 06d | [Session 7d: model and effort by role; the skill-authoring guide against `kb/`](06d-model-effort-and-kb.md) | **built** 2026-10-04: no role changes model (the Sonnet roles mostly read; on Opus +$6–10 a run); the rule *Sonnet only at `high`*, warned by `kb_check`; `trace.py --reprice`; the continuity editor checks its own file; a prompt audit (one fossil removed); `kb_check` warns on dated text; a bible read-set tool measured and dropped. No agent spawned | 06c |
 | 07 | [Session 8: retire skilled-writer](07-retire-skilled-writer.md) | **next** | 05 |
 
 ## Why this order
@@ -83,6 +84,9 @@ table: it is what the user reads.
 | context hygiene: no IDE diagnostics or connector instructions in agents' contexts (`.markdownlintignore`, `disableClaudeAiConnectors`, runs from the terminal CLI) | 06b | yes | not yet: the next run's probes |
 | showrunner levers: `medium` effort; `tools/room.py`, one call per loop step printing the next dispatches; auto-compaction at 250k with compact instructions and a pointer back after it (the chosen context lever, B); a pause at chapter boundaries past 80% of the 5-hour window, resumed by `CronCreate` | 06b | yes | not yet: the next full run measures turns, context, compactions and the showrunner's share against run #7's 36 turns, 344k and 41% |
 | role cost levers (effort, read-set, model, loop cap), blind-tested | 06c | yes | partly: story editor `medium` kept on agreement with an A/A baseline (−26% a spawn); loop cap, continuity `medium` and clerk on Haiku lost; read-set measured, not built; writer revisions on Sonnet, planner effort and the line editor untested. Savings unconfirmed until the next full run |
+| model and effort by role: *Sonnet only at `high`* (warned by `kb_check`), `trace.py --reprice` | 06d | yes | on run #7's transcripts (06d): the four Sonnet roles cost $11.90, $22.13 at Opus rates. Live: nothing changed to test |
+| continuity editor checks its own file (`wire.py check`) before its status line | 06d | yes | not yet: the next run |
+| prompt audit against Opus 5.5 / Sonnet 5.5; `kb_check` warns on dated text in `kb/` | 06d | yes | partly: one fossil removed from the continuity editor (its final message must stay one line in the next run); `kb/` has no dated text |
 | skilled-writer retired | 07 | no | — |
 
 ## Standing decisions (from the user, 2026-09-26)
@@ -92,6 +96,9 @@ table: it is what the user reads.
   situation and the stakes in plain words. An explanatory passage is allowed.
 - **Quality first.** **Opus for the hard roles** (planner, writer, story editor, judge),
   **Sonnet for the rest.** No design constraint exists for the sake of a smaller model.
+  **Sonnet 5.5 runs at `high` only** (2026-10-04, [06d](06d-model-effort-and-kb.md)): below it the
+  public index drops sharply, above it Opus at `medium` is cheaper for more. A role that needs more
+  moves to Opus at `medium`. `kb_check` warns on a Sonnet agent at another effort.
 - **Multiple agents in feedback loops**, not a single drafter plus a gate.
 - **Per-role knowledge bases in OKF format** replace the old cards, routing and search.
 - **Fewer limitations than the old repo.** Carry over a rule only when its evidence still applies.
