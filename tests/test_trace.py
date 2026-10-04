@@ -156,6 +156,26 @@ class TraceTest(unittest.TestCase):
         self.assertIn("unrecorded output", trace.render(result))
         self.assertEqual(trace.summarise(self.paths)["unrecorded_usd"], 0)
 
+    def test_compactions_are_counted_per_transcript(self):
+        boundary = {"type": "system", "subtype": "compact_boundary",
+                    "timestamp": "2026-01-01T00:00:30.000Z",
+                    "compactMetadata": {"trigger": "auto", "preTokens": 251000}}
+        with open(self.paths[0], "a", encoding="utf-8") as fh:
+            fh.write(json.dumps(boundary) + "\n")
+        sub = os.path.join(self.base, "0123abcd-0000", "subagents", "agent-a1.jsonl")
+        with open(sub, "a", encoding="utf-8") as fh:
+            fh.write(json.dumps(boundary) + "\n")
+        result = trace.summarise(self.paths)
+        self.assertEqual(result["showrunner"]["compactions"],
+                         [{"at": "2026-01-01T00:00:30.000Z", "trigger": "auto",
+                           "tokens": 251000}])
+        self.assertEqual(result["roles"]["writer"]["compactions"], 1)
+        text = trace.render(result)
+        self.assertIn("compactions: 1, at 00:00 auto 251k", text)
+        self.assertIn("compacted mid-task, a role's judgement on a summary: writer 1", text)
+        self.assertEqual(trace.summarise(self.paths, until="2026-01-01T00:00:25")
+                         ["roles"]["writer"]["compactions"], 0)
+
     def test_window_and_match(self):
         early = trace.summarise(self.paths, until="2026-01-01T00:00:15")
         self.assertEqual(early["roles"]["showrunner"]["responses"], 2)

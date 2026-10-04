@@ -7,7 +7,10 @@ so this plan spends most of its design on making them cheap.
 Evidence and sources: [2026-10-04 research](../experiments/2026-10-04-cost-levers.md).
 
 Depends on 06 (the trace's per-chapter and effort lines) and on 06b (a cheaper showrunner makes
-every test run cheaper). Baseline: [run #7 through the trace](../experiments/2026-10-04-trace-run-7.md).
+every test run cheaper). 06b was built without a run: its checklist in
+[2026-10-04-optimisation.md](../experiments/2026-10-04-optimisation.md) rides on the next full run,
+here or after. If no subagent compacts at its peak context there, lowering `autoCompactWindow` to
+150k is a free follow-up (06b, lever 4). Baseline: [run #7 through the trace](../experiments/2026-10-04-trace-run-7.md).
 
 **Measure the Sonnet roles against Claude Code's own count.** Their transcripts under-record
 output, mostly thinking: 192k of 295k missing tokens in run #7 (lesson 30). A Sonnet arm's cost

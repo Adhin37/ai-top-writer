@@ -1,4 +1,12 @@
 {
+  "effortLevel": "medium",
+  "modelSettings": {
+    "claude-opus-5-5": {
+      "effortLevel": "medium"
+    }
+  },
+  "autoCompactWindow": 250000,
+  "disableClaudeAiConnectors": true,
   "permissions": {
     "allow": [
       "Read(**)",

@@ -18,25 +18,33 @@ only to make a decision (the beat sheet, step 1), or when the line does not pars
 `python3 tools/wire.py status "<line>"`. What one role needs from another travels in files, by
 path; you do not carry it in your head.
 
-`{slug}` is the novel, `N` the chapter number, `NN` / `NNNN` its zero-padded forms, `K` the round,
-`{id}` the reader's neutral id (`python3 tools/reading.py id novels/{slug}`). The reader's shelf is
-`reading/{id}/`: the accepted chapters as `chNN.md`, and `notes.md`, its memory.
+**Every turn re-reads your whole context, so spend few.** Each step below is one call to
+`tools/room.py`: it runs the step's tools, checks the files the step needs, and prints the next
+dispatches, filled in:
 
-## 0. Before the chapter
+```
+@ spawn <agent type> as "<description>"      -> Agent, with that description
+@ continue <name>                            -> SendMessage to that agent's id
+<the text to send, unchanged>
+```
 
-- `plan/chapters.md` has a row for chapter N with an event, and `plan/reader-ledger.md` has the rows
-  due by N. If either is missing, extend the plan first ([plan.md](plan.md)).
-- `state/threads.md` exists (the planner's ledger task writes it).
+- Send each dispatch's text exactly as printed. Spawn all of one step's dispatches in one message.
+- Never open a file to check that a role wrote it: the next `room.py` call checks, and prints
+  `STOP: <why>` when something is missing. Act on the STOP.
+- `python3 tools/room.py where novels/{slug}` says which chapter and step the files are at: after a
+  compaction, a resume, or whenever you are unsure.
+
+`{slug}` is the novel, `N` the chapter number, `K` the round.
 
 ## 1. Beat sheet — planner
 
-The planner for chapter N is `planner-chNN`. From chapter 2 on it was spawned in step 6 of chapter
-N-1 for the fold, and you continue it warm (`SendMessage`); for chapter 1, spawn it. The task:
-*"Task: beats for chapter N. Reader's notes: reading/{id}/notes.md. Editor's notes for the planner:
-novels/{slug}/work/ch(N-1)/notes-rK.md"* (the previous chapter's last notes file; omit both for
-chapter 1).
+From chapter 2 on, the previous chapter's `room.py fold` printed this step: continue the planner
+warm. For chapter 1, the first chapter of a session, or when no fold ran:
+`python3 tools/room.py beats novels/{slug} N`. It stops if the chapter has no plan row or the
+ledger has rows past due ([plan.md](plan.md) first; `fold` says the same for the next chapter), and
+it prints a `PAUSE` line when the usage window is nearly spent (below).
 
-Read `work/chNNNN/beats.md`. **Approve it as written** unless:
+Read `work/chNNNN/beats.md` (`room.py` printed its path). Approve it **as written** unless:
 - it breaks the plan row's event;
 - it leaves a ledger row due this chapter unscheduled;
 - a `learns` item names no one who carries it (someone saying it, doing it, or weighing it before a
@@ -46,95 +54,72 @@ Then send it back saying which. Taste is not a reason.
 
 ## 2. Draft — writer
 
-Spawn **writer**, described `writer-chNN` so it can be continued: *"Novel: novels/{slug}. Chapter
-N. Beat sheet: novels/{slug}/work/chNNNN/beats.md. Write novels/{slug}/work/chNNNN/draft-r0.md."*
-It writes `facts-r0.md` beside the draft and ends on `DRAFT READY`.
+Send the writer dispatch `room.py beats` or `fold` printed. The writer writes `facts-r0.md` beside
+the draft and ends on `DRAFT READY`.
 
-## 3. Read and check — beta reader and continuity editor, in parallel
+## 3. Read and check — beta reader and continuity editor
 
-Build the round's reading folder, a fresh view of the shelf: the reader's notes, the last two
-accepted chapters, and the draft as `pending/chNN.md`. A round's reader never sees an earlier
-round.
-
-```
-python3 tools/reading.py round novels/{slug} N novels/{slug}/work/chNNNN/draft-rK.md K    # -> reading/{id}-chNN-rK/
-```
-
-From chapter 3 on, also count what recurs across the book, with this draft in it. The report is
-for the story editor and the line editor; you do not act on it.
-
-```
-python3 tools/history.py novels/{slug} --draft novels/{slug}/work/chNNNN/draft-rK.md --out novels/{slug}/work/chNNNN/history-rK.txt
-```
-
-Then spawn both at once:
-- a **fresh beta-reader**: *"Your reading folder is reading/{id}-chNN-rK/. Report on chapter N,
-  pending/chNN.md."* It hands its report back as text (Claude Code refuses a subagent's report
-  file), and you file it verbatim from its transcript, never retyped:
-  `python3 tools/handback.py <agent-id> reading/{id}-chNN-rK/report.md --report`. It updates
-  `notes.md` in that folder; only the accepted round's copy becomes memory (step 6).
-- a **continuity-editor**: *"Novel: novels/{slug}. Chapter N, round K. Draft:
-  novels/{slug}/work/chNNNN/draft-rK.md. Write novels/{slug}/work/chNNNN/continuity-rK.md."* It
-  runs lint into `work/chNNNN/lint-rK.txt` and ends on `CONTINUITY READY`.
+On `DRAFT READY`: `python3 tools/room.py round novels/{slug} N K`. It builds the round's reading
+folder (the reader's notes, the last two accepted chapters, the draft as `pending/chNN.md`; a
+round's reader never sees an earlier round) and, from chapter 3 on, the history report for the
+story editor and the line editor. Spawn the two dispatches it prints, a fresh **beta-reader** and a
+**continuity-editor**, in one message, and wait for both.
 
 ## 4. Judge the round — story editor
 
-Spawn **story-editor**: *"Novel: novels/{slug}. Chapter N, round K. Draft:
-novels/{slug}/work/chNNNN/draft-rK.md. Reader's report: reading/{id}-chNN-rK/report.md.
-Continuity: novels/{slug}/work/chNNNN/continuity-rK.md. Write
-novels/{slug}/work/chNNNN/notes-rK.md."* From chapter 2 on add *"Reader's memory before this
-chapter: reading/{id}/notes.md."* From chapter 3 on add *"History:
-novels/{slug}/work/chNNNN/history-rK.txt."* In rounds 1 and 2 add *"Writer's facts:
-novels/{slug}/work/chNNNN/facts-rK.md"*, so the editor sees what was done and what was stetted.
+With both back: `python3 tools/room.py judge novels/{slug} N K <beta-reader agent id>`. It files
+the reader's report verbatim from its transcript (Claude Code refuses a subagent's report file)
+and checks the continuity file. Spawn the **story-editor** it prints. On its `NOTES READY` line,
+send the branch `room.py judge` printed for that verdict:
 
-- **REVISE** and K < 2: send the notes to the writer — `SendMessage` to `writer-chNN`: *"Notes:
-  novels/{slug}/work/chNNNN/notes-rK.md. Write draft-r(K+1).md."* Then back to step 3 with K+1.
-- **ACCEPT**, or round 2 done: go on.
+- **REVISE** and K < 2: continue `writer-chNN` with the notes, then step 3 with K+1.
+- **ACCEPT**, or round 2 done: spawn the **line-editor**, step 5.
 
 ## 5. Polish — line editor
 
-Spawn **line-editor**: *"Novel: novels/{slug}. Polish novels/{slug}/work/chNNNN/draft-rK.md into
-novels/{slug}/chapters/NNNN-{title-slug}.md. Lint: novels/{slug}/work/chNNNN/lint-rK.txt.
-Continuity: novels/{slug}/work/chNNNN/continuity-rK.md."* From chapter 3 on add *"History:
-novels/{slug}/work/chNNNN/history-rK.txt."* (`{title-slug}`: the chapter title, lowercased,
-hyphenated.) It reads the two chapters before this one itself.
+The line editor reads the two chapters before this one itself, and ends on `POLISHED`.
 
 ## 6. After the chapter — clerk, then the fold
 
-**The reader's memory is capped at 800 words.** If the accepted round's `notes.md` is longer
-(`wc -w reading/{id}-chNN-rK/notes.md`), continue that round's beta reader warm first:
-*"Your notes.md measures N words by count, over the 800 your memory holds. Compress it to about
-700, in your own words: keep what you are unsure of and what you expect; drop what you no longer
-need."* Count again after; the reader cannot measure its own file, so give it the number each
-time. Its notes are its own; nobody else shortens them.
+On `POLISHED`: `python3 tools/room.py clerk novels/{slug} N K` (K, the accepted round). **The
+reader's memory is capped at 800 words**: if the accepted round's `notes.md` is over, it prints a
+continuation of that round's beta reader to compress its own notes, and you run `room.py clerk`
+again after, which counts afresh (the reader cannot measure its own file). Its notes are its own;
+nobody else shortens them. Under the cap, it prints the **clerk**. The clerk writes `state/`, the
+ledger's status, the reader's memory and `work/chNNNN/fold.md`, and ends on `CLERK DONE`.
 
-Spawn **clerk**: *"Novel: novels/{slug}. Chapter N: novels/{slug}/chapters/NNNN-{title-slug}.md.
-Notes: novels/{slug}/work/chNNNN/notes-rK.md. Facts: novels/{slug}/work/chNNNN/facts-rK.md. Beats:
-novels/{slug}/work/chNNNN/beats.md. Accepted round: reading/{id}-chNN-rK/."* (K is the accepted
-round.) It writes `state/`, the ledger's status, the reader's memory, and `work/chNNNN/fold.md`,
-and ends on `CLERK DONE`.
+On `CLERK DONE`: `python3 tools/room.py fold novels/{slug} N`. It runs the state check and counts
+the fold file. If the fold has lines for the bible it prints a **planner**, described
+`planner-ch(N+1)`, to fold them; that planner is continued warm for chapter N+1's beats, which it
+also prints. Send the fold now; the beats when chapter N+1 starts.
 
-If its `bible` count is above 0, spawn **planner**, described `planner-ch(N+1)`: *"Novel:
-novels/{slug}. Task: fold chapter N. Fold file: novels/{slug}/work/chNNNN/fold.md."* It is
-continued warm for chapter N+1's beats (step 1).
+**Every 10th chapter** `room.py fold` also builds a fresh reading folder (ch01 … chNN, no notes) and
+prints a fresh **beta-reader** for it. With its report back, `python3 tools/room.py adopt
+novels/{slug} N <agent id>` files the report, and its notes replace the running ones before the
+next chapter.
 
-**Every 10th chapter**, before the next one, a fresh reader re-reads everything, and its notes
-replace the running ones (`reading.py accept` says when it is due):
+## Pause at a chapter boundary
 
-```
-python3 tools/reading.py fresh novels/{slug} N      # -> reading/{id}-fresh-chNN/: ch01 … chNN, no notes
-```
+When `room.py` prints a `PAUSE` line, or a hook says the 5-hour window is past 80%, finish the step
+in hand and the chapter's fold, and start no new chapter. Then schedule the resume and stop:
 
-Spawn a fresh **beta-reader**: *"Your reading folder is reading/{id}-fresh-chNN/. There are no
-notes: read every chapter in order from ch01, then report on chapter N."* File its report, then
-`python3 tools/reading.py adopt novels/{slug} reading/{id}-fresh-chNN`.
+- load `CronCreate` (`ToolSearch`, `select:CronCreate`) and create a one-shot (`recurring: false`)
+  at a minute or two past the reset time printed, with the prompt *"The usage window has reset.
+  Resume the run: chapter N+1 of {slug}, then the rest of the /write count, from
+  kb/showrunner/loop.md; `python3 tools/room.py where novels/{slug}` says the step."*;
+- tell the user, in one line, when it resumes.
+
+The job lives only in this session; if the session closes, its handoff (`docs/sessions/`) resumes
+it. If the limit is hit mid-step anyway, Claude Code waits for the reset and continues.
 
 ## 7. Report to the user
 
 The chapter's path; two lines on what happens in it; how many rounds it took and what the notes
 were about; the reader's click-next and reason; anything left unresolved.
 
-In an experiment or benchmark, append every hand-back, verbatim, to the run's working log in
-`docs/experiments/` as you go — `python3 tools/handback.py <agent-id> <log> --append`, never
-retyped, and never to the scratchpad, which does not survive the session. What the run cost comes
-from `python3 tools/trace.py <session-id> --chapters`.
+In an experiment or benchmark, add `--log docs/experiments/<log>.md` to every `room.py` call, and
+`--agent <id>` for each agent that has handed back since the last call (the writer, the continuity
+editor, the story editor, the line editor, the clerk, the planner). It appends their hand-backs
+verbatim, and every dispatch sent, to the run's working log; never to the scratchpad, which does
+not survive the session. What the run cost comes from `python3 tools/trace.py <session-id>
+--chapters`.

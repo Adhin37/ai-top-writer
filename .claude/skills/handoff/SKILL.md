@@ -41,7 +41,8 @@ When a hook points you at a handoff, or the user asks you to continue after a li
      and in a test run log it as a deviation in the run's working log.
    - A hand-back that reached no file is filed from the agent's transcript with
      `tools/handback.py`, never retyped.
-3. Carry on from the note's next action, or from where the last messages leave off.
+3. Carry on from the note's next action, or from where the last messages leave off. In a writing
+   run, `python3 tools/room.py where novels/<slug>` says the chapter and step from the files.
 4. Close it: `python3 tools/checkpoint.py --close <session-id>`, so the hooks stop pointing at it.
 5. Tell the user in three lines or fewer what you resumed, what you re-spawned and what comes next.
 

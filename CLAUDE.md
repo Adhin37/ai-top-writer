@@ -17,7 +17,8 @@ The main session runs the room. It does not write the book.
 - **Relay hand-offs verbatim.** When one agent's output feeds another, pass the file path or the
   exact text — never your paraphrase.
 - **Act on status lines.** Every role ends on one line (`kb/shared/wire.md`). Open a role's file
-  only to make a decision, or when its line does not parse (`tools/wire.py`).
+  only to make a decision, or when its line does not parse (`tools/wire.py`). Every turn re-reads
+  your whole context: run each loop step as one `tools/room.py` call and send what it prints.
 - **Approve beat sheets as written** unless one breaks its event or the reader ledger. Taste is not
   a reason; say what is broken.
 - **Name the agent that is writing** at each step, so the user can tell whose edit they are seeing.
@@ -53,7 +54,7 @@ Why each role exists and what it may read: [docs/architecture.md](docs/architect
 | `.claude/commands/` | `/new`, `/write`, `/plan`, `/status`: short procedures that point at `kb/showrunner/` |
 | `.claude/skills/handoff/` | the main session's procedure for handing over across a usage-limit reset, and resuming |
 | `kb/<role>/` | each role's knowledge base (OKF): `index.md`, `prompt.md`, typed docs. `kb/shared/` for docs several roles use |
-| `tools/` | Python tools: `scaffold.py` (a new novel from `novels/_template/`, and the check that init filled it), `status.py` (where a novel stands; the ledger's debt against the plan), `export_prose.py` (prose-only exports), `reading.py` (the reader's shelf and each round's view of it), `lint.py` (per-chapter prose report), `history.py` (the book across chapters: motifs, signature phrases, two-handers, tempo runs; the editors' report from ch 3), `state_check.py` (state against chapters and plan), `kb_check.py` (the knowledge bases' shape, and a leak sweep for a novel's proper nouns), `lib/` (markdown, novel and prose readers), `guard.py` (the path hook; logs every allowed Read to `docs/sessions/<session>.reads.tsv`), `handback.py` (files a hand-back from a transcript, or appends it to a log), `wire.py` (parses status lines, notes, facts, continuity and fold files), `trace.py` (a session's cost per role and per chapter, from its transcripts: time, effort, cache expiries, injected context, docs opened, and a cross-check against Claude Code's own count), `checkpoint.py` + `session_hooks.py` + `statusline.py` (session handoffs) |
+| `tools/` | Python tools: `room.py` (the loop's deterministic steps, one call each, printing the next dispatches), `scaffold.py` (a new novel from `novels/_template/`, and the check that init filled it), `status.py` (where a novel stands; the ledger's debt against the plan), `export_prose.py` (prose-only exports), `reading.py` (the reader's shelf and each round's view of it), `lint.py` (per-chapter prose report), `history.py` (the book across chapters: motifs, signature phrases, two-handers, tempo runs; the editors' report from ch 3), `state_check.py` (state against chapters and plan), `kb_check.py` (the knowledge bases' shape, and a leak sweep for a novel's proper nouns), `lib/` (markdown, novel and prose readers), `guard.py` (the path hook; logs every allowed Read to `docs/sessions/<session>.reads.tsv`), `handback.py` (files a hand-back from a transcript, or appends it to a log), `wire.py` (parses status lines, notes, facts, continuity and fold files), `trace.py` (a session's cost per role and per chapter, from its transcripts: time, effort, cache expiries, injected context, docs opened, and a cross-check against Claude Code's own count), `checkpoint.py` + `session_hooks.py` + `statusline.py` (session handoffs) |
 | `tests/` | `python3 -m unittest discover tests` |
 | `novels/<slug>/` | a novel — format in [docs/novel-format.md](docs/novel-format.md); `novels/_template/` is the empty one `/new` copies |
 | `reading/<id>/` | the beta reader's shelf: accepted chapters, prose only, and its `notes.md`; `reading/<id>-chNN-rK/` is one round's view (gitignored) |
@@ -88,3 +89,12 @@ Why each role exists and what it may read: [docs/architecture.md](docs/architect
 - **Python:** standard library by default; a dependency is fine when it earns its place — record
   it in `requirements.txt`.
 - **Commit only when the user asks.**
+
+# Compact instructions
+
+The context is summarised at 250k tokens (`autoCompactWindow`). Keep: the user's request and every
+standing instruction they gave; the novel's slug, the chapter and step, the `/write` count left; the
+id and name of every agent in flight or to be continued warm (`writer-chNN`, `planner-chNN`); the
+working log's path and `.test-run`'s state; decisions made and not yet written down. Drop hand-back
+texts, tool output and file contents: they are on disk, and `python3 tools/room.py where
+novels/<slug>` and the session's handoff in `docs/sessions/` recover them.

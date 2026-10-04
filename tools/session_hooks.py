@@ -10,12 +10,14 @@ switched off.
       429 that stops a session at its usage limit (StopFailure).
   SessionStart (main session)
       if a session stopped at a limit, or ended with agents still running, and nobody has resumed
-      it yet: point the model at its handoff.
+      it yet: point the model at its handoff. After an auto-compaction (source "compact"): point
+      it at this session's handoff and at `tools/room.py where`, which the summary may have lost.
   UserPromptSubmit (main session)
       the same for this session's own handoff (a "continue" after the reset), and the usage check.
   PostToolUse (main session)
-      the usage check: when the 5-hour or 7-day window reaches THRESHOLD, tell the model once per
-      window to hand off. The reading comes from tools/statusline.py, which only the terminal CLI
+      the usage check: when the 5-hour window reaches PAUSE_AT, tell the model once per window to
+      start no new chapter (kb/showrunner/loop.md, "Pause at a chapter boundary"); when the 5-hour
+      or 7-day window reaches THRESHOLD, once per window, to hand off. The reading comes from tools/statusline.py, which only the terminal CLI
       runs; with no fresh reading there is no warning, and the handoff is still rebuilt every turn.
 """
 import glob
@@ -29,6 +31,7 @@ import checkpoint  # noqa: E402
 
 REBUILD = {"Stop", "SubagentStop", "StopFailure", "SessionEnd", "PreCompact"}
 THRESHOLD = 95
+PAUSE_AT = 80           # the 5-hour window: finish the step, start no new chapter
 FRESH_S = 600
 WINDOWS = {"five_hour": "5-hour", "seven_day": "7-day"}
 
@@ -112,7 +115,8 @@ def own_pointer(root, session_id):
 
 
 def usage_warning(root, now=None):
-    """Once per window: usage has reached THRESHOLD, per a fresh status-line reading."""
+    """Once per window and level: usage has reached PAUSE_AT or THRESHOLD, per a fresh
+    status-line reading."""
     now = now or time.time()
     usage = _load(os.path.join(sessions_dir(root), "usage.json"), {})
     if not isinstance(usage, dict) or now - (usage.get("updated") or 0) > FRESH_S:
@@ -121,23 +125,39 @@ def usage_warning(root, now=None):
     warned_path = os.path.join(sessions_dir(root), "warned.json")
     warned = _load(warned_path, {})
     warned = warned if isinstance(warned, dict) else {}
-    for key, label in WINDOWS.items():
+    levels = [(key, key, THRESHOLD) for key in WINDOWS] + [("five_hour:pause", "five_hour",
+                                                             PAUSE_AT)]
+    for mark, key, at in levels:
         window = limits.get(key) if isinstance(limits.get(key), dict) else {}
         pct = window.get("used_percentage")
-        if not isinstance(pct, (int, float)) or pct < THRESHOLD:
+        if not isinstance(pct, (int, float)) or pct < at:
             continue
         resets = checkpoint.when(window.get("resets_at"))
         stamp = checkpoint.iso(resets) or "unknown"
-        if warned.get(key) == stamp:
+        if warned.get(mark) == stamp:
             continue
-        warned[key] = stamp
+        warned[mark] = stamp
+        if at == THRESHOLD:
+            warned[key + ":pause"] = stamp          # past the hand-off, the pause is moot
         os.makedirs(sessions_dir(root), exist_ok=True)
         with open(warned_path, "w", encoding="utf-8") as fh:
             json.dump(warned, fh)
+        when = " (resets %s)" % checkpoint.hm(resets) if resets else ""
+        if at == PAUSE_AT:
+            return ("Usage: the 5-hour window is at %d%%%s. Finish the step in hand and start no "
+                    "new chapter: kb/showrunner/loop.md, \"Pause at a chapter boundary\"."
+                    % (pct, when))
         return ("Usage: the %s limit is at %d%%%s. Use the handoff skill now: spawn no new "
-                "agent, and write the handoff note." % (
-                    label, pct, " (resets %s)" % checkpoint.hm(resets) if resets else ""))
+                "agent, and write the handoff note." % (WINDOWS[key], pct, when))
     return None
+
+
+def after_compact(session_id):
+    """SessionStart after a compaction: where the facts the summary may have dropped are."""
+    return ("The context was just compacted. This session's handoff, rebuilt before it, is %s: "
+            "the agents in flight and their ids, your last words, the user's messages. In a "
+            "writing run, `python3 tools/room.py where novels/<slug>` says the chapter and step "
+            "from the files." % os.path.join(checkpoint.SESSIONS, session_id + ".md"))
 
 
 def rebuild(payload, root):
@@ -159,6 +179,8 @@ def handle(payload, root=checkpoint.ROOT):
     if payload.get("agent_id"):
         return None
     if event == "SessionStart":
+        if payload.get("source") == "compact" and session_id:
+            return after_compact(session_id)
         if payload.get("transcript_path"):
             refresh_stale(root, os.path.dirname(payload["transcript_path"]))
         return pointer(root, session_id)

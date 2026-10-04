@@ -267,6 +267,7 @@ class Transcript(object):
         self.dispatches = []    # the showrunner's spawns and continuations, as dicts
         self.injected = []      # (timestamp, kind, chars, attachment type)
         self.finals = []        # (timestamp, text): what SubagentHandback carried
+        self.compactions = []   # (timestamp, trigger, tokens before): the context summarised
         self.cost_state = None  # Claude Code's own count, the showrunner's last cost-state row
         self.role = "showrunner"
         self.description = ""
@@ -299,6 +300,13 @@ class Transcript(object):
             kind = row.get("type")
             if kind == "cost-state" and main:
                 self.cost_state = row
+                continue
+            if kind == "system" and row.get("subtype") == "compact_boundary":
+                meta = row.get("compactMetadata") if isinstance(row.get("compactMetadata"),
+                                                                dict) else {}
+                self.compactions.append((row.get("timestamp") or "", str(meta.get("trigger")
+                                                                         or "?"),
+                                         meta.get("preTokens") or 0))
                 continue
             message = row.get("message") if isinstance(row.get("message"), dict) else {}
             content = message.get("content")
@@ -579,6 +587,7 @@ def summarise(paths, since=None, until=None, match=None, log=None):
                                for k in sorted(set(i[1] for i in injected)))
         row["injected_n"] = dict((k, sum(1 for i in injected if i[1] == k))
                                  for k in row["injected"])
+        row["compactions"] = sum(1 for c in t.compactions if within(c[0], since, until))
         row["effort"] = {}
         for r in rs:
             row["effort"][r.effort or "?"] = row["effort"].get(r.effort or "?", 0) + 1
@@ -625,6 +634,8 @@ def summarise(paths, since=None, until=None, match=None, log=None):
                 "handback_rereads": sum(n * sum(1 for s in stamps if s > stamp)
                                         for stamp, n in hb),
                 "cache_read_tokens": row["cache_read"],
+                "compactions": [{"at": c[0], "trigger": c[1], "tokens": c[2]}
+                                for c in t.compactions if within(c[0], since, until)],
             }
         if log is None:
             for r in rs:
@@ -828,6 +839,17 @@ def render(result, show_agents=False, show_chapters=False, show_docs=False):
         out.append("hand-backs in: %d, ~%.1fk tokens, ~%.1fM re-read tokens (%.0f%% of its cache reads)"
                    % (s["handbacks"], s["handback_tokens"] / 1000,
                       s["handback_rereads"] / MILLION, share))
+        comp = s.get("compactions") or []
+        if comp:
+            out.append("compactions: %d, at %s (the summarising call is not a response in the "
+                       "transcript; the cross-check counts it)" % (len(comp), ", ".join(
+                           "%s %s %.0fk" % (c["at"][11:16], c["trigger"], c["tokens"] / 1000)
+                           for c in comp)))
+    sub = [(role, r["compactions"]) for role, r in order
+           if role != "showrunner" and r.get("compactions")]
+    if sub:
+        out.append("compacted mid-task, a role's judgement on a summary: " + " · ".join(
+            "%s %d" % kv for kv in sub))
     cc = result.get("crosscheck")
     if cc:
         out.append("")

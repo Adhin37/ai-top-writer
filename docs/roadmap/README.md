@@ -22,8 +22,8 @@ in `docs/sessions/`, and the `handoff` skill resumes it (the same session, or a 
 | 04 | [Session 5: novel setup and planning from scratch](04-front-end.md) | **done** 2026-10-03: template, init interview, `/new` `/write` `/plan` `/status`; init ran end to end from a seed (7 rounds, check clean first pass, $8.16); chapter 1 moved to 05 | 03 |
 | 05 | [Session 6: benchmark run #7](05-benchmark-run-7.md) | **done** 2026-10-03: five chapters from a fresh seed, no file touched by hand; **4.5 / 5 from three blind judges** (run #6: 3.5); 18/18 premise facts in their retells; $70.73 ($3.18 per 1,000 words); findings routed, two tools and five docs fixed | 04 |
 | 06 | [Session 7: measurement](06-measure-and-optimise.md) | **done** 2026-10-04: the trace per role and per chapter (time, effort, cache expiries, injected context, docs opened, a cross-check against Claude Code's own count); `tools/history.py` in the loop from ch 3. [Run #7's baseline](../experiments/2026-10-04-trace-run-7.md): the trace was 5.9% under on output (Sonnet's usage lands late); the showrunner is 41% allotted. No agent spawned | 05 |
-| 06b | [Session 7b: the showrunner's cost, and noise in agents' contexts](06b-showrunner-cost.md) | **next** | 06 |
-| 06c | [Session 7c: the roles' levers, tested blind and cheaply](06c-role-levers.md) | planned | 06, 06b |
+| 06b | [Session 7b: the showrunner's cost, and noise in agents' contexts](06b-showrunner-cost.md) | **built** 2026-10-04: markdownlint and the connector out of agents' contexts; the showrunner at `medium`; `tools/room.py` (one call per step, the dispatches printed: −42% turns predicted); auto-compaction at 250k (candidate B; A needs workflows switched on); a pause at chapter boundaries. No agent spawned: the [checklist](../experiments/2026-10-04-optimisation.md) rides on the next full run | 06 |
+| 06c | [Session 7c: the roles' levers, tested blind and cheaply](06c-role-levers.md) | **next** | 06, 06b |
 | 07 | [Session 8: retire skilled-writer](07-retire-skilled-writer.md) | planned | 05 |
 
 ## Why this order
@@ -80,7 +80,8 @@ table: it is what the user reads.
 | per-role and per-chapter measurement: model and tool time, effort, cache expiries, injected context, opened docs, final messages, the cross-check (`tools/trace.py`) | 06 | yes | yes, on run #7's transcripts (06): the chapter split matches the run's hand-cut windows within $0.1; the cross-check matched the input side to the token and found the output under-count (lesson 30). Live, in a new run: not yet |
 | docs-opened log from the guard (`docs/sessions/<session>.reads.tsv`) | 06 | yes | not yet: first written by the next run (06b) |
 | cross-chapter detectors: motif, signature, two-hander, tempo (`tools/history.py`), read by the story and line editors from ch 3 | 06 | yes | on run #7's chapters, offline (06): both refrains the judges named, at their counts; the two-hander warning a chapter before the reader's complaint. In the loop: not yet (06b) |
-| showrunner cost levers and context hygiene | 06b | no | — |
+| context hygiene: no IDE diagnostics or connector instructions in agents' contexts (`.markdownlintignore`, `disableClaudeAiConnectors`, runs from the terminal CLI) | 06b | yes | not yet: the next run's probes |
+| showrunner levers: `medium` effort; `tools/room.py`, one call per loop step printing the next dispatches; auto-compaction at 250k with compact instructions and a pointer back after it (the chosen context lever, B); a pause at chapter boundaries past 80% of the 5-hour window, resumed by `CronCreate` | 06b | yes | not yet: the next full run measures turns, context, compactions and the showrunner's share against run #7's 36 turns, 344k and 41% |
 | role cost levers (effort, read-set, model, loop cap), blind-tested | 06c | no | — |
 | skilled-writer retired | 07 | no | — |
 

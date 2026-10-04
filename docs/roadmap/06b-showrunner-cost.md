@@ -90,4 +90,40 @@ context, and the cost of each usage-limit pause, from the trace. Record the resu
 
 ## Session log
 
-*(filled in when this plan runs)*
+**2026-10-04 — built; no agent spawned.** Following the standing *test by parts* decision, every
+lever is built and unit-tested (251 tests pass, `kb_check` clean), and the next full run measures
+them. Predictions, the losing candidate and the checklist for that run:
+[2026-10-04-optimisation.md](../experiments/2026-10-04-optimisation.md).
+
+- **Lever 1.** `.markdownlintignore` covers `novels/`, `reading/`, `bench/` and `docs/sessions/`.
+  `disableClaudeAiConnectors: true` is in `.claude/settings.json`; it takes effect in a new
+  session, and it switches the connectors off for every session in this repository, maintenance
+  ones included. The test-run protocol now runs from the terminal CLI and checks the probe's
+  injected-context line for `mcp` and `ide_diagnostics`.
+- **Lever 2.** `effortLevel: "medium"`, and the same under `modelSettings.claude-opus-5-5`,
+  because the user's settings set a per-model level there, which outranks a top-level one.
+  **`ultrathink` was not used**: it is a keyword in a prompt the user types, and the showrunner
+  cannot raise its own effort for the approval mid-run. The approval is a three-point check
+  against files, which `medium` (Claude Code's default) can do.
+- **Lever 3.** `tools/room.py`: `beats`, `round`, `judge`, `clerk`, `fold`, `adopt`, `where`.
+  Each runs a step's tools and checks its files, and prints the next dispatches with the same
+  texts `loop.md` held before. `--log` / `--agent` replace the per-agent `handback.py --append`
+  calls, and its plan-row and ledger-debt checks replace `/write`'s `status.py` call before each
+  chapter. Predicted turns: 8 a chapter plus 5 a round, a mean of 21 on run #7's rounds against 36
+  (−42%, short of the half the plan targeted; the rest is one turn per agent sent).
+- **Lever 4: B, not A.** A needs workflows switched on in `/config` (a user action on Pro) and
+  probe spawns to answer its questions, so it was not built. B: `autoCompactWindow: 250000`,
+  `# Compact instructions` in `CLAUDE.md`, and a SessionStart hook that points a compacted
+  session at its handoff and `room.py where`. 250k, not 150k, because the docs do not say
+  whether the window reaches subagents, and run #7's planner peaked at 194k. The trace now
+  counts compactions per role, to settle it.
+- **Lever 5.** The status line's reading drives an 80% notice (`session_hooks.py`, once per
+  window) and a `PAUSE` line from `room.py beats` and `fold`. `loop.md`'s *Pause at a chapter
+  boundary* schedules the resume with a one-shot `CronCreate` at the reset. It works only where
+  the status line runs: the terminal CLI.
+- **Also in this plan's first live chapter** (above): not done, no chapter ran. It moves to the
+  next full run's checklist.
+- `docs/lessons.md` 31: the settings traps found on the way.
+
+**Exit criteria:** the first is checked by the next run's probes; the second needs a run; the
+third is met (`loop.md`, the *Features* table).

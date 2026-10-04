@@ -49,7 +49,8 @@ Two exceptions, both logged:
 - **When praising, name the technique and never quote the line back.** A quoted line is fed into the
   next chapter.
 - **Every exchange is logged verbatim**, both directions. Your own `SendMessage` text is part of the
-  measurement.
+  measurement. `tools/room.py --log` writes both: the hand-backs and the dispatches it printed.
+  A dispatch you changed before sending is logged by hand, with the reason.
 
 ## 4. Before the run
 
@@ -61,10 +62,16 @@ Two exceptions, both logged:
 - **A fresh session.** Agents register at session start, so make every toolkit change first, then
   open a new session in this repository. Nothing on disk shows which version of an agent a session
   loaded.
+- **From the terminal CLI, not the VS Code panel.** Only the CLI runs the status line, which is how
+  the session learns the 5-hour window's use and pauses at a chapter boundary (`loop.md`); and the
+  IDE's markdownlint injects its warnings into agents' contexts (run #7: ~151k characters into the
+  planner). `.markdownlintignore` keeps it off `novels/`, `reading/` and `bench/` in the IDE too.
 - **Probe the agents before chapter 1.** Spawn each loop role on a throwaway question: what its
   context holds besides the question (project instructions, a memory index, the harness's git
   status), and which model it says it runs on, without opening a file. A role holding `CLAUDE.md`
-  or a memory index is carrying the showrunner's rules; stop and find out why.
+  or a memory index is carrying the showrunner's rules; stop and find out why. Then
+  `python3 tools/trace.py <session-id>`: its *injected context* line must show no `mcp` and no
+  `ide_diagnostics` for any role (`disableClaudeAiConnectors` is set in `.claude/settings.json`).
 - **Pre-flight:**
   ```
   git rev-parse --short HEAD                  # the commit
@@ -86,8 +93,11 @@ Two exceptions, both logged:
   mid-session. A finding is one line: id · severity · claim · evidence verbatim (command and output,
   `file:line`) · what you expected · status. An unconfirmed observation is written down as
   unconfirmed. Improvement ideas count.
-- **Hand-backs go into the log by tool**, never retyped: `python3 tools/handback.py <agent-id>
-  <log> --append`.
+- **Hand-backs go into the log by tool**, never retyped: `--log <log> --agent <agent-id>` on the
+  next `tools/room.py` call (or `python3 tools/handback.py <agent-id> <log> --append` outside the
+  loop).
+- **Spend few turns.** Each `room.py` step is one call; a step's dispatches go out in one message;
+  your own notes go into the log in the turn you would have spent anyway, not a turn of their own.
 - **Verify claims against disk**, not against the agent's report.
 - **Do not steer.** If you can see a chapter heading for a defect, let it arrive and write it down.
 - **Name the agent that is writing** at each step.
@@ -150,14 +160,14 @@ The fixes come after the run is written up, never during it (§2).
 ## 10. Checklist
 
 ```
-before   [ ] fresh session; no agent file edited since it started
+before   [ ] fresh session, from the terminal CLI; no agent file edited since it started
          [ ] no rehearsal chapter; stop declared (five unless the user says otherwise)
          [ ] tests and kb_check pass; commit, session id, UTC start recorded
          [ ] full model ids in every agent's frontmatter
          [ ] configuration table written, each variable with its reason
          [ ] seed chosen and why logged; answer sheet written
          [ ] .test-run armed
-         [ ] loop roles probed for what they were handed
+         [ ] loop roles probed for what they were handed; no mcp or ide_diagnostics injected
 during   [ ] no showrunner write under novels/
          [ ] toolkit frozen (exceptions logged)
          [ ] beat sheets approved as written, or sent back naming the break

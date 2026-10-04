@@ -78,6 +78,8 @@ follows the wire format ([kb/shared/wire.md](../kb/shared/wire.md)):
 The notes file carries the story editor's lines for the planner. The writer's facts file carries
 its stets to the next story editor and its new facts to the planner's fold. The showrunner acts on
 the status lines (`tools/wire.py` parses them) and never carries content between roles.
+`tools/room.py` runs each loop step's tools and prints the next dispatches filled in, so a step
+costs the showrunner one turn, and every turn re-reads its whole context (plan 06b).
 
 Not wire: the prose, the beta reader's report and memory (the measurement), the judge's answers,
 and anything for the user. [roadmap/01b](roadmap/01b-wire-format.md) says why.

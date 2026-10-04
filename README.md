@@ -70,9 +70,9 @@ Every role ends on one status line; what one role needs from another travels in 
 .claude/agents/   thin agent definitions
 .claude/commands/ /new, /write, /plan, /status
 kb/               one knowledge base per role (OKF: index.md + typed docs)
-tools/            the loop's tools: the scaffold and its check, status, exports and the reader's
-                  shelf, lint, state check, the path guard, hand-backs, the wire-format checker,
-                  cost traces, session handoffs
+tools/            the loop's tools: one call per loop step (room.py), the scaffold and its
+                  check, status, exports and the reader's shelf, lint, state check, the path
+                  guard, hand-backs, the wire-format checker, cost traces, session handoffs
 tests/            python3 -m unittest discover tests
 docs/             roadmap, architecture, novel format, lessons, experiments
 novels/           the books (gitignored), and _template/, which /new copies

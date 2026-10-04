@@ -136,3 +136,10 @@ as a rule.
     a third short for the Sonnet roles, nearly half for the judges. The input side matched to the
     token. The session's `cost-state` row holds the true per-model count; check any per-role cost
     against it before using it to choose a lever (plan 06).
+31. **Settings have traps a cost lever falls into.** A per-model `effortLevel` in user settings
+    (`modelSettings`) outranks a top-level one in the project's, so the project sets both.
+    `ultrathink` is a keyword in a prompt the user types: the main session cannot raise its own
+    effort for one decision mid-run. Dynamic workflows are off on Pro until the user turns them on
+    in `/config`, so a session cannot build and probe one alone. The docs do not say whether
+    `autoCompactWindow` also reaches subagents, so the window stays above every role's peak context
+    (run #7: planner 194k, writer 141k) until a trace shows it does not (plan 06b).

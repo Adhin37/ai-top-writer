@@ -87,6 +87,14 @@ class PointerTest(unittest.TestCase):
         text = self.start(transcript_path=os.path.join(transcripts, "new.jsonl"))
         self.assertIn("docs/sessions/old.md", text)
 
+    def test_after_a_compaction_points_at_its_own_handoff(self):
+        handoff(self.root, "other")             # an unresumed stop elsewhere is not the point
+        text = session_hooks.handle({"hook_event_name": "SessionStart", "session_id": "s1",
+                                     "source": "compact"}, self.root)
+        self.assertIn("just compacted", text)
+        self.assertIn(os.path.join("docs", "sessions", "s1.md"), text)
+        self.assertIn("tools/room.py where", text)
+
     def test_subagents_get_nothing(self):
         handoff(self.root, "old")
         self.assertIsNone(self.start(agent_id="a1", agent_type="writer"))
@@ -123,7 +131,10 @@ class UsageTest(unittest.TestCase):
                                      "tool_name": "Agent"}, self.root)
 
     def test_warns_once_per_window_at_the_threshold(self):
+        self.reading(79)
+        self.assertIsNone(self.tool())
         self.reading(94)
+        self.assertIn("start no new chapter", self.tool())
         self.assertIsNone(self.tool())
         self.reading(95)
         text = self.tool()
@@ -133,6 +144,25 @@ class UsageTest(unittest.TestCase):
         self.assertIsNone(self.tool())
         self.reading(96, resets=FUTURE + 5 * 3600)
         self.assertIn("5-hour", self.tool())
+
+    def test_the_pause_comes_once_per_window_and_not_after_the_hand_off(self):
+        self.reading(82)
+        text = self.tool()
+        self.assertIn("5-hour window is at 82%", text)
+        self.assertIn("Pause at a chapter boundary", text)
+        self.assertNotIn("handoff skill", text)
+        self.assertIsNone(self.tool())
+        self.reading(83, resets=FUTURE + 5 * 3600)
+        self.assertIn("start no new chapter", self.tool())
+
+    def test_a_jump_past_the_threshold_skips_the_pause(self):
+        self.reading(97)
+        self.assertIn("handoff skill", self.tool())
+        self.assertIsNone(self.tool())
+
+    def test_the_weekly_window_has_no_pause(self):
+        self.reading(85, window="seven_day")
+        self.assertIsNone(self.tool())
 
     def test_the_weekly_window_too(self):
         self.reading(96, window="seven_day")
