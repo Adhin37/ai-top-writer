@@ -21,23 +21,12 @@ flowchart LR
     U(["you"]) -->|"/new · /write · /plan · /status"| S["showrunner<br/>(the main session)"]
     S -->|"one call per loop step"| T["tools/room.py<br/>and the other tools"]
     T -->|"prints the next dispatch"| S
-    S -->|spawns| R
-
-    subgraph R["the room (.claude/agents/)"]
-        direction TB
-        PL["planner · opus"]
-        WR["writer · opus"]
-        BR["beta reader · sonnet"]
-        CE["continuity editor · sonnet"]
-        SE["story editor · opus"]
-        LE["line editor · sonnet"]
-        CL["clerk · sonnet"]
-    end
-
+    S -->|"spawns, relays<br/>hand-offs verbatim"| R["the room (.claude/agents/)<br/>planner · writer · story editor (opus)<br/>beta reader · continuity editor<br/>line editor · clerk (sonnet)"]
+    KB[("kb/&lt;role&gt;/<br/>one knowledge base per role")] -.->|"each role reads its own"| R
     R <-->|"read / write"| N[("novels/&lt;slug&gt;/<br/>bible · plan · state · chapters")]
     T -->|"prose-only exports"| RD[("reading/&lt;id&gt;/<br/>the reader's shelf")]
-    BR <--> RD
-    KB[("kb/&lt;role&gt;/<br/>one knowledge base per role")] -.->|"each role reads its own"| R
+    N --> T
+    R <-->|"the beta reader<br/>sees only this"| RD
 ```
 
 A ninth role, the **judge**, is not in the loop. It reads blind copies in `bench/` for benchmarks,
@@ -121,7 +110,7 @@ sequenceDiagram
     S->>W: beat sheet path
     W-->>S: DRAFT READY work/chNNNN/draft-rK.md | facts … | new 9
     S->>Room: round novel N K
-    Room->>Room: export the draft prose-only into reading/<id>/chNN-rK/
+    Room->>Room: export the draft prose-only into reading/…/chNN-rK/
     Room-->>S: two dispatches, printed
     par in parallel
         S->>B: reading folder only
@@ -130,11 +119,16 @@ sequenceDiagram
         S->>C: draft + bible + state
         C-->>S: CONTINUITY READY … | findings 2
     end
-    S->>Room: judge novel N K
-    Room-->>S: story editor dispatch
+    S->>Room: judge novel N K reader-id
+    Room->>Room: file the reader's report, check the continuity file
+    Room-->>S: story editor dispatch, and both branches
     S->>E: retell, reports, beat sheet
     E-->>S: NOTES READY … | REVISE | notes 3
-    S->>W: continue warm: the notes path
+    alt REVISE
+        S->>W: continue warm: the notes path
+    else ACCEPT
+        S->>S: spawn the line editor, then room.py clerk
+    end
 ```
 
 ## What the reader knows is state
@@ -160,27 +154,20 @@ protagonist's situation and the stakes in plain words.
 
 A reader who knows the bible cannot notice what the page never says, and a writer who can read the
 reader's questionnaire writes for the questionnaire. `tools/guard.py`, a `PreToolUse` hook, enforces
-the walls (the source of truth is `ROLES` in that file).
+the walls (the source of truth is `ROLES` in that file). A missing arrow is a wall: the writer
+never sees the reader's reports, and no role in the loop opens `bench/`, `docs/` or the judge's
+knowledge base.
 
 ```mermaid
 flowchart LR
-    subgraph sealed["sealed roles"]
-        BR["beta reader"]
-        JD["judge"]
-    end
-    subgraph loop["working roles"]
-        PL["planner"]
-        WR["writer"]
-        ED["story · continuity ·<br/>line editors, clerk"]
-    end
-
-    BR -->|only| RD[("reading/")]
-    JD -->|only| BL[("bench/*/blind/")]
-    PL & WR & ED --> NV[("novels/")]
-    ED -->|"story editor, clerk"| RD
-    PL -->|"reader notes"| RD
-    WR -.-x|refused| RD
-    loop -.-x|refused| BENCH[("bench/ · docs/<br/>kb/judge/")]
+    BR["beta reader"]:::sealed -->|only| RD[("reading/")]
+    JD["judge"]:::sealed -->|only| BL[("bench/*/blind/")]
+    PL["planner"] --> NV[("novels/")]
+    PL -->|"the reader's notes"| RD
+    SE["story editor · clerk"] --> NV
+    SE --> RD
+    WR["writer · line editor ·<br/>continuity editor"] --> NV
+    classDef sealed fill:#fde2e4,stroke:#c0392b
 ```
 
 The beta reader and the judge have no `Bash` tool, which is their real wall; the full table is in
