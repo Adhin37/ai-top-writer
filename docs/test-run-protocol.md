@@ -116,9 +116,15 @@ check with no impression at all.)
 - **What they read:** a prose-only export (`tools/export_prose.py`), in a neutral folder
   `bench/<experiment>/blind/<four random letters>/`, with the key outside `blind/`. The guard keeps
   the judge inside `bench/*/blind/`, `kb/judge/` and `kb/shared/grading.md`.
-- **Who:** three fresh `judge` agents, `claude-opus-5` (pinned in its frontmatter), each reading
-  every chapter with the full questionnaire in `kb/judge/prompt.md` (mode 1). Their verdicts are on
-  its 0–5 scale, anchored to what the judge would do next.
+- **Who:** a panel of three fresh judges on two models: two `judge` (`claude-opus-5`) and one
+  `judge--fable` (`claude-fable-5-1`), each pinned in its frontmatter and each reading every
+  chapter with the full questionnaire in `kb/judge/prompt.md` (mode 1).
+  `python3 tools/bench.py panel bench/<experiment>/blind/<id>` prints the three dispatches. Their
+  verdicts are on its 0–5 scale, anchored to what the judge would do next.
+- **Report the spread, not only the mean:** each score next to its model, and whether the two
+  models agree. Copies of one model share one taste, so their agreement is weak evidence. Run #7's
+  unanimous 4.5 came from three copies of Opus 5. No judge runs on a loop model (Opus 5.5,
+  Sonnet 5.5): the loop must not be judged by its own critics.
 - **Grading:** each judge's answer to questions 1–2 is graded against `premise.md` by a further fresh
   judge (mode 3), in its own blind folder. Strip the read's header line first if it names its
   folder (plan 01's graders saw `…/blind/<id>/`), and log that you did.
@@ -177,7 +183,8 @@ during   [ ] no showrunner write under novels/
 after    [ ] stopped at the declared count
          [ ] own impression written before any judge runs
          [ ] nothing modified under kb/ when the judges spawn (git status)
-         [ ] three fresh blind judges; retells graded against premise.md
+         [ ] the blind panel on two models (`bench.py panel`); scores reported per model, with the
+             spread; retells graded against premise.md
          [ ] each judge asked what it was handed; contaminants recorded
          [ ] each role's model read back from the transcripts
          [ ] every finding reconciled against the page and routed: example, ledger, or replacing rule

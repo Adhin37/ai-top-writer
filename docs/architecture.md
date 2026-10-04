@@ -46,7 +46,7 @@ What carries over from skilled-writer: [lessons.md](lessons.md).
 | **line editor** | `line-editor` | sonnet | novel (not `reading/`) | `work/`, `chapters/` | one polish pass after ACCEPT: AI-default tells, tics, format, numerals, lexicon, voice cadence; from ch 3 `tools/history.py`'s motif and signature counts across the book |
 | **continuity editor** | `continuity-editor` | sonnet | novel (not `reading/`) | `work/` | every round, beside the reader: contradictions with the bible and state, time and travel, spelling and number drift, who could know what; runs `tools/lint.py` |
 | **clerk** | `clerk` | sonnet | novel, reading folder | `state/`, ledger status, the reader's shelf, `work/` | the state write after the line pass; copies the accepted round's reader notes into memory; lists new facts for the planner's fold |
-| **judge** | `judge` | opus (`claude-opus-5`, pinned) | `bench/*/blind/` only | nothing | not in the loop: the blind benchmark reader, with a different questionnaire from the beta reader's so the loop cannot tune itself to its judge |
+| **judge** | `judge`, `judge--fable` | `claude-opus-5` and `claude-fable-5-1`, pinned | `bench/*/blind/` only | nothing | not in the loop: the blind benchmark reader, with a different questionnaire from the beta reader's so the loop cannot tune itself to its judge; a panel on two models, neither a loop model, because copies of one model share one taste |
 
 ## The loop, per chapter
 

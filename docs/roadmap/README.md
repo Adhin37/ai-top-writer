@@ -87,6 +87,7 @@ table: it is what the user reads.
 | model and effort by role: *Sonnet only at `high`* (warned by `kb_check`), `trace.py --reprice` | 06d | yes | on run #7's transcripts (06d): the four Sonnet roles cost $11.90, $22.13 at Opus rates. Live: nothing changed to test |
 | continuity editor checks its own file (`wire.py check`) before its status line | 06d | yes | not yet: the next run |
 | prompt audit against Opus 5.5 / Sonnet 5.5; `kb_check` warns on dated text in `kb/` | 06d | yes | partly: one fossil removed from the continuity editor (its final message must stay one line in the next run); `kb/` has no dated text |
+| conformity guards from Anthropic's multi-agent study: a judge panel on two models (`bench.py panel`, `judge--fable`); `scaffold.py check` warns on a name another novel uses; a planner example for names the world gives | — | yes | partly: the names check found the five shared names in the two existing novels. The panel waits for the next benchmark |
 | skilled-writer retired | 07 | no | — |
 
 ## Standing decisions (from the user, 2026-09-26)

@@ -73,6 +73,10 @@ A defect from the first two goes back to `planner-init` with the check's lines, 
 *"Check: <lines>. Fix them."* Run the check again after. A warn is yours to decide: send it back or
 log why it stands.
 
+A `names` warn from `scaffold.py check` is a name word another novel beside this one already
+uses. Every planner is a fresh spawn of one model, and its first draw is the same each time. Send
+it back to `planner-init` unless the user chose the name.
+
 A `leak` from `kb_check` is a name this novel shares with a knowledge-base example, and a role can
 blend the two. Before chapter 1, rename the example: invented nouns are cheap, and a name in the
 novel may be one the user chose.

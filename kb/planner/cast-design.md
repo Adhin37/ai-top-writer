@@ -1,7 +1,7 @@
 ---
 type: howto
 title: Designing the cast
-description: How to design a protagonist and a cast that generate scenes (a want and a need, edges to their competence, a gift whose cost comes from how it works, voices that differ as minds), and how each one moves.
+description: How to design a protagonist and a cast that generate scenes (a want and a need, edges to their competence, a gift whose cost comes from how it works, voices that differ as minds, names the world gives), and how each one moves.
 roles: [planner]
 ---
 # Designing the cast
@@ -95,6 +95,23 @@ the stores clerk — Deck Four stores — ch 2
 ```
 
 Promote them to a profile on a third appearance, or when they make a decision that moves the plot.
+
+### A name the world gives
+
+**First-draw names, which would fit any book:**
+
+> Tovi's crew: Kael Thorne, Lira Ashby, Dorran Vex.
+
+**Names the Stack gives its people:**
+
+> A Stack child is named for the deck and the shift it was born on (Nine-Late, Four-Dawn) until it
+> takes a trade name at journeyman. Tovi is a Brand because she brazes. Kell's family has run the
+> processors for three generations and still carries a fitter's name, and everyone on Deck Nine
+> knows what that means.
+
+Test it: would the name fit a character in another book? If yes, draw again from the world. Ask
+who gives names here and what a name tells a neighbour. The first name that comes to mind is the
+one every other planner draws too.
 
 ### How a character moves
 

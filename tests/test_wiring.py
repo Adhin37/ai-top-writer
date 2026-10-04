@@ -54,13 +54,13 @@ class AgentWiringTest(unittest.TestCase):
                 for key in ("description", "tools", "model"):
                     self.assertTrue(fields.get(key), "%s has no %s" % (name, key))
                 self.assertEqual(fields.get("omitClaudeMd"), "true")
-                prompt = "kb/%s/prompt.md" % name
+                prompt = "kb/%s/prompt.md" % guard.role_of(name)
                 self.assertIn(prompt, body)
                 self.assertTrue(os.path.isfile(os.path.join(ROOT, prompt)), prompt)
 
     def test_every_agent_is_known_to_the_guard(self):
         for name, _, _ in agents():
-            self.assertIn(name, guard.ROLES, "%s would fail open in tools/guard.py" % name)
+            self.assertIn(guard.role_of(name), guard.ROLES, "%s would fail open in tools/guard.py" % name)
 
     def test_cold_roles_stay_cold(self):
         for name, fields, _ in agents():
@@ -78,6 +78,7 @@ class AgentWiringTest(unittest.TestCase):
         for name in ("beta-reader", "line-editor", "continuity-editor", "clerk"):
             self.assertRegex(models[name], r"^(sonnet|claude-sonnet-[\d-]+)$", name)
         self.assertEqual(models["judge"], "claude-opus-5")
+        self.assertEqual(models["judge--fable"], "claude-fable-5-1")  # the panel's second model
 
     def test_settings_wire_the_guard(self):
         settings = json.loads(read(os.path.join(ROOT, ".claude", "settings.json")))

@@ -42,7 +42,7 @@ The loop, step by step: [kb/showrunner/loop.md](kb/showrunner/loop.md). A new no
 | continuity editor | `continuity-editor` | sonnet | every round, beside the reader: the draft against the bible and state; one finding a line |
 | line editor | `line-editor` | sonnet | one polish pass after ACCEPT; reads the last two chapters for recurring habits |
 | clerk | `clerk` | sonnet | after the line pass: state, ledger status, the reader's memory; lists new facts for the fold |
-| judge | `judge` | opus | benchmark only, never in the loop; blind; a different questionnaire |
+| judge | `judge`, `judge--fable` | opus 5, fable | benchmark only, never in the loop; blind; a different questionnaire; a panel on two models (`bench.py panel`) |
 
 Why each role exists and what it may read: [docs/architecture.md](docs/architecture.md).
 

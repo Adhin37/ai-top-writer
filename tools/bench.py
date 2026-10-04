@@ -20,6 +20,11 @@
   bench.py pair EXP NAME A=FILE B=FILE     two blind folders for the judge, X and Y swapped between
                                            them; appends the key to bench/EXP/key.md (the judge
                                            cannot open it) and prints both judge dispatches
+  bench.py panel FOLDER [--agents A,B,C]   the benchmark's judge panel on one blind folder (mode 1):
+                                           one dispatch per judge, by default two of `judge` (Opus 5)
+                                           and one `judge--fable` (Fable 5.1), so the verdict is not
+                                           three copies of one model's taste. Report each score with
+                                           its model, and the spread beside the mean
   bench.py agree notes A B                 two notes files: the verdict, and notes matched by the
                                            quote on their `where` line
   bench.py agree continuity A B [--catch QUOTE]...
@@ -55,6 +60,8 @@ from lib import mdio  # noqa: E402
 
 ROOT = room.ROOT
 ROLES = ("continuity-editor", "story-editor", "line-editor", "clerk")
+ARM_ROLES = ROLES + ("judge",)
+PANEL = ("judge", "judge--fable", "judge")
 MATCH_WORDS = 5     # a run of this many words in common makes two quotes the same passage
 
 # what each role writes in round K; the copy must not hold it
@@ -328,6 +335,20 @@ def judge_dispatch(folder):
                          "then Y." % folder, "judge %s" % os.path.basename(folder))
 
 
+def panel(folder, agents=PANEL, root=ROOT):
+    """The mode-1 dispatches for a judge panel on folder; refuses an agent with no agent file."""
+    folder = folder.rstrip("/")
+    if not os.path.isdir(os.path.join(root, folder)) or "/blind/" not in "/%s/" % folder:
+        raise ValueError("%s: want a folder under bench/<experiment>/blind/" % folder)
+    for a in agents:
+        if not os.path.isfile(os.path.join(root, ".claude", "agents", a + ".md")):
+            role, _, name = a.partition("--")
+            raise ValueError("no .claude/agents/%s.md; write it with `bench.py arm %s %s --model "
+                             "MODEL` and start a new session" % (a, role, name or "?"))
+    return [room.dispatch("spawn", a, "Mode 1 — read. Your folder is %s/." % folder,
+                          "judge read %d (%s)" % (i, a)) for i, a in enumerate(agents, 1)]
+
+
 # ---------------------------------------------------------------- agree
 
 
@@ -426,7 +447,7 @@ def main(argv=None):
     p.add_argument("--role", required=True, choices=ROLES)
     p.add_argument("--agent", help="the agent type to dispatch, e.g. story-editor--medium")
     p = sub.add_parser("arm")
-    p.add_argument("role", choices=ROLES)
+    p.add_argument("role", choices=ARM_ROLES)
     p.add_argument("arm")
     p.add_argument("--effort", choices=("low", "medium", "high", "xhigh", "max"))
     p.add_argument("--model")
@@ -436,6 +457,9 @@ def main(argv=None):
     p.add_argument("name")
     p.add_argument("a")
     p.add_argument("b")
+    p = sub.add_parser("panel")
+    p.add_argument("folder")
+    p.add_argument("--agents", help="comma-separated agent types (default: %s)" % ",".join(PANEL))
     p = sub.add_parser("agree")
     p.add_argument("kind", choices=("notes", "continuity"))
     p.add_argument("a")
@@ -465,6 +489,9 @@ def main(argv=None):
             folders = pair(args.exp, args.name, sides[0], sides[1], args.root)
             print(room.render(["key      bench/%s/key.md" % args.exp],
                               [judge_dispatch(f) for f, _, _ in folders]))
+        elif args.cmd == "panel":
+            agents = tuple(a.strip() for a in args.agents.split(",")) if args.agents else PANEL
+            print(room.render([], panel(args.folder, agents, args.root)).lstrip())
         elif args.kind == "notes":
             print(agree_notes(args.a, args.b))
         else:

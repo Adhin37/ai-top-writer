@@ -153,3 +153,10 @@ as a rule.
     What decided it was the kind of finding lost: at `medium` the continuity editor did no thinking
     and dropped the "who could know it" checks, while the story editor at `medium` stayed within its
     A/A (plan 06c, lever 2).
+34. **Copies of one model agree because they are copies.** Anthropic's multi-agent study (2026-08)
+    found agents in similar contexts making the same choice: the same branch name, the same story
+    title. Here, two novels from different seeds share five name words (Pell, Aurel, Bram, Orrin,
+    Vane), because every planner is a fresh spawn of one model. Run #7's unanimous 4.5 came from
+    three copies of Opus 5. Agreement between copies is one vote. The judge panel now has two models
+    (`bench.py panel`), and `scaffold.py check` warns on a name another novel uses
+    ([experiment](experiments/2026-10-04-multiagent-paper.md)).

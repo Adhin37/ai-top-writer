@@ -22,6 +22,14 @@ should be lost by accident; anything dropped is dropped on purpose.
    `docs/lessons.md` rather than only in memory.
 6. Commit in both repos **only if the user asks**.
 
+## After the rebuild
+
+Every reader in the loop and on the bench is Claude, so they share blind spots that no panel can
+reveal (Anthropic's multi-agent study, and its research-system post: automated evals miss what
+human testers catch). When the rebuild closes and the standing decision that the user reads
+nothing lapses, the first human read is the check: one person reads chapter 1 blind and answers
+the judge's questions 1–3. It is not part of this plan.
+
 ## Exit criteria
 
 The coverage diff has no unexplained gap, and a new session in either repo is told where the live

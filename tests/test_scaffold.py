@@ -319,6 +319,21 @@ class CheckTest(unittest.TestCase):
             self.assertTrue(has(found, "warn", "round(s) 4 never asked"))
             self.assertTrue(has(found, "warn", "round-6b.md has no `## Answers`"))
 
+    def test_a_name_another_novel_uses(self):
+        with Fixture() as fx:
+            other = os.path.join(fx.tmp, "other-book")
+            os.makedirs(os.path.join(other, "bible"))
+            for rel, text in (("novel.md", "---\nslug: other-book\n---\n"),
+                              ("bible/lexicon.md", "## Names\n| canonical | who |\n|---|---|\n"
+                               "| Kell Arden | a clerk |\n| the Brand Yard | a place |\n")):
+                with open(os.path.join(other, *rel.split("/")), "w", encoding="utf-8") as fh:
+                    fh.write(text)
+            found = fx.found()
+            self.assertFalse(has(found, "warn", "Brand"))
+            self.assertFalse(has(found, "warn", "Tovi"))
+            fx.write("bible/lexicon.md", FILLED["bible/lexicon.md"] + "| Kell | the boss | |\n")
+            self.assertTrue(has(fx.found(), "warn", "Kell (Kell) is also in other-book (Kell Arden)"))
+
     def test_style_anchor_and_blurb(self):
         with Fixture() as fx:
             text = NOVEL_MD % fx.fields

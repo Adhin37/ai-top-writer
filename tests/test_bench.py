@@ -196,6 +196,22 @@ class BenchTest(unittest.TestCase):
         self.assertEqual(out.count("@ spawn judge as"), 2)
         self.assertIn("Mode 2 — compare. Your folder is %s/. Read X first, then Y." % folder, out)
 
+    # ------------------------------------------------------------ panel
+
+    def test_panel_mixes_models_and_needs_their_agent_files(self):
+        os.makedirs(self.p("bench", "vt", "blind", "abcd"))
+        code, out = self.run_bench("panel", "bench/vt/blind/abcd")
+        self.assertEqual(code, 1)
+        for name in ("judge", "judge--fable"):
+            self.fx.write("../../.claude/agents/%s.md" % name, "---\nname: %s\n---\n" % name)
+        code, out = self.run_bench("panel", "bench/vt/blind/abcd/")
+        self.assertEqual(code, 0, out)
+        self.assertEqual(out.count("@ spawn judge as"), 2)
+        self.assertEqual(out.count("@ spawn judge--fable as"), 1)
+        self.assertEqual(out.count("Mode 1 — read. Your folder is bench/vt/blind/abcd/."), 3)
+        code, _ = self.run_bench("panel", "bench/vt/abcd")
+        self.assertEqual(code, 1)
+
     # ------------------------------------------------------------ agree
 
     def test_same_passage_needs_a_run_of_words(self):

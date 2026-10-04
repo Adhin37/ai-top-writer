@@ -8,8 +8,9 @@ under `novels/`. The planner fills every file during init (`kb/planner/init.md`)
 `check` reports whether init is done: every file the template has, no `{{…}}` placeholder left,
 the config keys the roles read, a premise of three to seven sourced facts, every premise fact in
 the ledger, the antagonist's face on the page by `opening.contract_by_ch`, ten to fifteen chapter
-rows with a temperature and a hook, the protagonist's profile, and a thread board for the plan's
-ids. Findings print as `level check: detail` (`defect`, `warn`, `note`), then a count line that ends
+rows with a temperature and a hook, the protagonist's profile, a thread board for the plan's
+ids, and no name word shared with another novel beside it (cold planners draw the same names).
+Findings print as `level check: detail` (`defect`, `warn`, `note`), then a count line that ends
 in `clean` when there is no defect and no warn. It reports and never gates: the exit status is 0
 unless the novel cannot be found.
 
@@ -230,6 +231,35 @@ def check_cast(nov, out):
         out.add("warn", "lexicon", "bible/lexicon.md has no Names table with `never write as`")
 
 
+def name_words(nov):
+    """{word: full name}: the capitalised words of the lexicon's Names rows. Rows that start with
+    `the` are places and bodies (`the Middle Ward`), whose words are ordinary nouns."""
+    t = mdio.table_with(nov.text("bible", "lexicon.md"), "canonical")
+    out = {}
+    for row in t.rows if t else []:
+        name = re.sub(r"\(.*?\)", "", row.first()).strip("*` ").strip()
+        if name.lower().startswith("the ") or PLACEHOLDER.search(name):
+            continue
+        for w in re.findall(r"\b[A-Z][a-z]{2,}\b", name):
+            out.setdefault(w, name)
+    return out
+
+
+def check_shared_names(nov, out):
+    """A name word this novel shares with another novel in the same directory. Each planner is a
+    fresh spawn of the same model, so their first draws converge; two books with the same Pell
+    read as one machine's books."""
+    mine = name_words(nov)
+    parent = os.path.dirname(nov.root)
+    for other in sorted(os.listdir(parent)) if mine else []:
+        o = Novel(os.path.join(parent, other))
+        if other.startswith("_") or o.root == nov.root or not o.exists():
+            continue
+        theirs = name_words(o)
+        for w in sorted(set(mine) & set(theirs)):
+            out.add("warn", "names", "%s (%s) is also in %s (%s)" % (w, mine[w], other, theirs[w]))
+
+
 def check_interview(nov, out):
     """The rounds asked (`work/init/round-N.md`, `round-Nb.md` for a re-ask) and answered."""
     init = nov.path("work", "init")
@@ -257,6 +287,7 @@ def check(nov, template=TEMPLATE):
     check_ledger(nov, out)
     check_plan(nov, out)
     check_cast(nov, out)
+    check_shared_names(nov, out)
     check_interview(nov, out)
     return out
 
