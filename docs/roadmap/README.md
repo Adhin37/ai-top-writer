@@ -21,7 +21,9 @@ in `docs/sessions/`, and the `handoff` skill resumes it (the same session, or a 
 | 03 | [Session 4: the knowledge bases](03-knowledge-bases.md) | **done** 2026-10-02: 51 docs from 44 skills; `kb_check` clean, zero leaks; ch 4 at least as good as ch 2–3 (2 rounds, click-next 4) | 02 |
 | 04 | [Session 5: novel setup and planning from scratch](04-front-end.md) | **done** 2026-10-03: template, init interview, `/new` `/write` `/plan` `/status`; init ran end to end from a seed (7 rounds, check clean first pass, $8.16); chapter 1 moved to 05 | 03 |
 | 05 | [Session 6: benchmark run #7](05-benchmark-run-7.md) | **done** 2026-10-03: five chapters from a fresh seed, no file touched by hand; **4.5 / 5 from three blind judges** (run #6: 3.5); 18/18 premise facts in their retells; $70.73 ($3.18 per 1,000 words); findings routed, two tools and five docs fixed | 04 |
-| 06 | [Session 7: measurement, then optimisation](06-measure-and-optimise.md) | **next** | 05 |
+| 06 | [Session 7: measurement](06-measure-and-optimise.md) | **next**; split 2026-10-04 into 06 / 06b / 06c ([research](../experiments/2026-10-04-cost-levers.md)) | 05 |
+| 06b | [Session 7b: the showrunner's cost, and noise in agents' contexts](06b-showrunner-cost.md) | planned | 06 |
+| 06c | [Session 7c: the roles' levers, tested blind and cheaply](06c-role-levers.md) | planned | 06, 06b |
 | 07 | [Session 8: retire skilled-writer](07-retire-skilled-writer.md) | planned | 05 |
 
 ## Why this order
@@ -36,7 +38,7 @@ in `docs/sessions/`, and the `handoff` skill resumes it (the same session, or a 
    - It runs before 02, which adds two roles whose whole output is for other agents, so they are
      born in the wire format. It touches no channel a reader of the
    book sees, which is why the user brought it forward of "tokens later" (2026-09-27). Prose-side
-   levers (effort, model, the showrunner's context) stay in 06.
+   levers (effort, model, the showrunner's context) stay in 06b and 06c.
 3. **02 finishes the loop across chapters.** One chapter cannot test serial memory, the state write
    or continuity.
 4. **03 writes the knowledge bases** once the loop has shown what each role needs. Writing them
@@ -45,7 +47,8 @@ in `docs/sessions/`, and the `handoff` skill resumes it (the same session, or a 
    a new novel.
 6. **05 is the first comparable measurement** against run #6.
 7. **06 optimises cost only after quality is established.** The user's instruction: quality first,
-   tokens later.
+   tokens later. 06 measures and spawns nothing; 06b cuts what changes no role's judgement
+   (no judge needed); 06c tests the levers that can change the book, on frozen inputs.
 8. **07 retires the old repo** only after the new one has shipped a benchmark.
 
 ## Features
@@ -74,7 +77,9 @@ table: it is what the user reads.
 | novel setup: template, planner init interview, writer style samples; `/new`, `/plan`, `/write`, `/status` | 04 | yes | yes (04, 05): `/new` clean on the first check twice; `/write` took a new novel's chapter 1 to ACCEPT with the central rule `stated`; `/status` matched the files after every chapter but one line (fixed); `/plan` moved an overdue fact (the tool then misread it; fixed). The round-6 re-ask and the round-5 mix have not arisen |
 | benchmark run #7 against run #6 | 05 | yes | yes (05): 4.5 / 5 from three blind judges, unanimous (run #6: 3.5 from one reader); 18/18 premise facts in their retells; ch 1's central rule `stated` in the loop; $3.18 per 1,000 words (run #6: $4.76). Novel, models and pipeline all differ |
 | test-run protocol (`docs/test-run-protocol.md`) and pre-run probes | 05 | yes | yes (05): no showrunner write under `novels/`, the toolkit frozen, every role on its pinned model; two gaps found and fixed (the judges' git status, a zsh trap) |
-| per-role measurement, then cost levers | 06 | partly (trace) | — |
+| per-role measurement: cache expiries, injected context, effort, opened docs | 06 | partly (trace) | — |
+| showrunner cost levers and context hygiene | 06b | no | — |
+| role cost levers (effort, read-set, model, loop cap), blind-tested | 06c | no | — |
 | skilled-writer retired | 07 | no | — |
 
 ## Standing decisions (from the user, 2026-09-26)

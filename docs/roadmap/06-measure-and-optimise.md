@@ -1,8 +1,10 @@
-# 06 — Session 7: measurement, then optimisation
+# 06 — Session 7: measurement
 
-**Goal:** first see what the book does across chapters and what each role costs. Then, and only
-then, reduce cost without losing the quality run #7 established. The user's instruction was
-quality first and tokens later. This is later.
+**Goal:** see what the book does across chapters and what each role costs, per chapter, before
+any lever is pulled. Nothing in this plan spawns an agent: the trace reads transcripts and the
+detectors read chapters. The levers are in [06b](06b-showrunner-cost.md) and
+[06c](06c-role-levers.md). The user's instruction was quality first and tokens later. This is later,
+and on a Pro plan the usage limit is what binds.
 
 ## Part A — measurement
 
@@ -26,6 +28,20 @@ reads and writes, cost, the showrunner's context, and hand-back sizes, scoped by
   - Plan 01: at least $3.08, mostly judges.
   - The ITERATE re-run: at least $0.70.
   - The thinking behind that response cannot be recovered.
+- **Cache expiries.** Per role, the requests that follow a gap longer than the agent's cache TTL,
+  and the tokens they re-wrote. Run #7's warm writer re-wrote ~675k tokens this way (~$3.4 of
+  $13.23). The same line for the showrunner, per usage-limit pause.
+- **Injected context.** Per role, the size of what Claude Code adds to an agent's context that no
+  role asked for: `ide_diagnostics`, MCP instructions, other attachments. Run #7's planner got
+  ~151k characters of markdownlint warnings.
+- **Effort per spawn.** Read it from the agent file at spawn time, so a result is never credited to
+  the wrong level. Every role ran at `high` in run #7, the showrunner at `xhigh`.
+- **Opened docs from the guard.** `tools/guard.py` already sees every `Read` with the caller's role.
+  Have it append `role, path` to a log under `docs/sessions/`, so "which `kb/` docs were opened" is
+  exact, not parsed out of transcripts.
+- **A cross-check.** Compare one session's per-role shares with `/usage`'s plan breakdown, which
+  attributes usage to subagents. If they disagree by more than a few points, find out why before
+  trusting either.
 
 ### 2. Port the cross-chapter detectors
 
@@ -47,55 +63,23 @@ barrel-head" four times across five chapters, which all three judges named. The 
 two-chapter window kept the refrain as a callback each time it met it; its doc now asks it to search
 every earlier chapter first (lesson 28). A tool that lists the repeats would give it the count.
 
-## Part B — optimisation
+## Part B moved: 06b and 06c
 
-**Keep any change only if a blind judge panel cannot tell it from the baseline.** (The user reads
-nothing during the rebuild, a standing decision.) Test
-one lever at a time, on the same beat sheets.
+The optimisation levers are split by what it costs to check them on a Pro plan
+([research, 2026-10-04](../experiments/2026-10-04-cost-levers.md)):
 
-0. **The showrunner's context.** In plan 01 the main session cost $19.96 of $38.03. $12.86 of that
-   was cache reads: its context averaged ~315k tokens and peaked ~610k over 204 responses. Hand-backs
-   were 9.8M of those re-reads and its own file reads 11M; its own writing was most of the rest. The
-   lever: **one chapter per showrunner context**, handed over with the existing `handoff` skill,
-   plus 01b's status-line reads. The showrunner writes no prose, so the risk is to routing, not to
-   the book. Measure the showrunner's cost per chapter before and after.
-   Plan 02 again: $32.80 of $54.89, a context of mean 425k and peak 631k tokens. That session
-   built the tools and ran the loop in one context, and hand-backs were only 3% of its cache
-   reads, so the cost was the context's length, not the room's traffic.
-   Run #7: $27.40 of $70.73 (39%), a context of mean 328k and peak 535k over five chapters and the
-   judging; hand-backs were 11% of its cache reads. Each usage-limit pause also cost a full cache
-   rebuild of that context (~$2.8 and ~$3.7), which one chapter per context would shrink.
-1. **Warm writer across chapters.** Continue the same writer via `SendMessage` for an arc, instead of
-   a fresh one per chapter. Run #6 measured this once: drafter time halved (755 s against 1,531 s).
-2. **Effort per role: the largest subagent lever.** In plan 01, thinking was 53–69% of the Opus
-   roles' output tokens (writer 53%, story editor 61%, planner 69%), and 73% of the line editor's
-   on Sonnet.
-   `effort` in an agent's frontmatter is the only per-subagent control over thinking; Claude Code
-   has no thinking cap. Try `effort: medium` on the Sonnet critics first, then on the story editor.
-   The prose roles come last, if at all. Terse-thinking results such as [Chain of Draft](https://arxiv.org/abs/2502.18600)
-   come from reasoning benchmarks, not fiction.
-3. **Model per role.** Can the writer's revision rounds run on Sonnet while round 0 stays on Opus?
-   Can the beta reader drop to Haiku? Run the beta-reader calibration from plan 01 again before
-   trusting it. The same calibration run can take 01b's deferred change: the report's list
-   sections in wire form, with the retell untouched. Test it as its own arm, not mixed with the
-   model change.
-4. **Loop pruning.** From the round statistics: if the second revision round almost never changes
-   the verdict, cap at one. Run #7: four of five chapters went to round 2, whose ACCEPT is forced;
-   their round-1 notes numbered 3, 4, 3 and 1, and the round-2 readers gave 4, 5, 4 and 5. If the continuity editor rarely finds anything after chapter 3, run it
-   every other chapter.
-5. **Read-set trimming.** From the trace's opened-docs list, drop knowledge-base docs no role opens.
-   Reading costs as much as writing: each Opus role's cache writes roughly equalled its output in
-   plan 01 (writer $2.13 against $1.94).
-6. **Re-check the wire format over many chapters.** 01b tested it on one chapter. Across an arc,
-   check with the trace that hand-backs stay one line and that notes files have not grown back.
-
-Record every result in `docs/experiments/<date>-optimisation.md`, including the levers that lost.
+- [06b](06b-showrunner-cost.md): **levers that change no role's judgement**: the showrunner's
+  context and turns, its effort, and noise injected into agents' contexts. Checked by the trace
+  and by routing, with no judge.
+- [06c](06c-role-levers.md): **levers that can change the book**: effort, model and read-set per
+  role, loop pruning. Each needs a blind comparison, run on frozen inputs to keep it cheap.
 
 ## Exit criteria
 
-- Cost and time per role are known, per chapter.
+- Cost and time per role are known, per chapter, with cache expiries, injected context and effort
+  on their own lines.
 - The cross-chapter detectors run in the loop.
-- Every kept optimisation has a blind comparison behind it.
+- The trace report on run #7 is in `docs/experiments/`, as 06b's and 06c's baseline.
 
 ## Session log
 
