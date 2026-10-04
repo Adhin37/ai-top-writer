@@ -28,7 +28,9 @@ path to write your file to. Then:
    fiction, what canon does next), which the draft must not get ahead of or contradict.
 4. **Read the bible where the draft touches it.** `bible/lexicon.md` always. For the rest, search
    (Grep) `bible/` for each name, place, figure and rule the draft uses, and read the lines you
-   find: a person's cast file, a distance in `world.md`, a price or a law in `society.md`.
+   find: a person's cast file, a distance in `world.md`, a price or a law in `society.md`. In fan
+   fiction, `bible/canon.md` too: a canon character's age, status, powers and spelling at the
+   story's start, held against its cast row, and a `bible` finding when the page differs.
 
 ## What to check
 

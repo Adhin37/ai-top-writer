@@ -1,31 +1,43 @@
 ---
 type: howto
 title: A story in someone else's world
-description: How to plan fan fiction (canon facts and characterisation recorded in your own words, one divergence point, a budget for characters acting out of their canon selves) as an original story.
+description: How to plan fan fiction (from the researched canon dossier, with lookups for what it lacks; one divergence point; a budget for characters acting out of their canon selves) as an original story.
 roles: [planner]
 toggle: genre (fanfic)
 ---
 # A story in someone else's world
 
 Fan fiction readers know the source better than you do: they forgive an invented city, never a
-character who would not say that. Record canon as **facts and characterisation in your own words**
-in `bible/canon.md`, never as quotation. No text from the source work, anywhere. Set the canon's
-scope once (which works, which adaptations) and do not widen it. Plan one divergence point, where
-your story leaves canon, and let everything after it follow from that one change.
+character who would not say that, or who is two years too old. Canon comes to you researched: the
+canon researcher's `bible/canon.md` ([its format](../canon-researcher/canon-format.md)) holds the
+scope, the cast with their ages and status at the story's start, the timeline, the terms and what
+fans expect, each fact sourced. Design from it, not from memory. A canon fact you need that it
+lacks is a lookup: end your message with `gap canon <the question>`, and the showrunner sends it
+to the researcher. Never state a canon fact the dossier does not hold, and never quote the source
+work. Plan one divergence point, where your story leaves canon, write it on the dossier's
+`divergence` line, and let everything after it follow from that one change.
 
 ## Examples
 
-### Canon in your own words
+### A canon fact the dossier lacks
 
-**A quotation store (never):**
+**From memory (never):**
 
-> The deck chief's famous line from the third season: "…"
+```
+beats  sc 2: the deck chief's daughter, nine, runs the message to Deck Six
+```
 
-**A record of what is true:**
+Nothing in `bible/canon.md` says he has a daughter, or how old she is. A fan who knows she is
+twelve, or that she does not exist, stops trusting every page after.
 
-> Deck chief (canon, seasons 1–3): runs Deck Four by rota and favour; protects his own crew to a
-> fault; has never lied to a superior and has lied to every inspector. Speaks in short orders and
-> never thanks anyone aloud.
+**As a lookup:**
+
+```
+PLANNER DONE beats | work/ch0006/beats.md | gaps 1 | changed 0
+gap canon does the deck chief have children before season 1; names and ages at the story's start
+```
+
+The beat waits for the answer, or the scene uses someone the dossier holds.
 
 ### One divergence
 
@@ -64,9 +76,9 @@ budget: a few such changes an arc, each with its cause in a scene.
 
 ### The world track as canon
 
-What canon says happens next goes in `plan/timeline.md` as your own one-line summaries. It is the
-clock the protagonist's changes interrupt; the continuity editor checks a chapter against it as
-against the bible.
+What canon says happens next goes in `plan/timeline.md`, from the dossier's `## Timeline`, as your
+own one-line summaries. It is the clock the protagonist's changes interrupt; the continuity editor
+checks a chapter against it as against the bible.
 
 A canon event is a stage: plan the protagonist's own errand to move inside it, so the beat pays
 twice.

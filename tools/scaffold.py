@@ -9,7 +9,8 @@ under `novels/`. The planner fills every file during init (`kb/planner/init.md`)
 the config keys the roles read, a premise of three to seven sourced facts, every premise fact in
 the ledger, the antagonist's face on the page by `opening.contract_by_ch`, ten to fifteen chapter
 rows with a temperature and a hook, the protagonist's profile, a thread board for the plan's
-ids, and no name word shared with another novel beside it (cold planners draw the same names).
+ids, no name word shared with another novel beside it (cold planners draw the same names), and in
+fan fiction a sourced canon dossier (`bible/canon.md`, the canon researcher's).
 Findings print as `level check: detail` (`defect`, `warn`, `note`), then a count line that ends
 in `clean` when there is no defect and no warn. It reports and never gates: the exit status is 0
 unless the novel cannot be found.
@@ -262,6 +263,57 @@ def check_shared_names(nov, out):
             out.add("warn", "names", "%s (%s) is also in %s (%s)" % (w, mine[w], other, theirs[w]))
 
 
+def is_fanfic(nov):
+    return bool(re.search(r"fan[\s-]?fic", str(nov.get("genre") or ""), re.I))
+
+
+def check_canon(nov, out):
+    """Fan fiction: a dossier with a scope, and every canon character, event and term sourced
+    (kb/canon-researcher/canon-format.md)."""
+    if not is_fanfic(nov):
+        return
+    if not str(nov.get("canon.source") or "").strip():
+        out.add("defect", "canon", "novel.md has no `canon.source`: round 1 names the source work")
+    if not os.path.isfile(nov.path("bible", "canon.md")):
+        out.add("defect", "canon", "bible/canon.md is missing: the canon researcher writes it after "
+                "round 1 (kb/showrunner/init.md)")
+        return
+    text = nov.text("bible", "canon.md")
+    scope = mdio.section(text, "scope", level=2)
+    if len(scope.split("\n")) < 2 or not "\n".join(scope.split("\n")[1:]).strip():
+        out.add("defect", "canon", "bible/canon.md has no `## Scope`")
+    sources = mdio.table_with(text, "id", "where")
+    known = {r.first() for r in sources.rows} if sources else set()
+    if not known:
+        out.add("defect", "canon", "bible/canon.md has no `## Sources` table (id, where)")
+    cast = mdio.table_with(text, "name", "source")
+    if cast is None or not cast.rows:
+        out.add("defect", "canon", "bible/canon.md has no `## Cast` table with a source column")
+    names = set()
+    for table, what in ((cast, "cast"), (mdio.table_with(text, "when", "event", "source"),
+                                         "timeline"),
+                        (mdio.table_with(text, "canonical", "source"), "terms")):
+        for row in table.rows if table else []:
+            ids = re.findall(r"\bS\d+\b", row.get("source"))
+            if what == "cast":
+                names.add(row.first().strip("*` ").lower())
+            if not ids:
+                out.add("defect", "canon", "bible/canon.md:%d %s row `%s` cites no source"
+                        % (row.line_no, what, row.first()[:40]))
+            for sid in ids:
+                if known and sid not in known:
+                    out.add("warn", "canon", "bible/canon.md:%d cites %s, not in `## Sources`"
+                            % (row.line_no, sid))
+    for who in nov.get("canon.must_appear") or []:
+        if str(who).strip() and str(who).strip().lower() not in names:
+            out.add("warn", "canon", "`%s` must appear (novel.md) but has no row in the dossier's "
+                    "cast" % who)
+    unsure = [l for l in mdio.section(text, "unsure", level=2).split("\n")[1:]
+              if l.strip().startswith("-")]
+    if unsure:
+        out.add("note", "canon", "%d fact(s) under `## Unsure`: each goes to the user as a question" % len(unsure))
+
+
 def check_interview(nov, out):
     """The rounds asked (`work/init/round-N.md`, `round-Nb.md` for a re-ask) and answered."""
     init = nov.path("work", "init")
@@ -290,6 +342,7 @@ def check(nov, template=TEMPLATE):
     check_plan(nov, out)
     check_cast(nov, out)
     check_shared_names(nov, out)
+    check_canon(nov, out)
     check_interview(nov, out)
     return out
 

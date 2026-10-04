@@ -5,7 +5,7 @@ What can be checked:
 
   * a **status line**, the one line a role's final message is: `VERB <head> | key value | ...`;
   * a **hand-back**, a whole final message: the status line must come first, and only the lines
-    its role may add (`gap`, `changed`, `left`, `across`) may follow it;
+    its role may add (`gap`, `changed`, `left`, `across`, `unsure`, `blocked`) may follow it;
   * a **notes file** (`notes-rK.md`, the story editor's);
   * a **facts file** (`facts-rK.md`, the writer's);
   * a **continuity file** (`continuity-rK.md`, the continuity editor's);
@@ -36,6 +36,7 @@ VERBS = {
     "POLISHED": ("output path", ("changes", "left"), ("left", "across")),
     "CONTINUITY READY": ("continuity file", ("findings", "lint"), ()),
     "CLERK DONE": ("chapter", ("fold", "bible", "ledger", "check"), ()),
+    "CANON DONE": ("dossier", ("facts", "sources", "unsure", "blocked"), ("unsure", "blocked")),
 }
 STATUS = re.compile(r"^(%s)\s+(.*)$" % "|".join(re.escape(v) for v in VERBS))
 VERDICTS = ("ACCEPT", "REVISE")
@@ -89,6 +90,12 @@ def parse_status(line):
             found.append(finding("warn", "status", "owed should read <stated>/<due>, got %r"
                                  % fields["owed"]))
     return verb, head, fields, found
+
+
+def canon_gaps(text):
+    """The planner's `gap canon <question>` lines in a hand-back, verbatim, in order."""
+    return [l.strip() for l in (text or "").splitlines()
+            if re.match(r"^gap\s+canon\b", l.strip())]
 
 
 def check_handback(text):

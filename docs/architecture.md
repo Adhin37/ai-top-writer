@@ -46,6 +46,7 @@ What carries over from skilled-writer: [lessons.md](lessons.md).
 | **line editor** | `line-editor` | sonnet, high | novel (not `reading/`) | `work/`, `chapters/` | one polish pass after ACCEPT: AI-default tells, tics, format, numerals, lexicon, voice cadence; from ch 3 `tools/history.py`'s motif and signature counts across the book |
 | **continuity editor** | `continuity-editor` | sonnet, high | novel (not `reading/`) | `work/` | every round, beside the reader: contradictions with the bible and state, time and travel, spelling and number drift, who could know what; runs `tools/lint.py` |
 | **clerk** | `clerk` | sonnet, high | novel, reading folder | `state/`, ledger status, the reader's shelf, `work/` | the state write after the line pass; copies the accepted round's reader notes into memory; lists new facts for the planner's fold |
+| **canon researcher** | `canon-researcher` | sonnet, high | novel (not `reading/`), the web: fan wikis through their API (`tools/canon_fetch.py`), other pages with WebFetch | `bible/canon.md`, `work/canon/` | fan fiction only: after init's round 1, the sourced canon dossier (scope, cast with ages and status at the story's start, timeline, world, terms, conflicts, what fans expect, what it could not source); later, the planner's `gap canon` lookups. Records what the source says; designs nothing. A site that refuses it is reported `blocked`, never worked around |
 | **judge** | `judge`, `judge--fable` | `claude-opus-5` and `claude-fable-5-1`, pinned; high | `bench/*/blind/` only | nothing | not in the loop: the blind benchmark reader, with a different questionnaire from the beta reader's so the loop cannot tune itself to its judge; a panel on two models, neither a loop model, because copies of one model share one taste |
 
 ## The loop, per chapter
@@ -172,6 +173,7 @@ in `tools/guard.py`.
 | story editor | everything except `bench/`, `docs/`, `kb/judge/` | `novels/*/work/**` |
 | continuity editor | everything except `reading/`, `bench/`, `docs/`, `kb/beta-reader/`, `kb/judge/` | `novels/*/work/**` |
 | clerk | everything except `bench/`, `docs/`, `kb/judge/` | `novels/*/{state,plan,work}/**`, `reading/**` |
+| canon researcher | everything except `reading/`, `bench/`, `docs/`, the critics' and judge's `kb/` folders | `novels/*/bible/canon.md`, `novels/*/work/canon/**`; its shell runs `tools/canon_fetch.py` only |
 | main session | everything | everything — except `novels/**` while a `.test-run` file exists |
 | any other agent | not judged (fails open) | not judged |
 
@@ -188,7 +190,8 @@ instrument instead of the craft.
 **Bash.** The beta reader and the judge are given no `Bash` tool, which is the real wall for
 them. The continuity editor and the clerk have `Bash` to run the tools (`lint.py`,
 `state_check.py`, `reading.py`, `wire.py`), and the guard lets them run nothing else:
-`python3 tools/<name>.py …`, optionally piped into `head` or `tail`. `cat reading/…` or
+`python3 tools/<name>.py …`, optionally piped into `head` or `tail`. The canon researcher's shell
+runs `tools/canon_fetch.py` and nothing else. `cat reading/…` or
 `python3 -c` would walk around every rule above. A tool's own reads are not routed; the tools are
 the repository's, and none prints a rubric.
 

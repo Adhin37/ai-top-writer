@@ -326,6 +326,27 @@ class RoomTest(unittest.TestCase):
 
     # ------------------------------------------------------------ usage
 
+    def test_canon_sends_the_planners_gaps_verbatim_then_continues_it(self):
+        self.agent("p1", "PLANNER DONE beats | w/beats.md | gaps 2 | changed 0\n"
+                   "gap canon is the harbourmaster's son alive at the start; his age\n"
+                   "gap the bible gives no distance to the quay", "planner-ch04")
+        code, out = self.run_room("canon", self.novel, "p1")
+        self.assertEqual(code, 0, out)
+        self.assertIn('@ spawn canon-researcher as "canon lookup"\nNovel: novels/long-ebb. Task: '
+                      'lookup.\ngap canon is the harbourmaster\'s son alive at the start; his age',
+                      out)
+        self.assertNotIn("distance to the quay", out)
+        before, after = out.split("then, on CANON DONE:")
+        self.assertNotIn("@ continue", before)
+        self.assertIn("@ continue planner-ch04\nCanon looked up: novels/long-ebb/bible/canon.md. "
+                      "Finish the task.", after)
+
+    def test_canon_stops_without_a_gap_canon_line(self):
+        self.agent("p2", "PLANNER DONE beats | w/beats.md | gaps 0 | changed 0", "planner-ch04")
+        code, out = self.run_room("canon", self.novel, "p2")
+        self.assertEqual(code, 2)
+        self.assertIn("STOP: agent p2 handed back no `gap canon` line", out)
+
     def test_the_pause_reads_a_fresh_five_hour_reading(self):
         path = os.path.join(self.root, "usage.json")
 

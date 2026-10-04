@@ -18,7 +18,7 @@ KB = os.path.join(ROOT, "kb")
 LINK = re.compile(r"\]\(([^)#\s]+)(?:#[^)]*)?\)")
 COLD = {"beta-reader", "judge"}
 WIRED = ("planner", "writer", "story-editor", "line-editor", "continuity-editor", "clerk",
-         "showrunner")
+         "canon-researcher", "showrunner")
 PLACEHOLDER = re.compile(r"<[^<>]*>")
 
 

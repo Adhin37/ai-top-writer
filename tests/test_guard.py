@@ -149,6 +149,22 @@ class GuardTest(unittest.TestCase):
             self.assertFalse(self.allowed(call("Bash", "continuity-editor", command=cmd)), cmd)
         self.assertTrue(self.allowed(call("Bash", None, command="cat reading/r1/report.md")))
 
+    def test_canon_researcher_writes_the_dossier_and_runs_the_fetch_tool_only(self):
+        role = "canon-researcher"
+        for rel in ("novels/x/bible/canon.md", "novels/x/work/canon/src/w/Corin_Dask.md"):
+            self.assertTrue(self.allowed(call("Write", role, file_path=p(rel))), rel)
+        for rel in ("novels/x/bible/world.md", "novels/x/plan/timeline.md", "novels/x/novel.md",
+                    "reading/r1/notes.md"):
+            self.assertFalse(self.allowed(call("Write", role, file_path=p(rel))), rel)
+        self.assertTrue(self.allowed(call("Read", role, file_path=p("novels/x/novel.md"))))
+        for rel in ("reading/r1/notes.md", "kb/story-editor/prompt.md", "docs/lessons.md"):
+            self.assertFalse(self.allowed(call("Read", role, file_path=p(rel))), rel)
+        self.assertTrue(self.allowed(call(
+            "Bash", role, command="python3 tools/canon_fetch.py page w.fandom.com Ilse_Maro_%28novel%29 "
+            "--out novels/x/work/canon/src/w")))
+        for cmd in ("python3 tools/lint.py novels/x", "curl https://w.fandom.com/wiki/X"):
+            self.assertFalse(self.allowed(call("Bash", role, command=cmd)), cmd)
+
     # --- everyone else --------------------------------------------------------------------
 
     def test_main_session_is_free(self):

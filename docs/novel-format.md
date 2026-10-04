@@ -18,6 +18,8 @@ novels/<slug>/
     world.md              setting, places, distances, factions, the rules of the world
     society.md            labour, money, law, belief — the central rule reaching ordinary life
     lexicon.md            spellings, terms, forms of address, number style
+    canon.md              fan fiction only: the canon researcher's sourced dossier of the source
+                          work (kb/canon-researcher/canon-format.md)
     cast/_voices.md       one row per speaker: intel, eq, articulacy, wit, heat, cadence
     cast/<name>.md        profiles for major characters
     cast/_extras.md       one line per walk-on
@@ -34,6 +36,8 @@ novels/<slug>/
     scenes.md             one row per scene: chapter, who, where, tempo, two-hander
   work/init/              the init interview: round-N.md (questions, then the answers verbatim),
                           style-beat.md, style-samples.md
+  work/canon/             fan fiction: src/<wiki>/ (pages tools/canon_fetch.py cached, the
+                          dossier's evidence) and inbox/ (pages or notes the user saved)
   work/chNNNN/            the loop's hand-off files for the chapter in progress — beat sheet,
                           drafts per round, the writer's facts file per round, the continuity
                           editor's file and lint report per round, the history report per
@@ -50,7 +54,9 @@ The frontmatter keeps a key only if a role or a tool reads it: `title` and `slug
 webnovel.com); `genre`; `narration` and `pov` (the writer, the format spec, lint); `tone` (the
 writer, the story editor); `channels` (lint and the text tools); `mc.name` and `mc.foreknowledge`;
 `opening.promise` and `opening.contract_by_ch` (the antagonist's face is on the page by then);
-`content` (rating, romance, hard limits); `optional` (the modules each role's index switches on).
+`content` (rating, romance, hard limits); `optional` (the modules each role's index switches on);
+in fan fiction, `canon` (the source work, the scope, where the story starts on canon's timeline,
+who must appear: round 1's answers, which the canon researcher reads).
 
 The body has two sections: `# Blurb` (the platform listing, 60–120 words) and `# Style anchor`,
 the sample the user chose in init's round 5, verbatim. The style anchor is the voice every chapter

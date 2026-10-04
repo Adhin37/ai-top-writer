@@ -21,7 +21,8 @@ file that changes only effort or model, `tools/bench.py`), is held to its role's
 
 Bash: the cold roles are given none, which is their real wall. A working role that has Bash (clerk,
 continuity editor) may run only the project's tools, `python3 tools/<name>.py ...`, optionally piped
-into `head` or `tail`; `cat reading/...` or `python3 -c` would walk around every rule above.
+into `head` or `tail`; `cat reading/...` or `python3 -c` would walk around every rule above. A role
+whose spec has `bash` runs only the tools it names (the canon researcher: `canon_fetch.py`).
 The main session may do anything, except write under novels/ while a `.test-run` file exists at
 the project root (a benchmark run measures the room, not the showrunner).
 
@@ -85,13 +86,20 @@ ROLES = {
         "write": ["novels/*/state/**", "novels/*/plan/**", "novels/*/work/**", "reading/**"],
         "why": "the clerk writes state after a chapter is accepted",
     },
+    "canon-researcher": {
+        "read_deny": COMMON_DENY + ["reading/**"] + CRITIC_KBS,
+        "write": ["novels/*/bible/canon.md", "novels/*/work/canon/**"],
+        "bash": ["canon_fetch"],
+        "why": "the canon researcher records what the source work says, in bible/canon.md; the "
+               "story is the planner's",
+    },
 }
 
 WRITE_TOOLS = {"Write", "Edit", "MultiEdit", "NotebookEdit"}
 SEARCH_TOOLS = {"Grep", "Glob"}
 GLOB_CHARS = re.compile(r"[*?\[{]")
 # A working role's Bash: one project tool, optionally piped into head or tail. No other shell syntax.
-TOOL_CMD = re.compile(r"^python3\s+(?:\S*/)?tools/[\w-]+\.py(?:\s+[^\s;&|`$<>(){}\\]+)*"
+TOOL_CMD = re.compile(r"^python3\s+(?:\S*/)?tools/([\w-]+)\.py(?:\s+[^\s;&|`$<>(){}\\]+)*"
                       r"(?:\s+2>&1)?"
                       r"(?:\s*\|\s*(?:head|tail)(?:\s+-n)?(?:\s+-?\d+)?)*\s*$")
 
@@ -225,9 +233,13 @@ def _denied_below(spec, rel):
 
 def _one_target(spec, kind, rel, shown):
     if kind == "bash":
-        if "read_only" in spec or not TOOL_CMD.match(shown.strip()):
+        m = None if "read_only" in spec else TOOL_CMD.match(shown.strip())
+        if not m:
             return "`%s`: your shell runs the project's tools only (python3 tools/<name>.py)" % (
                 shown.strip()[:80])
+        if "bash" in spec and m.group(1) not in spec["bash"]:
+            return "`%s`: your shell runs %s only" % (
+                shown.strip()[:80], ", ".join("tools/%s.py" % t for t in spec["bash"]))
         return None
     if kind == "write":
         if rel is None or not any(matches(p, rel) for p in spec["write"]):

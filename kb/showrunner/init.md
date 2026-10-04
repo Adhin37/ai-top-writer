@@ -1,7 +1,7 @@
 ---
 type: protocol
 title: New novel — showrunner procedure
-description: The main session's procedure for /new — scaffold a novel from the template, relay the planner's seven interview rounds and the writer's style samples, and check the result.
+description: The main session's procedure for /new — scaffold a novel from the template, relay the planner's seven interview rounds, the canon researcher's dossier in fan fiction and the writer's style samples, and check the result.
 roles: [showrunner]
 ---
 # New novel
@@ -16,7 +16,8 @@ fill a file yourself.
 The user answers nothing during the rebuild. Before step 1, write the answer sheet into the run's
 log in `docs/experiments/`: the seed, the platform, and what the author wants on each round's
 topics (the protagonist, the world's rule, the antagonist, the voice, the ending), as an author
-would say it. Then `touch .test-run`.
+would say it. In fan fiction, add the source work, the scope, where the story starts, and who
+must appear; the sheet gives no sources, so `blocked` lines are logged and not waited on. Then `touch .test-run`.
 
 Answer every question from the sheet, and log each answer with its source: `sheet`, or `rec —
 sheet silent` when you took the recommendation because the sheet says nothing. Never change the
@@ -47,6 +48,19 @@ the answers in chat. Then continue `planner-init`:
 2. <the user's words>"*
 
 `rec` means the user took the recommendation.
+
+## 2b. The canon — canon researcher (fan fiction only)
+
+In fan fiction, after round 1's answers the planner ends on `PLANNER DONE canon-scope | …`. Spawn
+**canon-researcher**, described `canon-init`: *"Novel: novels/{slug}. Task: init."* It ends on
+`CANON DONE novels/{slug}/bible/canon.md | …`, then its `unsure` and `blocked` lines. Continue
+`planner-init` with the lines, verbatim: *"Canon: novels/{slug}/bible/canon.md. Ask round 2.
+<the unsure lines>"*. The `blocked` lines go to the user with round 2's questions, as an offer, not
+a wait: a page they save into `novels/{slug}/work/canon/inbox/` is read by the next lookup.
+
+Later, when any planner's hand-back carries `gap canon` lines, run
+`python3 tools/room.py canon novels/{slug} <planner agent id>` and send what it prints: the
+researcher's lookup, then the planner continued.
 
 ## 3. The style — writer
 

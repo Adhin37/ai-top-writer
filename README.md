@@ -21,7 +21,7 @@ flowchart LR
     U(["you"]) -->|"/new · /write · /plan · /status"| S["showrunner<br/>(the main session)"]
     S -->|"one call per loop step"| T["tools/room.py<br/>and the other tools"]
     T -->|"prints the next dispatch"| S
-    S -->|"spawns, relays<br/>hand-offs verbatim"| R["the room (.claude/agents/)<br/>planner · writer · story editor (opus)<br/>beta reader · continuity editor<br/>line editor · clerk (sonnet)"]
+    S -->|"spawns, relays<br/>hand-offs verbatim"| R["the room (.claude/agents/)<br/>planner · writer · story editor (opus)<br/>beta reader · continuity editor<br/>line editor · clerk<br/>canon researcher, fan fiction (sonnet)"]
     KB[("kb/&lt;role&gt;/<br/>one knowledge base per role")] -.->|"each role reads its own"| R
     R <-->|"read / write"| N[("novels/&lt;slug&gt;/<br/>bible · plan · state · chapters")]
     T -->|"prose-only exports"| RD[("reading/&lt;id&gt;/<br/>the reader's shelf")]

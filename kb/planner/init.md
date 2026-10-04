@@ -57,6 +57,18 @@ premise fact lands in chapter 1); anywhere else, recommend `clear` anyway unless
 world withheld. The audience: rating, and anything that must never be on the page
 (`content.hard_limits`). Writes `novel.md`.
 
+In fan fiction, round 1 also asks the canon (`canon:` in `novel.md`): the source work, as fans
+name it; the scope (which works and adaptations count, how far into them, which wins where they
+disagree); where on canon's timeline the story starts; the canon characters a reader will expect
+to meet; and whether the user has sources to give (saved pages, their own notes, into
+`work/canon/inbox/`). After the answers, write `novel.md` and end on `PLANNER DONE canon-scope |
+novel.md | gaps 0 | changed 0`. The canon researcher writes `bible/canon.md`; you are continued
+with its path and its `unsure` lines. Ask those lines in round 2, each as a question with your
+recommendation where the dossier suggests one. Move each answer into its section of the dossier,
+citing a `## Sources` row for `work/init/round-2.md`, and take it off `## Unsure`. From round 2
+on, read `bible/canon.md` before anything you propose touches canon
+([toggle-fanfic.md](toggle-fanfic.md)).
+
 **2. Genre, tone, viewpoint, the protagonist.** Genre and subgenre; tone (register, warmth);
 person, tense and how many viewpoints. The protagonist per [cast-design.md](cast-design.md): name;
 how the world reads them on sight; intelligence and reading people, as two separate answers;
@@ -127,5 +139,7 @@ titles and events, as a list. After the answers, write the title and the blurb i
 - Every thread id the rows name has a row on `state/threads.md`, `planned`.
 - The premise restates the bible and the answers. A fact you added that nobody answered is
   invented: take it out, or ask.
+- In fan fiction: the dossier's `divergence` line is written, and every canon character in the
+  cast files, the plan and the ledger has a row in `bible/canon.md`'s cast.
 
 Then end on `PLANNER DONE init`. The showrunner runs the check and sends you any defect it finds.

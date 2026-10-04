@@ -92,7 +92,8 @@ STALE = 8.0     # a response recording fewer tokens than chars / STALE never got
 CHARS_PER_TOKEN = 4.0
 TS = re.compile(r"^(\d{4})-(\d\d)-(\d\d)T(\d\d):(\d\d):(\d\d)(\.\d+)?")
 # Roles whose final message is one status line (kb/shared/wire.md).
-STATUS_ROLES = ("planner", "writer", "story-editor", "line-editor", "continuity-editor", "clerk")
+STATUS_ROLES = ("planner", "writer", "story-editor", "line-editor", "continuity-editor", "clerk",
+                "canon-researcher")
 CHAPTER_IN_TEXT = (re.compile(r"\b[Cc]hapter (\d+)\b"), re.compile(r"/ch(\d{4})/"))
 CHAPTER_IN_DESC = re.compile(r"\bch ?(\d+)\b")
 ROUND = (re.compile(r"\bround (\d+)\b"), re.compile(r"\bdraft-r(\d+)\b"),

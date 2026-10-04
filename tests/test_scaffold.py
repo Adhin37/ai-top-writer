@@ -343,5 +343,81 @@ class CheckTest(unittest.TestCase):
             self.assertTrue(has(fx.found(), "defect", "no sample under `# Style anchor`"))
 
 
+
+CANON = """# Canon — Ashfall Academy
+
+## Scope
+works      the web novel, chapters 1–212
+versions   the web novel wins
+start      the first week of the second year
+divergence (the planner's)
+
+## Cast
+| name | age at start | status at start | looks | power and limits | ties | manner | first appears | source |
+|---|---|---|---|---|---|---|---|---|
+| Corin Dask | 16 | alive | ash-grey hair | heat-sense | Tam Rook | deflects | ch 1 | S1 |
+| Tam Rook | 17 | alive | tall | none | Corin | loud | ch 2 | %(tam)s |
+
+## Timeline
+| when | event | ages then | source |
+|---|---|---|---|
+| year 2, winter | the Ember Trials | Corin 16 | S1 |
+
+## Unsure
+- Ilse's age: is 54 right?
+
+## Sources
+| id | where | what |
+|---|---|---|
+| S1 | https://ashfall.fandom.com/wiki/Corin_Dask | the wiki |
+"""
+
+
+class CanonTest(unittest.TestCase):
+    """Fan fiction needs the canon researcher's dossier; other genres are not asked for one."""
+
+    def fanfic(self, fx, must=("Corin Dask",), source="Ashfall Academy"):
+        text = (NOVEL_MD % fx.fields).replace('genre: "scifi"', 'genre: "fanfic"')
+        block = 'canon:\n  source: "%s"\n  must_appear: [%s]\n\nopening:' % (
+            source, ", ".join('"%s"' % m for m in must))
+        fx.write("novel.md", text.replace("opening:", block, 1))
+
+    def test_a_sourced_dossier_is_clean(self):
+        with Fixture() as fx:
+            self.fanfic(fx)
+            fx.write("bible/canon.md", CANON % {"tam": "S1"})
+            found = fx.found()
+            self.assertFalse([f for f in found if f[0] != "note"], found)
+            self.assertTrue(has(found, "note", "1 fact(s) under `## Unsure`"))
+
+    def test_fan_fiction_without_a_dossier_or_a_source(self):
+        with Fixture() as fx:
+            self.fanfic(fx, source="")
+            found = fx.found()
+            self.assertTrue(has(found, "defect", "bible/canon.md is missing"))
+            self.assertTrue(has(found, "defect", "no `canon.source`"))
+
+    def test_an_unsourced_row_and_a_missing_character(self):
+        with Fixture() as fx:
+            self.fanfic(fx, must=("Corin Dask", "Ilse Maro"))
+            fx.write("bible/canon.md", CANON % {"tam": "the wiki, I think"})
+            found = fx.found()
+            self.assertTrue(has(found, "defect", "cast row `Tam Rook` cites no source"))
+            self.assertTrue(has(found, "warn", "`Ilse Maro` must appear"))
+
+    def test_an_unknown_source_id_and_no_scope(self):
+        with Fixture() as fx:
+            self.fanfic(fx)
+            fx.write("bible/canon.md", (CANON % {"tam": "S9"}).replace(
+                "## Scope\n", "## Scope\n\n## Removed\n"))
+            found = fx.found()
+            self.assertTrue(has(found, "warn", "cites S9"))
+            self.assertTrue(has(found, "defect", "no `## Scope`"))
+
+    def test_other_genres_need_no_dossier(self):
+        with Fixture() as fx:
+            self.assertFalse([f for f in fx.found() if f[1] == "canon"])
+
+
 if __name__ == "__main__":
     unittest.main()

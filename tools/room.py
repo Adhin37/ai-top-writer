@@ -23,6 +23,9 @@ Steps (NOVEL is the novel directory, N the chapter, K the round):
                                      re-read, the usage pause; the planner's fold and N+1's beats
   room.py adopt NOVEL N READER_ID    after the every-10 fresh reader: files its report, adopts its
                                      notes
+  room.py canon NOVEL PLANNER_ID     after a planner's hand-back with `gap canon` lines (fan
+                                     fiction): the canon researcher's lookup, then the planner
+                                     continued to finish its task
   room.py where NOVEL                which chapter and step the files say the room is at
 
 Every step takes `--log LOG` (an experiment's working log) and `--agent ID`, repeatable: the
@@ -215,6 +218,11 @@ def clerk(c, k):
 def planner_fold(c):
     return dispatch("spawn", "planner", "Novel: %s. Task: fold chapter %d. Fold file: %s."
                     % (c.novel, c.n, c.wfile("fold.md")), "planner-ch%02d" % (c.n + 1))
+
+
+def researcher_lookup(novel, gaps):
+    return dispatch("spawn", "canon-researcher", "Novel: %s. Task: lookup.\n%s"
+                    % (novel, "\n".join(gaps)), "canon lookup")
 
 
 def fresh_reader(c, folder):
@@ -463,6 +471,22 @@ def step_adopt(c, reader_id, transcripts=None):
 # ---------------------------------------------------------------- where
 
 
+def step_canon(novel, agent_id, transcripts=None):
+    """The planner's `gap canon` lines, verbatim, to a canon researcher; the planner after it."""
+    try:
+        path = handback.find_transcript(agent_id, transcripts or handback.default_transcripts())
+    except FileNotFoundError as exc:
+        raise Stop(str(exc))
+    gaps = wire.canon_gaps(handback.last_handback(path) or "")
+    if not gaps:
+        raise Stop("agent %s handed back no `gap canon` line" % agent_id)
+    planner = handback.description(path) or agent_id
+    lines = ["canon lookup · %d question(s) from %s" % (len(gaps), planner)]
+    after = dispatch("continue", planner, "Canon looked up: %s/bible/canon.md. Finish the task."
+                     % novel)
+    return lines, [researcher_lookup(novel, gaps)], "then, on CANON DONE:", [after]
+
+
 def _read_or_none(path):
     return mdio.read_text(path) if os.path.isfile(path) else None
 
@@ -532,7 +556,7 @@ def where(novel, root=ROOT):
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("step", choices=("beats", "round", "judge", "clerk", "fold", "adopt",
-                                     "where"))
+                                     "canon", "where"))
     ap.add_argument("novel")
     ap.add_argument("rest", nargs="*", help="N, K, the agent id: as the step needs")
     ap.add_argument("--log", help="append hand-backs and dispatches to this working log")
@@ -551,9 +575,17 @@ def main(argv=None):
             n, line = where(args.novel, args.root)
             print("ch %d · %s" % (n, line))
             return 0
-        need = {"beats": 1, "round": 2, "judge": 3, "clerk": 2, "fold": 1, "adopt": 2}
+        need = {"beats": 1, "round": 2, "judge": 3, "clerk": 2, "fold": 1, "adopt": 2,
+                "canon": 1}
         if len(args.rest) != need[args.step]:
             raise Stop("%s takes %d argument(s) after NOVEL" % (args.step, need[args.step]))
+        if args.step == "canon":
+            novel = os.path.relpath(os.path.abspath(args.novel), args.root)
+            lines, sends, then, after = step_canon(novel, args.rest[0], args.transcripts)
+            lines += append_log(args.log, list(args.agent) + [args.rest[0]], sends,
+                                args.transcripts, args.root)
+            print(render(lines, sends, render([then], after)))
+            return 0
         c = Chapter(args.novel, int(args.rest[0]), args.root)
         k = int(args.rest[1]) if args.step in ("round", "judge", "clerk") else None
         if args.step == "beats":

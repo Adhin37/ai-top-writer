@@ -14,7 +14,7 @@ Name the agent that is working at each step, so the user can tell whose edit the
 
 **Every role ends on one status line** ([wire](../shared/wire.md)): `DRAFT READY`, `NOTES READY`,
 `PLANNER DONE`, `POLISHED`, `CONTINUITY READY`, `CLERK DONE` (during init, also `PLANNER ASKS` and
-`SAMPLES READY`; the beta reader ends on its report instead). Act on that line. Open a role's file
+`SAMPLES READY`; in fan fiction, `CANON DONE`; the beta reader ends on its report instead). Act on that line. Open a role's file
 only to make a decision (the beat sheet, step 1), or when the line does not parse:
 `python3 tools/wire.py status "<line>"`. What one role needs from another travels in files, by
 path; you do not carry it in your head.
@@ -101,6 +101,14 @@ also prints. Send the fold now; the beats when chapter N+1 starts.
 prints a fresh **beta-reader** for it. With its report back, `python3 tools/room.py adopt
 novels/{slug} N <agent id>` files the report, and its notes replace the running ones before the
 next chapter.
+
+## Canon lookups (fan fiction)
+
+A planner's hand-back (beats, fold, plan) may end on `gap canon <question>` lines: a canon fact
+`bible/canon.md` lacks. Before anything else in that step: `python3 tools/room.py canon
+novels/{slug} <planner agent id>`. It prints a **canon-researcher**, described `canon lookup`, with
+the lines verbatim, then the planner continued to finish its task. Approve the beat sheet only
+after that.
 
 ## Pause at a chapter boundary
 

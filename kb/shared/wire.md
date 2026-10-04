@@ -2,7 +2,7 @@
 type: reference
 title: Wire format
 description: How roles write for each other — the one status line that ends a turn, and the keyed lines of a notes, facts or ledger file.
-roles: [planner, writer, story-editor, line-editor, continuity-editor, clerk, showrunner]
+roles: [planner, writer, story-editor, line-editor, continuity-editor, clerk, canon-researcher, showrunner]
 ---
 # Wire format
 
@@ -73,7 +73,7 @@ chapter is close…"* and ran three hundred words before reaching that line.
 
 | role | final message |
 |---|---|
-| planner | `PLANNER DONE <task> \| <file>, <file> \| gaps <n> \| changed <n>`, then one `gap <…>` or `changed <…>` line each |
+| planner | `PLANNER DONE <task> \| <file>, <file> \| gaps <n> \| changed <n>`, then one `gap <…>` or `changed <…>` line each; in fan fiction, `gap canon <question>` for a canon fact `bible/canon.md` lacks |
 | planner, an init round that asks the user | `PLANNER ASKS <round file> \| round <n> \| questions <n>` |
 | writer | `DRAFT READY <draft> \| facts <facts file> \| new <n> \| stets <n> \| couldn't <n>` |
 | writer, style samples for a new novel | `SAMPLES READY <samples file> \| samples <n>` |
@@ -81,3 +81,4 @@ chapter is close…"* and ran three hundred words before reaching that line.
 | line editor | `POLISHED <path> \| changes <n> (<the top three>) \| left <n>`, then one `left <…>` or `across <…>` line each |
 | continuity editor | `CONTINUITY READY <continuity file> \| findings <n> \| lint <lint file>` |
 | clerk | `CLERK DONE <chapter> \| fold <fold file> \| bible <n> \| ledger <n> \| check <result>` |
+| canon researcher | `CANON DONE <dossier> \| facts <n> \| sources <n> \| unsure <n> \| blocked <n>`, then one `unsure <…>` or `blocked <…>` line each |

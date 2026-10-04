@@ -69,6 +69,22 @@ class StatusTest(unittest.TestCase):
             "PLANNER DONE beats | w/beats.md | gaps 1 | changed 0")
         self.assertEqual(fields["files"], "w/beats.md")
 
+    def test_the_canon_researchers_hand_back(self):
+        text = ("CANON DONE novels/x/bible/canon.md | facts 41 | sources 12 | unsure 2 | blocked 1\n"
+                "unsure   Ilse's age: canon never gives it; is 54 right?\n"
+                "blocked  https://w.example/wiki/Ilse · her age\n")
+        self.assertEqual(wire.check_handback(text), [])
+        self.assertIn("defect", levels(wire.parse_status(
+            "CANON DONE novels/x/bible/canon.md | facts 41 | sources 12")[3]))
+
+    def test_canon_gaps_are_the_planners_gap_canon_lines(self):
+        text = ("PLANNER DONE beats | w/beats.md | gaps 2 | changed 0\n"
+                "gap canon does the deck chief have children; names and ages at the start\n"
+                "gap the bible gives no distance to the quay\n")
+        self.assertEqual(wire.canon_gaps(text), [
+            "gap canon does the deck chief have children; names and ages at the start"])
+        self.assertEqual(wire.check_handback(text), [])
+
     def test_a_planner_line_with_no_files_and_init_parse_clean(self):
         _, _, fields, found = wire.parse_status("PLANNER DONE fold | gaps 0 | changed 0")
         self.assertEqual((found, fields.get("files"), fields["gaps"]), ([], None, "0"))
