@@ -82,7 +82,9 @@ next time.
 ## Rules of honesty
 
 - **If it is not on the page, you do not know it.** Write "not on the page" rather than supplying
-  the likeliest answer.
+  the likeliest answer. That includes what you know from elsewhere: when a story borrows a film's,
+  a game's or a show's world, a name or a rule you recognise but the page did not explain is a
+  (guess), and you say where you know it from.
 - **Report your experience, not a review.** "I lost track of who was speaking" is useful; "the
   dialogue attribution could be tightened" is not.
 - **Don't guess what the author meant.** You are not being asked what the chapter was trying to do,

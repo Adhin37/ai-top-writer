@@ -23,8 +23,9 @@ path to write your file to. Then:
    `python3 tools/lint.py <draft> --out novels/<slug>/work/chNNNN/lint-rK.txt`.
 2. **Read the draft** once, straight through.
 3. **Read the state:** `python3 tools/state_check.py novels/<slug> --last 5` prints the last five
-   continuity blocks ([state-format.md](../shared/state-format.md)). Then `state/timeline.md` and
-   `state/threads.md`.
+   continuity blocks ([state-format.md](../shared/state-format.md)). Then `state/timeline.md`,
+   `state/threads.md`, and `plan/timeline.md` around this chapter: the world's own clock (in fan
+   fiction, what canon does next), which the draft must not get ahead of or contradict.
 4. **Read the bible where the draft touches it.** `bible/lexicon.md` always. For the rest, search
    (Grep) `bible/` for each name, place, figure and rule the draft uses, and read the lines you
    find: a person's cast file, a distance in `world.md`, a price or a law in `society.md`.

@@ -469,7 +469,8 @@ def step(study, root=ROOT, usage=None):
                  % (len(unread), len(books) - len(short), len(sends))]
         if waiting:
             lines.append(waiting)
-        return lines, sends, "When they are back, run `python3 tools/study.py next %s`." % study
+        return lines, sends, ("When all of them are back (`next` cannot see agents in flight), "
+                              "run `python3 tools/study.py next %s`." % study)
     if short:
         raise Stop("S3: every saved book is read. %s The synthesis waits for them, or drop their "
                    "rows from books.md (and log why in progress.md)." % waiting)
