@@ -63,6 +63,7 @@ the first five chapters do not start to pay.
 
 ## When to break it
 
-Fan fiction puts the source work in the title line (*Source Work: The Title*), because readers
-browse fan fiction by fandom. And when the user arrives with a title they love, screen it, report
+Fan fiction puts the source work in the title line, because readers browse fan fiction by fandom,
+in the platform's form: on Webnovel the fandom leads (*Deck Nine: The Cadet Who Remembered*); on
+Royal Road it follows, with the story's type (*The Cadet Who Remembered (Deck Nine, OC)*). And when the user arrives with a title they love, screen it, report
 what the screen found once, and use theirs.

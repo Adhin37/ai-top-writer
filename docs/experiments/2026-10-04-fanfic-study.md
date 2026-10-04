@@ -339,26 +339,26 @@ modules* in `kb/writer/index.md`:
 
 | id | finding | scope | books | destination | kind | owner | verdict |
 |---|---|---|---|---|---|---|---|
-| F1 | The departure from canon (who the protagonist is to canon, how they got there, any system) is a premise fact due in ch 1, in plain words | fanfic | 6 (Young Sheldon ch1, Ghost ch1, DC ch1, Marvel ch1, Just Deserts ch1; against: Sublight ch1–8) | kb/planner/toggle-fanfic.md § new "The departure is a premise fact": a premise row and its ledger moment | ledger entry | planner | |
-| F2 | The arrival told in the genre's shorthand (name the stock scene, skip it), then one plain sentence of what happened | fanfic | 4 (Ghost ch1, Marvel ch1, DC ch1; against: Young Sheldon ch1) | kb/writer/toggle-fanfic.md (new) § The arrival | example | writer | |
-| F3 | A canon name gets its clause even when every fan knows it; a canon roster becomes a crowd with three faces | fanfic | 5 (Ghost ch1–2, ch9; DC ch3; Young Sheldon ch1; Sublight ch3, ch9, ch10; Just Deserts ch3, ch10) | kb/writer/toggle-fanfic.md (new) § A canon name | example | writer | |
-| F4 | A canon event is a stage the insert's own errand moves through; a replay with the insert watching, or a chapter without the host world or the insert, is skimmed | fanfic | 4 (Just Deserts ch3, ch5, ch8–10; Sublight ch4–7, ch9; Young Sheldon ch5, ch7; Marvel ch4, ch8) | kb/planner/toggle-fanfic.md § The world track as canon | example | planner | |
-| F5 | A canon character's viewpoint misreading the insert shows them from outside; it must not retell what the reader holds | fanfic | 4 (DC ch4, 6, 7, 8, 9; Marvel ch9–10; Sublight ch6, ch9; Ghost ch6) | kb/writer/toggle-fanfic.md (new) § A canon mind looking at the protagonist | example | writer | |
-| F6 | The fan holds the canon future, the cold reader only what the page said: one plain line of what is coming before the chapter that spends it | fanfic | 4 (Young Sheldon ch6–7; Sublight ch1–8; Ghost ch3; Just Deserts ch4) | kb/planner/toggle-foreknowledge.md § new "The reader's share": a fact row due before the spend | ledger entry | planner | |
-| F7 | A character briefs another on events the reader saw: the cross-chapter skim | cross-genre | 4 (Just Deserts ch7, ch10; DC ch6, ch9; Marvel ch2–10; Young Sheldon ch2–3) | kb/story-editor/across-chapters.md § new pattern "The scene told again" | example | story-editor | |
-| F8 | A joke button over a live thread lets the hook go; a comic last line works when the joke is the cost | cross-genre | 5 (Ghost ch6, 7, 9, 10; Sublight ch10; DC ch1, 5, 6, 10; Young Sheldon ch10; Just Deserts ch6) | kb/writer/openings-and-endings.md § Endings: stop at the beat (a second pair) | example | writer | |
-| F9 | A refrain is spaced and comes back turned; the gag that becomes the default voice wears | cross-genre | 2 (Just Deserts ch1, ch10; DC ch4, ch7, ch10) | kb/writer/toggle-comedy.md § new example "The gag that comes back" | example | writer | |
-| F10 | A gift or system given in ch 1 is used, and pays, on the page by ch 2–3 | cross-genre | 4 (Young Sheldon ch1–5; Ghost ch1–2; DC ch1–2; Marvel ch1–6) | kb/planner/toggle-litrpg.md § new "The first use" | example | planner | |
-| F11 | The fandom goes in the title in the platform's form: Webnovel "Source: Title", Royal Road "Title (Source, type)" | fanfic | 6 (all titles) | kb/planner/title-and-blurb.md § When to break it | replaces: "Fan fiction puts the source work in the title line" | planner | |
-| F12 | Popups right after the action; menus read aloud are skimmed | cross-genre | 3 (Ghost ch2, 8, 9, 10; Marvel ch4, 5, 7, 9; DC ch1–2) | kb/planner/toggle-litrpg.md § Screens are documents | confirms | planner | |
-| F13 | The rule lands at the moment it bites; a block where nobody wants anything is skimmed | cross-genre | 5 (DC ch1; Ghost ch2, ch4; Just Deserts ch2, ch7, ch8; Sublight ch9; Young Sheldon ch6) | kb/writer/orienting-the-reader.md §1, §3 | confirms | writer | |
-| F14 | The chapter's event is played, not summarised | cross-genre | 3 (DC ch2, 3, 7; Young Sheldon ch5, 8, 10; Marvel ch2) | kb/writer/scene-and-summary.md; kb/story-editor/delivery-test.md | confirms | writer | |
-| F15 | The cool chapter still has a want and a turn | cross-genre | 5 (Ghost ch6; DC ch6; Young Sheldon ch2–4; Marvel ch2, ch8; Just Deserts ch6) | kb/planner/arcs-and-chapters.md § Temperatures | confirms | planner | |
-| F16 | Canon opposition is not lowered for the insert's win; a stretch with its cause on the page is accepted | fanfic | 3 (DC ch8–9; Ghost ch9; Sublight ch5) | kb/story-editor/never-stupid.md; kb/planner/toggle-fanfic.md § Characters out of character | confirms | story-editor | |
-| F17 | The recap is one clause of a sentence doing other work | cross-genre | 4 (Marvel ch2–10; Young Sheldon ch2; Ghost ch9; DC ch6) | kb/writer/openings-and-endings.md § Openings | confirms | writer | |
-| F18 | The cold read is the binding test; the beta reader stays cold | cross-genre | 6 (all hook curves) | kb/beta-reader/prompt.md; CLAUDE.md principle 2 | confirms | beta-reader | |
-| F19 | One head per scene | cross-genre | 3 (Young Sheldon ch1, ch3; Marvel ch3, ch4; DC ch4) | kb/writer/toggle-pov-switch.md | confirms | writer | |
-| F20 | Written pauses and one-word beat paragraphs; dash chains | cross-genre | 2 (DC ch2–4; Just Deserts ch1–10) | kb/line-editor/ai-default-habits.md (the stage direction; the dash appositive) | confirms | line-editor | |
+| F1 | The departure from canon (who the protagonist is to canon, how they got there, any system) is a premise fact due in ch 1, in plain words | fanfic | 6 (Young Sheldon ch1, Ghost ch1, DC ch1, Marvel ch1, Just Deserts ch1; against: Sublight ch1–8) | kb/planner/toggle-fanfic.md § new "The departure is a premise fact": a premise row and its ledger moment | ledger entry | planner | accept |
+| F2 | The arrival told in the genre's shorthand (name the stock scene, skip it), then one plain sentence of what happened | fanfic | 4 (Ghost ch1, Marvel ch1, DC ch1; against: Young Sheldon ch1) | kb/writer/toggle-fanfic.md (new) § The arrival | example | writer | accept |
+| F3 | A canon name gets its clause even when every fan knows it; a canon roster becomes a crowd with three faces | fanfic | 5 (Ghost ch1–2, ch9; DC ch3; Young Sheldon ch1; Sublight ch3, ch9, ch10; Just Deserts ch3, ch10) | kb/writer/toggle-fanfic.md (new) § A canon name | example | writer | accept — as a fanfic example that points to orienting-the-reader.md §4 (the rule's owner); no restated rule |
+| F4 | A canon event is a stage the insert's own errand moves through; a replay with the insert watching, or a chapter without the host world or the insert, is skimmed | fanfic | 4 (Just Deserts ch3, ch5, ch8–10; Sublight ch4–7, ch9; Young Sheldon ch5, ch7; Marvel ch4, ch8) | kb/planner/toggle-fanfic.md § The world track as canon | example | planner | accept |
+| F5 | A canon character's viewpoint misreading the insert shows them from outside; it must not retell what the reader holds | fanfic | 4 (DC ch4, 6, 7, 8, 9; Marvel ch9–10; Sublight ch6, ch9; Ghost ch6) | kb/writer/toggle-fanfic.md (new) § A canon mind looking at the protagonist | example | writer | accept |
+| F6 | The fan holds the canon future, the cold reader only what the page said: one plain line of what is coming before the chapter that spends it | fanfic | 4 (Young Sheldon ch6–7; Sublight ch1–8; Ghost ch3; Just Deserts ch4) | kb/planner/toggle-foreknowledge.md § new "The reader's share": a fact row due before the spend | ledger entry | planner | accept |
+| F7 | A character briefs another on events the reader saw: the cross-chapter skim | cross-genre | 4 (Just Deserts ch7, ch10; DC ch6, ch9; Marvel ch2–10; Young Sheldon ch2–3) | kb/story-editor/across-chapters.md § new pattern "The scene told again" | example | story-editor | accept |
+| F8 | A joke button over a live thread lets the hook go; a comic last line works when the joke is the cost | cross-genre | 5 (Ghost ch6, 7, 9, 10; Sublight ch10; DC ch1, 5, 6, 10; Young Sheldon ch10; Just Deserts ch6) | kb/writer/openings-and-endings.md § Endings: stop at the beat (a second pair) | example | writer | accept |
+| F9 | A refrain is spaced and comes back turned; the gag that becomes the default voice wears | cross-genre | 2 (Just Deserts ch1, ch10; DC ch4, ch7, ch10) | kb/writer/toggle-comedy.md § new example "The gag that comes back" | example | writer | accept — two books, a new example in an existing doc; the line editor keeps recurring-habit thinning |
+| F10 | A gift or system given in ch 1 is used, and pays, on the page by ch 2–3 | cross-genre | 4 (Young Sheldon ch1–5; Ghost ch1–2; DC ch1–2; Marvel ch1–6) | kb/planner/toggle-litrpg.md § new "The first use" | example | planner | accept |
+| F11 | The fandom goes in the title in the platform's form: Webnovel "Source: Title", Royal Road "Title (Source, type)" | fanfic | 6 (all titles) | kb/planner/title-and-blurb.md § When to break it | replaces: "Fan fiction puts the source work in the title line" | planner | accept |
+| F12 | Popups right after the action; menus read aloud are skimmed | cross-genre | 3 (Ghost ch2, 8, 9, 10; Marvel ch4, 5, 7, 9; DC ch1–2) | kb/planner/toggle-litrpg.md § Screens are documents | confirms | planner | accept — confirms; no edit |
+| F13 | The rule lands at the moment it bites; a block where nobody wants anything is skimmed | cross-genre | 5 (DC ch1; Ghost ch2, ch4; Just Deserts ch2, ch7, ch8; Sublight ch9; Young Sheldon ch6) | kb/writer/orienting-the-reader.md §1, §3 | confirms | writer | accept — confirms; no edit |
+| F14 | The chapter's event is played, not summarised | cross-genre | 3 (DC ch2, 3, 7; Young Sheldon ch5, 8, 10; Marvel ch2) | kb/writer/scene-and-summary.md; kb/story-editor/delivery-test.md | confirms | writer | accept — confirms; no edit |
+| F15 | The cool chapter still has a want and a turn | cross-genre | 5 (Ghost ch6; DC ch6; Young Sheldon ch2–4; Marvel ch2, ch8; Just Deserts ch6) | kb/planner/arcs-and-chapters.md § Temperatures | confirms | planner | accept — confirms; no edit |
+| F16 | Canon opposition is not lowered for the insert's win; a stretch with its cause on the page is accepted | fanfic | 3 (DC ch8–9; Ghost ch9; Sublight ch5) | kb/story-editor/never-stupid.md; kb/planner/toggle-fanfic.md § Characters out of character | confirms | story-editor | accept — confirms; no edit |
+| F17 | The recap is one clause of a sentence doing other work | cross-genre | 4 (Marvel ch2–10; Young Sheldon ch2; Ghost ch9; DC ch6) | kb/writer/openings-and-endings.md § Openings | confirms | writer | accept — confirms; no edit |
+| F18 | The cold read is the binding test; the beta reader stays cold | cross-genre | 6 (all hook curves) | kb/beta-reader/prompt.md; CLAUDE.md principle 2 | confirms | beta-reader | accept — confirms; no edit |
+| F19 | One head per scene | cross-genre | 3 (Young Sheldon ch1, ch3; Marvel ch3, ch4; DC ch4) | kb/writer/toggle-pov-switch.md | confirms | writer | accept — confirms; no edit |
+| F20 | Written pauses and one-word beat paragraphs; dash chains | cross-genre | 2 (DC ch2–4; Just Deserts ch1–10) | kb/line-editor/ai-default-habits.md (the stage direction; the dash appositive) | confirms | line-editor | accept — confirms; no edit |
 
 Notes for the review:
 - **F3** restates no rule: `orienting-the-reader.md` §4 owns it. The row adds the fan-fiction case
@@ -396,3 +396,23 @@ Notes for the review:
   reader; the rule stays.
 - **A fan beta reader.** The study's most useful split would argue for a second, fan reader. F18
   shows the cold read is the binding one, and a second reader is a role, not a doc edit.
+
+## Applied
+
+- F1: kb/planner/toggle-fanfic.md § The departure is a premise fact (new example: a premise row and its ledger moment).
+- F2: kb/writer/toggle-fanfic.md (new doc) § The arrival; linked from kb/writer/index.md, *Optional modules* (`genre: fanfic`).
+- F3: kb/writer/toggle-fanfic.md § A canon name (example; points to orienting-the-reader.md §4 for the rule).
+- F4: kb/planner/toggle-fanfic.md § The world track as canon (replay vs stage example).
+- F5: kb/writer/toggle-fanfic.md § A canon mind looking at the protagonist (points to toggle-pov-switch.md for when).
+- F6: kb/planner/toggle-foreknowledge.md § The reader's share (new example: a fact row due before the spend).
+- F7: kb/story-editor/across-chapters.md § The scene told again (new pattern, with a note).
+- F8: kb/writer/openings-and-endings.md § Endings: stop at the beat (second pair: a joke after the hook).
+- F9: kb/writer/toggle-comedy.md § Examples, "The gag that comes back".
+- F10: kb/planner/toggle-litrpg.md § The first use (new example).
+- F11: kb/planner/title-and-blurb.md § When to break it (the fanfic title sentence replaced by the per-platform form).
+- F12–F20: confirms; no edit.
+
+Checks: `python3 tools/kb_check.py` clean (0 defect, 0 warn). The leak sweep with the six `names.txt`
+files flags only common words from the grep-built lists (`Plan`, `Your`, `Open`, `Intelligence`)
+and an invented name already in kb/ before this study (`Tam`); no studied book's or source work's
+noun is in the new text.

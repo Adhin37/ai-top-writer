@@ -32,16 +32,16 @@ sheet, not for the bible.
 The world is invented: a harbour town where the sea gives back its drowned once a year.
 
 ```
-new    Tam is Ysolde's cousin, not her brother | bible/cast/_extras.md | "your mother's sister's boy"
+new    Orrin is Ysolde's cousin, not her brother | bible/cast/_extras.md | "your mother's sister's boy"
 ```
 
-`_extras.md` had `Tam — Ysolde's brother, boathouse lad — ch 1, 3 — alive`. The line becomes
-`Tam — Ysolde's cousin (her mother's sister's son), boathouse lad — ch 1, 3 — alive`, and the final
+`_extras.md` had `Orrin — Ysolde's brother, boathouse lad — ch 1, 3 — alive`. The line becomes
+`Orrin — Ysolde's cousin (her mother's sister's son), boathouse lad — ch 1, 3 — alive`, and the final
 message carries:
 
 ```
-changed  bible/cast/_extras.md: Tam is Ysolde's cousin, not her brother (ch 3)
-gap      plan row 9 has "Ysolde's brother" at the Calder wake; the row needs Tam's new relation
+changed  bible/cast/_extras.md: Orrin is Ysolde's cousin, not her brother (ch 3)
+gap      plan row 9 has "Ysolde's brother" at the Calder wake; the row needs Orrin's new relation
 ```
 
 ## Your final message for a fold

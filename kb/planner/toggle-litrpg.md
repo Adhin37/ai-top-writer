@@ -48,6 +48,22 @@ never twice in a row. Show the change, not the whole sheet:
 [ Grade: 6 → 4 · reason logged: fault caused (Deck Four main) ]
 ```
 
+### The first use
+
+A system or gift given in chapter 1 is a promise. Plan its first use, and what it pays, on the
+page by chapter 2 or 3, and a use in most chapters of the first arc.
+
+**Given and shelved:**
+
+> Ch 1: Tovi's meter grants her the Listening rating. Ch 2–4: school, a haircut, the canteen. Ch 5:
+> nobody has mentioned the rating since.
+
+**Given and used:**
+
+> Ch 1: the rating arrives. Ch 2: she listens to the Deck Four main and hears it is going; the
+> rating ticks up when the clamp holds. Ch 3: she hears something in Kell's office that is not a
+> pipe.
+
 ## When to break it
 
 A story where the system is only ever seen from outside (a world where everyone else has levels and

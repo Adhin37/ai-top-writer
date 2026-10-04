@@ -22,9 +22,9 @@ Appended, in chapter order, never rewritten. A header, then one line per key.
 ```
 =C0003= day 12, dusk to night | words 2410
 ev    Ysolde rows the Calder boy out past the bar alone, against the harbourmaster's order
-at    Ysolde: the boathouse · Quell: the harbour office · Tam: the quay steps
-kno   Ysolde+ the tally was signed before the boy drowned (the date on it) · Quell? suspects she has seen it · Tam- does not know she went out
-has   Ysolde: the Calder tally, folded in her boot · Tam: the boathouse key
+at    Ysolde: the boathouse · Quell: the harbour office · Orrin: the quay steps
+kno   Ysolde+ the tally was signed before the boy drowned (the date on it) · Quell? suspects she has seen it · Orrin- does not know she went out
+has   Ysolde: the Calder tally, folded in her boot · Orrin: the boathouse key
 cost  Ysolde: two fingers frostbitten, no grip in her left hand for days
 thr   ^T2 ~T4
 hook  Quell's lamp is lit in the office window when she comes back in
@@ -72,7 +72,7 @@ when.
 
 | ch | scene | who | where | tempo | two-hander |
 |---|---|---|---|---|---|
-| 3 | 1 | Ysolde, Tam | the quay steps | quiet | yes |
+| 3 | 1 | Ysolde, Orrin | the quay steps | quiet | yes |
 | 3 | 2 | Ysolde, the Calder boy (dead) | the bar at night | tense | no |
 | 3 | 3 | Ysolde, Quell | the harbour office | tense | yes |
 
@@ -105,7 +105,7 @@ it into the bible; the clerk never edits `bible/`.
 ```
 # Fold — chapter 3
 new    the bar can be crossed on foot for an hour at the Long Ebb's lowest | bible/world.md | "the bar was dry for the length of a prayer"
-new    Tam is Ysolde's cousin, not her brother | bible/cast/_extras.md | "your mother's sister's boy"
+new    Orrin is Ysolde's cousin, not her brother | bible/cast/_extras.md | "your mother's sister's boy"
 stale  "the Long Ebb — first appears ch 4" | bible/lexicon.md | on the page from ch 1
 ```
 

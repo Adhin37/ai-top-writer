@@ -63,6 +63,25 @@ a *For the planner* line, with the reader's words.
 The reader's memory predicts something this chapter is about to do: they will feel it land. If
 the draft does it offstage, see [promises.md](promises.md).
 
+### The scene told again
+
+> Ch 4 plays the Deck Four leak. Ch 6: Tovi tells Ossie the whole of it, clamp by clamp, across
+> two pages; he listens, and asks one question at the end.
+
+Each chapter handles its own business, so only the run shows it: the reader is reading a scene a
+second time. The scene log and the reader's memory show they already hold it.
+
+```
+N2 the leak retold to Ossie
+where "So I went down to Four with the wrong clamp"
+ev    state/scenes.md: ch 4 s1 plays the leak · reader's memory: "the leak Tovi fixed in ch 4"
+eff   two pages the reader skims to reach Ossie's question
+dir   one line for the telling ("She told him about the leak"), then the question, which is new
+```
+
+It holds when the listener's reaction is the event: the telling is how someone learns a thing
+that changes what they do, and the scene is their face, not the retelling.
+
 ### The recurring gesture
 
 The same small move in three chapters (the hand to the pocket, the folded paper, the last line that

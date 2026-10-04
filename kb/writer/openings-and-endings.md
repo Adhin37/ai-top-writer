@@ -48,6 +48,20 @@ scene.
 
 The second leaves a concrete question (second what? who was the first?) and nothing after it.
 
+**A joke after the hook:**
+
+> Ossie came back from Deck Nine with his hand wrapped and would not say who had done it.
+>
+> Later Tovi beat him at cards three times running. "I'm letting you win," he said. "Out of pity."
+
+**The hook kept:**
+
+> Ossie came back from Deck Nine with his hand wrapped. "Cards?" he said, and dealt left-handed,
+> and would not say who had done it.
+
+A warm gag after the live thread lets the pressure out. A comic last line works when the joke is
+the cost, or carries it: the second is still funny, and the hand is still there.
+
 ### Kinds of ending
 
 The beat sheet's `hook` line says which kind this chapter's is. A **reveal** (new information

@@ -119,14 +119,24 @@ class KbCheckTest(unittest.TestCase):
 
     def test_the_sweep_from_a_noun_list(self):
         nouns = self.write("study/names.txt", "# a studied book\nOrlan Vey\nthe Greywater\n\n")
-        self.assertEqual(kb_check.file_nouns(nouns), ["Greywater", "Orlan", "Orlan Vey",
-                                                      "the Greywater"])
+        self.assertEqual(kb_check.file_nouns(nouns), (["Greywater", "Orlan", "Orlan Vey",
+                                                       "the Greywater"], []))
+        self.assertEqual(kb_check.file_nouns(nouns, {"orlan"}),
+                         (["Greywater", "Orlan Vey", "the Greywater"], ["Orlan"]))
         self.write("kb/writer/a.md", DOC + "\nOrlan crossed the bridge.\nThe Greywaters ran.\n")
         found = [(lv, d.split(" names ")[1]) for lv, c, d
                  in kb_check.run(self.tmp, noun_files=[nouns]) if c == "leak"]
         self.assertEqual(sorted(found), [("defect", "'Orlan', from %s" % nouns),
                                          ("warn", "'Greywaters', near 'Greywater' from %s"
                                           % nouns)])
+
+    def test_a_noun_list_word_the_kb_uses_in_lower_case_is_mid_sentence_only(self):
+        nouns = self.write("study/names.txt", "Grand Plan\nOrlan Vey\n")
+        self.write("kb/writer/a.md", DOC + "\nPlan the chapter; the plan comes first.\n"
+                   "Orlan left, and then Plan B.\n")
+        found = sorted(d.split(" names ")[1] for lv, c, d
+                       in kb_check.run(self.tmp, noun_files=[nouns]) if lv == "defect")
+        self.assertEqual(found, ["'Orlan', from %s" % nouns, "'Plan', from %s" % nouns])
 
     def test_counts(self):
         rows = dict((p, (w, n)) for p, w, n in kb_check.counts(self.kb))

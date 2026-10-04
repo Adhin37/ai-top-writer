@@ -161,16 +161,25 @@ def novel_nouns(novel):
     return sorted(names), sorted(terms | words)
 
 
-def file_nouns(path):
-    """The names in a plain list, one a line (`#` starts a comment): a studied book's people,
-    places and coinages, from tools/study.py. Every one is matched anywhere."""
-    names = set()
+def file_nouns(path, ordinary=frozenset()):
+    """(names, terms) from a plain list, one a line (`#` starts a comment): a studied book's
+    people, places and coinages, from tools/study.py. Each line, and each capitalised word of a
+    longer one, is a name matched anywhere; a word split off that is in `ordinary` (the knowledge
+    base writes it in lower case: "Your" of "Your Name") is a term, matched mid-sentence only."""
+    names, terms = set(), set()
     for line in mdio.read_text(path).splitlines():
         line = line.split("#", 1)[0].strip()
         if line:
             names.add(line)
-            names.update(w for w in line.split() if len(w) >= 4 and w[:1].isupper())
-    return sorted(names)
+            for w in line.split():
+                if len(w) >= 4 and w[:1].isupper() and w != line:
+                    (terms if w.lower() in ordinary else names).add(w)
+    return sorted(names), sorted(terms - names)
+
+
+def ordinary_words(kb):
+    """The words the knowledge base writes in lower case somewhere."""
+    return {w for path in docs(kb) for w in re.findall(r"\b[a-z]{4,}\b", mdio.read_text(path))}
 
 
 def check_leaks(kb, names, terms, source, out):
@@ -251,9 +260,10 @@ def run(root=ROOT, novels=(), noun_files=()):
         source = os.path.basename(os.path.normpath(novel))
         check_leaks(kb, names, terms, source, out)
         check_near_names(kb, names, source, out)
+    ordinary = ordinary_words(kb) if noun_files else set()
     for path in noun_files:
-        names = file_nouns(path)
-        check_leaks(kb, names, [], path, out)
+        names, terms = file_nouns(path, ordinary)
+        check_leaks(kb, names, terms, path, out)
         check_near_names(kb, names, path, out)
     return out
 

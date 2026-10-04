@@ -79,7 +79,7 @@ lint     novels/tidewater/work/ch0004/lint-r0.txt · 1 defect · 0 warn
 checked  lexicon, world.md §Places, cast/quell.md, _extras.md; C0001–C0003; timeline days 1–12
 F1 know    "Ysolde knew Quell had signed the Calder tally himself" | C0003 kno: "Ysolde+ the tally was signed before the boy drowned" | nothing on the page tells her who signed it
 F2 travel  "By noon she was at the salt pans" | bible/world.md §Places: "the salt pans, a day's walk north" | she left the quay at dawn the same day
-F3 state   "turned the boathouse key in the lock" | C0003 has: "Tam: the boathouse key" | she gave it to Tam last chapter
+F3 state   "turned the boathouse key in the lock" | C0003 has: "Orrin: the boathouse key" | she gave it to Orrin last chapter
 F4 lexicon "Harbormaster Quell" | bible/lexicon.md: "harbourmaster, never harbormaster" | lint line 88
 ```
 

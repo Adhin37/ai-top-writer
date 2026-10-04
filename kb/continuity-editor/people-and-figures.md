@@ -25,7 +25,7 @@ him as never having left.
 ### In two hands
 
 ```
-F3 state  "turned the boathouse key in the lock" | C0003 has: "Tam: the boathouse key" | she gave it to Tam last chapter
+F3 state  "turned the boathouse key in the lock" | C0003 has: "Orrin: the boathouse key" | she gave it to Orrin last chapter
 ```
 
 ### Recovered too fast

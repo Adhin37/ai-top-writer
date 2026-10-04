@@ -27,3 +27,4 @@ Start with [prompt.md](prompt.md) — your procedure.
 | [toggle-slice-of-life.md](toggle-slice-of-life.md) | `optional.slice-of-life-texture: on` | always, when on — work, food, money and small rituals inside the scenes |
 | [toggle-grimdark.md](toggle-grimdark.md) | `optional.grimdark-consequences: on` | a death, an injury or a moral cost is on the page |
 | [toggle-pov-switch.md](toggle-pov-switch.md) | `pov.switch_granularity` other than `never` | the chapter or a scene is in another viewpoint |
+| [toggle-fanfic.md](toggle-fanfic.md) | `genre: fanfic` | always, when on — the arrival, canon names for a reader who has never met them, a canon mind looking at the protagonist |

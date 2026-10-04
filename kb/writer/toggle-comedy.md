@@ -33,6 +33,12 @@ it, so the scene got more dangerous, not less.
 > The deep-crew recruitment poster had been updated. The number of crews returned had been
 > painted over, neatly, in the same green as the wall.
 
+**The gag that comes back.** A running line is a pleasure the reader waits for when it is spaced
+and returns changed; used in every scene, it becomes the narrator's default and wears out.
+
+> Ch 1: Ossie apologises to the clamp every time it slips. Ch 4: he apologises to the recruiter's
+> desk. Ch 9, at the burial shaft, he starts to apologise to the clamp and cannot finish.
+
 **Undersell.** Nobody laughs to cue the reader, and the funny word comes last in the sentence.
 
 ## When to break it
