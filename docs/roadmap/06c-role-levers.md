@@ -7,7 +7,13 @@ so this plan spends most of its design on making them cheap.
 Evidence and sources: [2026-10-04 research](../experiments/2026-10-04-cost-levers.md).
 
 Depends on 06 (the trace's per-chapter and effort lines) and on 06b (a cheaper showrunner makes
-every test run cheaper).
+every test run cheaper). Baseline: [run #7 through the trace](../experiments/2026-10-04-trace-run-7.md).
+
+**Measure the Sonnet roles against Claude Code's own count.** Their transcripts under-record
+output, mostly thinking: 192k of 295k missing tokens in run #7 (lesson 30). A Sonnet arm's cost
+and thinking share come from the trace's allotted column, or from the session's per-model total
+in an arm where only one Sonnet role changes. The trace reads effort per response, so an arm is
+credited to the level it actually ran at.
 
 ## How to compare cheaply
 
@@ -48,7 +54,8 @@ every test run cheaper).
 3. **The continuity editor's read-set.** It reads ~65k tokens a spawn, and its cache writes ($2.29)
    are four times its output ($0.55). Give it the lint and `state_check` output and the bible
    entries the draft's names touch, not the whole bible. Test by findings agreement.
-   - **Free in the same pass:** drop `kb/` docs that no role opened (06's guard log).
+   - ~~Free in the same pass: drop `kb/` docs that no role opened.~~ 06 found none to drop: every
+     unopened doc is a module switched off for the novel, or a cold role's `index.md`.
 4. **The clerk on Haiku 4.5.** Mechanical work, and Haiku's older tokenizer adds a second saving.
    `state_check.py` and the next continuity pass check it, with no judge.
    - The beta reader on Haiku stays deferred: a calibrated instrument changes only with its

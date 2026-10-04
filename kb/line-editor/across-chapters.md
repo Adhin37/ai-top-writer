@@ -6,8 +6,11 @@ roles: [line-editor]
 ---
 # Habits across chapters
 
-Read the two chapters before this one beside it, and before you keep a line as a callback, search
-every earlier chapter in `chapters/` for it: two chapters back cannot see its first use. A move used
+Read the two chapters before this one beside it, and before you keep a line as a callback, count
+its earlier uses: two chapters back cannot see its first use. From chapter 3 on the history
+report counts them for you across the whole book, with chapter numbers (`motif` for a phrase or
+image that comes back whole, `signature` for a short phrase in several chapters or mouths); before
+that, search `chapters/`. A move used
 once in each chapter is invisible to any check of one chapter, and a reader still feels it by the
 third: the same gesture, the same image, the same piece of wisdom in a new mouth, the same shape of
 last line. Thin it in this chapter. Keep it only if it is a deliberate callback, one whose second
@@ -45,6 +48,21 @@ chapter's last line against the last two, and against the *Ending* of the beat s
 says and change its shape, by putting it in a mouth or in an action, or by moving it a line
 earlier. If the beat sheet does not name it, end on the line of speech or the action just before
 it.
+
+### The refrain the report counts
+
+```
+warn motif: "Old seals hold their air, Kell had told the cadets" x4 in ch 1 (2), 3, 5 - also in bible/world.md:12
+```
+
+Each use looked like a callback from where it stood: ch 3 called back to ch 1, and this chapter,
+ch 5, calls back to ch 3. The report sees four uses, and a line in the bible, which is where the
+drafter keeps finding it. A fourth use is the book's habit, not a callback: thin it here, unless
+this use changes what the line means.
+
+```
+across  "Old seals hold their air" ch 1, ch 3 — thinned here: the fourth use (history x4)
+```
 
 ### The callback that earns it
 

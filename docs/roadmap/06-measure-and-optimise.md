@@ -83,4 +83,68 @@ The optimisation levers are split by what it costs to check them on a Pro plan
 
 ## Session log
 
-*(filled in when this plan runs)*
+**2026-10-04.** No agent was spawned. Baseline report:
+[docs/experiments/2026-10-04-trace-run-7.md](../experiments/2026-10-04-trace-run-7.md).
+
+**Part A.1, the trace** (`tools/trace.py`; 16 tests, 9 new). Each item, built or decided:
+
+- **Per role, model seconds against tool seconds:** built. A tool's seconds belong to the
+  response that called it.
+- **Per chapter, the same plus rounds:** built (`--chapters`). Every dispatch names its chapter
+  (`chapter N`, `work/chNNNN/`), and each agent response follows the dispatch that started it, so
+  a warm planner is split between the fold and the next beats. Run #7's split agrees with its
+  hand-cut windows within $0.1 a chapter.
+- **The kb docs each role opened:** built. Per role from the transcripts, or from the guard's log
+  when it has one (`--docs` lists the docs never opened). It is not split per chapter, since
+  nothing needed it.
+- **Effort:** built, but from the transcripts, not the agent file. Claude Code writes `effort` on
+  every assistant row, so the level is the one each response ran at. Better than the plan's
+  reading at spawn time, and no hook was needed.
+- **The Sonnet roles' final messages:** built. Every status-line role's final messages are parsed
+  (`wire.py`). **Answered: the model did it.** Ch 3 r0 on Sonnet 5 recapped, and ch 3 r1–r2 on
+  Sonnet 5.5 were clean, reading byte-identical templates. No more template tuning; lesson 23
+  extended.
+- **The under-count:** generalised. Sonnet loses its usage on ordinary tool-call responses too
+  (147 in run #7), not only the final one. The lower bound now covers every stale response
+  (lesson 30).
+- **Cache expiries:** built: a gap past the TTL, *and* more written than read. The second
+  condition removed one false positive, a writer continuation 5.0 minutes after that still hit.
+  The showrunner gets one line per pause.
+- **Injected context:** built. IDE diagnostics, MCP instructions, other hooks and the harness, in
+  characters, per role.
+- **Opened docs from the guard:** built. `tools/guard.py` appends every allowed Read to
+  `docs/sessions/<session>.reads.tsv`, and never blocks on it (3 tests).
+- **Cross-check:** `/usage` is interactive and per-window, so it cannot be read for a past
+  session. Claude Code's own `cost-state` row in the same transcript can.
+  - The input side matches to the token.
+  - Output is short by $4.88 (5.9%), all of it the under-count above.
+  - The trace now allots each model's gap to its roles. The showrunner's share is 41.3% allotted
+    (43.9% as traced). The Sonnet roles and the judge rise.
+  - Reading `/usage` once in a live session is moved to 06b's first chapter.
+
+**Part A.2, the detectors** (`tools/history.py`; 7 tests):
+
+- **What it does:** `motif` and `signature` lines for the line editor, `two-hander` and
+  `tempo`/`temp` lines for the story editor, as `level check: detail` under each owner. Nothing
+  gates.
+- **Motif** is new, not a port. It counts a phrase that comes back whole, at every use, across
+  the whole book, and names the bible line it came from. It merges a refrain broken by a clause,
+  and extends a use along its shared, all-common-word tail.
+- **Signature** is skilled-writer's rule unchanged, minus what a motif already covers.
+- **On run #7:**
+  - It found both refrains all three judges named, at the judges' counts (x4, x4), and traced
+    "broad as a barrel-head" to `bible/world.md:15`.
+  - It found the judge's "hand flat on" gesture (x5).
+  - Its two-hander warning fires from ch 3, one chapter before the in-loop reader's "another
+    conversation in which nobody will say anything useful would lose me".
+- **In the loop:** the showrunner runs it from chapter 3 on, every round, with the draft in it
+  (`work/chNNNN/history-rK.txt`, `kb/showrunner/loop.md` step 3). The story editor and the line
+  editor get the path. Their `across-chapters.md` docs say which lines are theirs. The line
+  editor's "search every earlier chapter" became "count its earlier uses: the report does it".
+- **"At every arc boundary"** adds nothing to "from chapter 3 on", because no planned arc ends
+  before chapter 3, so there is no separate arc-boundary run.
+
+**Not live-checked** (test by parts): the guard's log, and the two editors reading the report,
+are first exercised by the next run that writes a chapter (06b's pilot).
+
+Tests 209 → 228 (all OK); `kb_check` clean.

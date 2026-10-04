@@ -94,7 +94,10 @@ as a rule.
     limit; after it, `sonnet` meant `claude-sonnet-5-5`, not `claude-sonnet-5`. Eight agents ran
     on the new model, which confounds what changed in the Sonnet roles, and the cost trace counted
     them as $0 until it was made to warn. Pin full model ids for a benchmark; a tool that prices
-    by model must say when it meets one it does not know.
+    by model must say when it meets one it does not know. Plan 06 found the model was the cause:
+    the continuity editor recapped on Sonnet 5 and was one clean line on Sonnet 5.5, reading a
+    byte-identical template. Two template fixes had only shrunk the recap. Before tuning a prompt
+    for a behaviour, check whether the model changed under it.
 24. **A model cannot count its own words.** Two beta readers told to keep their notes under 800
     words wrote 915 and 976. One asked to compress reported success at 868. Given the measured
     count and a target, it reached 749 (plan 02). Give a cap's number from a tool, every time.
@@ -121,7 +124,15 @@ as a rule.
     back and was right each time it kept "Old ones hold their shape" as a callback (ch 3, ch 5);
     the judges counted four uses across five chapters and all three named it. A habit check has to
     search every earlier chapter before it keeps a line, not only the two beside it (run #7).
+    `tools/history.py` now counts every use across the book for it (plan 06).
 29. **The in-loop reader tracked the blind judges.** Fourteen beta-reader rounds gave click-next 4–5;
     three blind judges gave 4.5. The showrunner's own impression, written first, guessed 3.5–4 and
     over-weighted length, which no judge named. On a verdict, trust the cold reader over the
     showrunner who has read every report (run #7).
+30. **A transcript under-counts output, and Sonnet's most.** Claude Code writes a response's usage
+    as its rows stream, and some rows land before the last tokens do. On Opus 5.5 only an agent's
+    final response lost its count. On Sonnet 5.5, 147 ordinary tool-call responses recorded 2–3
+    output tokens and no thinking. Run #7's trace was $4.88 (5.9%) under Claude Code's own count:
+    a third short for the Sonnet roles, nearly half for the judges. The input side matched to the
+    token. The session's `cost-state` row holds the true per-model count; check any per-role cost
+    against it before using it to choose a lever (plan 06).

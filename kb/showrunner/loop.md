@@ -60,6 +60,13 @@ round.
 python3 tools/reading.py round novels/{slug} N novels/{slug}/work/chNNNN/draft-rK.md K    # -> reading/{id}-chNN-rK/
 ```
 
+From chapter 3 on, also count what recurs across the book, with this draft in it. The report is
+for the story editor and the line editor; you do not act on it.
+
+```
+python3 tools/history.py novels/{slug} --draft novels/{slug}/work/chNNNN/draft-rK.md --out novels/{slug}/work/chNNNN/history-rK.txt
+```
+
 Then spawn both at once:
 - a **fresh beta-reader**: *"Your reading folder is reading/{id}-chNN-rK/. Report on chapter N,
   pending/chNN.md."* It hands its report back as text (Claude Code refuses a subagent's report
@@ -76,7 +83,8 @@ Spawn **story-editor**: *"Novel: novels/{slug}. Chapter N, round K. Draft:
 novels/{slug}/work/chNNNN/draft-rK.md. Reader's report: reading/{id}-chNN-rK/report.md.
 Continuity: novels/{slug}/work/chNNNN/continuity-rK.md. Write
 novels/{slug}/work/chNNNN/notes-rK.md."* From chapter 2 on add *"Reader's memory before this
-chapter: reading/{id}/notes.md."* In rounds 1 and 2 add *"Writer's facts:
+chapter: reading/{id}/notes.md."* From chapter 3 on add *"History:
+novels/{slug}/work/chNNNN/history-rK.txt."* In rounds 1 and 2 add *"Writer's facts:
 novels/{slug}/work/chNNNN/facts-rK.md"*, so the editor sees what was done and what was stetted.
 
 - **REVISE** and K < 2: send the notes to the writer — `SendMessage` to `writer-chNN`: *"Notes:
@@ -87,8 +95,9 @@ novels/{slug}/work/chNNNN/facts-rK.md"*, so the editor sees what was done and wh
 
 Spawn **line-editor**: *"Novel: novels/{slug}. Polish novels/{slug}/work/chNNNN/draft-rK.md into
 novels/{slug}/chapters/NNNN-{title-slug}.md. Lint: novels/{slug}/work/chNNNN/lint-rK.txt.
-Continuity: novels/{slug}/work/chNNNN/continuity-rK.md."* (`{title-slug}`: the chapter title,
-lowercased, hyphenated.) It reads the two chapters before this one itself.
+Continuity: novels/{slug}/work/chNNNN/continuity-rK.md."* From chapter 3 on add *"History:
+novels/{slug}/work/chNNNN/history-rK.txt."* (`{title-slug}`: the chapter title, lowercased,
+hyphenated.) It reads the two chapters before this one itself.
 
 ## 6. After the chapter — clerk, then the fold
 
@@ -128,4 +137,4 @@ were about; the reader's click-next and reason; anything left unresolved.
 In an experiment or benchmark, append every hand-back, verbatim, to the run's working log in
 `docs/experiments/` as you go — `python3 tools/handback.py <agent-id> <log> --append`, never
 retyped, and never to the scratchpad, which does not survive the session. What the run cost comes
-from `python3 tools/trace.py <session-id>`.
+from `python3 tools/trace.py <session-id> --chapters`.

@@ -238,6 +238,16 @@ class Novel(object):
                         out.append((variant, canonical))
         return out
 
+    def lexicon_terms(self):
+        """The first cell of every lexicon table row: every name and coined term the book uses."""
+        out = []
+        for table in mdio.parse_tables(self.text("bible", "lexicon.md")):
+            for row in table.rows:
+                term = re.sub(r"\(.*?\)", "", row.first()).strip("*` ").strip()
+                if term:
+                    out.append(term)
+        return out
+
     def banned_words(self):
         """The backticked words in the lexicon's `Banned words` section."""
         sec = mdio.section(self.text("bible", "lexicon.md"), "banned words")

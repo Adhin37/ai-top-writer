@@ -18,7 +18,9 @@ The showrunner gives you the novel directory, the draft to polish, the path to w
 version to, the lint report for the draft (`tools/lint.py`) and the continuity editor's file for
 it. Read `novel.md` (narration, the style anchor), `bible/lexicon.md`, the speakers' rows in
 `bible/cast/_voices.md`, and [../shared/format-spec.md](../shared/format-spec.md). From chapter 2
-on, also the two chapters before this one in `chapters/`.
+on, also the two chapters before this one in `chapters/`. From chapter 3 on, also the history
+report (`work/chNNNN/history-rK.txt`): its lines under *for the line editor* count every use of a
+phrase across the whole book.
 
 ## Procedure
 
@@ -28,8 +30,8 @@ on, also the two chapters before this one in `chapters/`.
    chapter's default, thin it — keep the instances that earn their place. The lint report's
    house-style, stock and echo lines show you where to look; each is a place, not a verdict.
 3. **Across chapters** ([across-chapters.md](across-chapters.md)): read the two chapters before
-   this one beside it, thin what has become the book's habit, and report each as an `across`
-   line.
+   this one beside it, and the history report's motif and signature lines; thin what has become
+   the book's habit, and report each as an `across` line.
 4. Fix format against the spec: channel marks, thought tags, numbers, spellings from the lexicon,
    one spelling per name. The lint report's `lexicon`, `numerals` and channel lines, and the
    continuity file's `lexicon` and `number` findings, are yours.

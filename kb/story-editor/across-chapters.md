@@ -8,7 +8,11 @@ roles: [story-editor]
 
 A chapter can pass every test on its own and still be the fourth in a row with the same shape.
 `state/scenes.md` shows the last chapters' scenes: who was in them, where, at what tempo, and
-whether they were two people talking. The reader's memory (`reading/<id>/notes.md`) shows what the
+whether they were two people talking. The history report counts the runs for you: two-handers
+with this draft in them, tempos from the scene log, which ends at the last accepted chapter. Its
+lines under *for the story editor* are yours, and the rest are the line editor's.
+A `warn` there is a run of the length readers have named; whether it costs this chapter is your
+call, on the evidence below. The reader's memory (`reading/<id>/notes.md`) shows what the
 reader believes and expects. Sameness and drift are notes for the planner when they are not yet a
 cost to this chapter, and notes for the writer when they already are.
 
@@ -22,6 +26,10 @@ cost to this chapter, and notes for the writer when they already are.
 | 4 | 2 | Tovi, recruiter | Deck Seven    | tense | yes |
 ```
 
+```
+warn two-hander: 3 two-handers in a row, c3 s2 to c4 s2
+```
+
 Three conversations in a row, each between Tovi and one other person. Each scene works alone. A
 reader feels the run as the story standing still. If this draft is the third, the note for the
 writer is to give one scene a third party with business of its own, or something to do with
@@ -31,6 +39,15 @@ their hands besides talk. The note for the planner is the run itself.
 
 Five chapters at `tense` read as one long chapter. The scene log shows the tempo, and the plan row's
 `temp` shows what was meant. If they disagree, the draft played it differently from the plan.
+
+```
+warn tempo: 4 chapters in a row open quiet: ch 2-5
+note temp: ch 5 was planned fast and played quiet, quiet, tense
+```
+
+Four chapters that each open on someone alone, thinking, before anything happens: the reader
+learns to skim the first page. If this draft opens the same way it is the fifth: a note for the
+writer if its opening can start in motion, and for the planner if the next row would too.
 
 ### The reader's belief has drifted
 

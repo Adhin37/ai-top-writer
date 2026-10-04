@@ -164,5 +164,55 @@ class GuardProcessTest(unittest.TestCase):
         self.assertEqual(res.returncode, 0)
 
 
+class ReadLogTest(unittest.TestCase):
+    """Every Read the guard allows lands in docs/sessions/<session>.reads.tsv, for the trace."""
+
+    def setUp(self):
+        self._env = os.environ.pop("CLAUDE_PROJECT_DIR", None)
+        self.tmp = tempfile.TemporaryDirectory()
+        self.log = os.path.join(self.tmp.name, "docs", "sessions", "s1.reads.tsv")
+
+    def tearDown(self):
+        self.tmp.cleanup()
+        if self._env is not None:
+            os.environ["CLAUDE_PROJECT_DIR"] = self._env
+
+    def run_hook(self, tool, agent=None, **tool_input):
+        payload = {"tool_name": tool, "tool_input": tool_input, "cwd": self.tmp.name,
+                   "session_id": "s1"}
+        if agent:
+            payload.update(agent_id="a9", agent_type=agent)
+        return subprocess.run([sys.executable, os.path.join(ROOT, "tools", "guard.py")],
+                              input=json.dumps(payload), capture_output=True, text=True)
+
+    def lines(self):
+        if not os.path.exists(self.log):
+            return []
+        with open(self.log, encoding="utf-8") as fh:
+            return [l.rstrip("\n").split("\t") for l in fh]
+
+    def test_allowed_reads_are_logged_with_the_role(self):
+        doc = os.path.join(self.tmp.name, "kb", "writer", "prompt.md")
+        self.assertEqual(self.run_hook("Read", "writer", file_path=doc).returncode, 0)
+        self.assertEqual(self.run_hook("Read", file_path=doc).returncode, 0)
+        rows = self.lines()
+        self.assertEqual([r[1:] for r in rows], [["s1", "a9", "writer", "kb/writer/prompt.md"],
+                                                 ["s1", "", "showrunner", "kb/writer/prompt.md"]])
+
+    def test_refused_reads_writes_and_searches_are_not(self):
+        self.assertEqual(self.run_hook("Read", "writer", file_path=os.path.join(
+            self.tmp.name, "kb", "story-editor", "prompt.md")).returncode, 2)
+        self.run_hook("Write", "writer", file_path=os.path.join(self.tmp.name, "novels", "x",
+                                                                "work", "a.md"))
+        self.run_hook("Grep", "writer", pattern="x", path=self.tmp.name)
+        self.assertEqual(self.lines(), [])
+
+    def test_an_unwritable_log_never_blocks(self):
+        os.makedirs(os.path.dirname(self.log))
+        os.makedirs(self.log)                       # a directory where the file should be
+        res = self.run_hook("Read", "writer", file_path=os.path.join(self.tmp.name, "kb", "a.md"))
+        self.assertEqual((res.returncode, res.stderr), (0, ""))
+
+
 if __name__ == "__main__":
     unittest.main()

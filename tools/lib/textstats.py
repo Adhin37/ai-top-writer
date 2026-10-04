@@ -315,6 +315,11 @@ class Chapter(object):
             out.append(speakers)
         return out
 
+    def scene_turns(self):
+        """Spoken turns per scene: the paragraphs with speech in them."""
+        starts = [p[0] for p in self.speech_paragraphs()]
+        return [sum(1 for s in starts if a <= s < b) for a, b in self.scene_bounds()]
+
     def echoed_phrases(self, window=4, minimum=3):
         """(phrase, count) for each `window`-word phrase used `minimum`+ times. Overlapping windows
         of one repetition are reported once."""

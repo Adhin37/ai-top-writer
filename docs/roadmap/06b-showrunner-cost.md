@@ -1,7 +1,8 @@
 # 06b — Session 7b: the showrunner's cost, and noise in agents' contexts
 
 **Goal:** cut the cost that changes no role's judgement. In run #7 the showrunner was $33.88 of
-$77.21 (44%), and almost none of it was thinking. 100M tokens were re-read across 296 responses
+$77.21 (44% as traced; **41%** once the trace's output under-count is allotted, per
+[06's baseline](../experiments/2026-10-04-trace-run-7.md)), and almost none of it was thinking. 100M tokens were re-read across 296 responses
 over a context of mean 344k ($20.09), plus $10.31 of cache writes, mostly the rebuilds after two
 usage-limit pauses. Its own output was $3.48. The cost is context × turns.
 Evidence and sources: [2026-10-04 research](../experiments/2026-10-04-cost-levers.md).
@@ -12,7 +13,15 @@ role asked for. The trace and the routing check them (`tools/status.py`, `tools/
 the wire status lines). The risk is to routing, not to the book.
 
 Depends on 06: the trace's per-chapter split, cache-expiry and injected-context lines are the
-before/after instrument.
+before/after instrument (`trace.py <session> --chapters`). Run #7's numbers for each lever are in
+[the baseline](../experiments/2026-10-04-trace-run-7.md): 15–45 showrunner turns a chapter (mean
+36), $5.73 of showrunner cache rebuilt after two pauses, 166k characters of IDE diagnostics (133k
+into the planner), 129k of MCP instructions across 68 spawns.
+
+**Also in this plan's first live chapter** (moved from 06): read `/usage`'s plan breakdown once
+in the session and set its per-subagent shares beside the trace's allotted shares. And check that
+`docs/sessions/<session>.reads.tsv` fills, and that the story and line editors act on
+`history-rK.txt` from chapter 3 (06's changes, live-checked here).
 
 ## Levers, cheapest first
 

@@ -21,8 +21,8 @@ in `docs/sessions/`, and the `handoff` skill resumes it (the same session, or a 
 | 03 | [Session 4: the knowledge bases](03-knowledge-bases.md) | **done** 2026-10-02: 51 docs from 44 skills; `kb_check` clean, zero leaks; ch 4 at least as good as ch 2–3 (2 rounds, click-next 4) | 02 |
 | 04 | [Session 5: novel setup and planning from scratch](04-front-end.md) | **done** 2026-10-03: template, init interview, `/new` `/write` `/plan` `/status`; init ran end to end from a seed (7 rounds, check clean first pass, $8.16); chapter 1 moved to 05 | 03 |
 | 05 | [Session 6: benchmark run #7](05-benchmark-run-7.md) | **done** 2026-10-03: five chapters from a fresh seed, no file touched by hand; **4.5 / 5 from three blind judges** (run #6: 3.5); 18/18 premise facts in their retells; $70.73 ($3.18 per 1,000 words); findings routed, two tools and five docs fixed | 04 |
-| 06 | [Session 7: measurement](06-measure-and-optimise.md) | **next**; split 2026-10-04 into 06 / 06b / 06c ([research](../experiments/2026-10-04-cost-levers.md)) | 05 |
-| 06b | [Session 7b: the showrunner's cost, and noise in agents' contexts](06b-showrunner-cost.md) | planned | 06 |
+| 06 | [Session 7: measurement](06-measure-and-optimise.md) | **done** 2026-10-04: the trace per role and per chapter (time, effort, cache expiries, injected context, docs opened, a cross-check against Claude Code's own count); `tools/history.py` in the loop from ch 3. [Run #7's baseline](../experiments/2026-10-04-trace-run-7.md): the trace was 5.9% under on output (Sonnet's usage lands late); the showrunner is 41% allotted. No agent spawned | 05 |
+| 06b | [Session 7b: the showrunner's cost, and noise in agents' contexts](06b-showrunner-cost.md) | **next** | 06 |
 | 06c | [Session 7c: the roles' levers, tested blind and cheaply](06c-role-levers.md) | planned | 06, 06b |
 | 07 | [Session 8: retire skilled-writer](07-retire-skilled-writer.md) | planned | 05 |
 
@@ -77,7 +77,9 @@ table: it is what the user reads.
 | novel setup: template, planner init interview, writer style samples; `/new`, `/plan`, `/write`, `/status` | 04 | yes | yes (04, 05): `/new` clean on the first check twice; `/write` took a new novel's chapter 1 to ACCEPT with the central rule `stated`; `/status` matched the files after every chapter but one line (fixed); `/plan` moved an overdue fact (the tool then misread it; fixed). The round-6 re-ask and the round-5 mix have not arisen |
 | benchmark run #7 against run #6 | 05 | yes | yes (05): 4.5 / 5 from three blind judges, unanimous (run #6: 3.5 from one reader); 18/18 premise facts in their retells; ch 1's central rule `stated` in the loop; $3.18 per 1,000 words (run #6: $4.76). Novel, models and pipeline all differ |
 | test-run protocol (`docs/test-run-protocol.md`) and pre-run probes | 05 | yes | yes (05): no showrunner write under `novels/`, the toolkit frozen, every role on its pinned model; two gaps found and fixed (the judges' git status, a zsh trap) |
-| per-role measurement: cache expiries, injected context, effort, opened docs | 06 | partly (trace) | — |
+| per-role and per-chapter measurement: model and tool time, effort, cache expiries, injected context, opened docs, final messages, the cross-check (`tools/trace.py`) | 06 | yes | yes, on run #7's transcripts (06): the chapter split matches the run's hand-cut windows within $0.1; the cross-check matched the input side to the token and found the output under-count (lesson 30). Live, in a new run: not yet |
+| docs-opened log from the guard (`docs/sessions/<session>.reads.tsv`) | 06 | yes | not yet: first written by the next run (06b) |
+| cross-chapter detectors: motif, signature, two-hander, tempo (`tools/history.py`), read by the story and line editors from ch 3 | 06 | yes | on run #7's chapters, offline (06): both refrains the judges named, at their counts; the two-hander warning a chapter before the reader's complaint. In the loop: not yet (06b) |
 | showrunner cost levers and context hygiene | 06b | no | — |
 | role cost levers (effort, read-set, model, loop cap), blind-tested | 06c | no | — |
 | skilled-writer retired | 07 | no | — |

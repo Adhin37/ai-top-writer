@@ -19,7 +19,12 @@ Every role writes only its allowlist.
 Not covered: Bash. The cold roles are given no Bash tool, which is their real wall.
 The main session may do anything, except write under novels/ while a `.test-run` file exists at
 the project root (a benchmark run measures the room, not the showrunner).
+
+Every Read it allows is appended to `docs/sessions/<session>.reads.tsv` (time, session, agent id,
+role, path), so `tools/trace.py` knows exactly which `kb/` docs each role opened. The log never
+blocks a call: if it cannot be written, the call goes ahead unlogged.
 """
+import datetime
 import json
 import os
 import re
@@ -224,6 +229,28 @@ def verdict(payload):
     return None
 
 
+def log_read(payload):
+    """Append an allowed Read to the session's read log. Never raises."""
+    try:
+        if payload.get("tool_name") != "Read":
+            return
+        path = _path_arg(payload.get("tool_input") or {}, "file_path")
+        session = re.sub(r"[^\w.-]", "", str(payload.get("session_id") or ""))
+        if not path or not session:
+            return
+        root = project_root(payload)
+        rel = relpath(path, root)
+        role = str(payload.get("agent_type") or "").strip() if payload.get("agent_id") else ""
+        stamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+        out = os.path.join(root, "docs", "sessions", session + ".reads.tsv")
+        os.makedirs(os.path.dirname(out), exist_ok=True)
+        with open(out, "a", encoding="utf-8") as fh:
+            fh.write("\t".join((stamp, session, str(payload.get("agent_id") or ""),
+                                role or "showrunner", rel if rel is not None else path)) + "\n")
+    except Exception:       # a log must never stop the call it records
+        pass
+
+
 def main():
     try:
         payload = json.loads(sys.stdin.read() or "{}")
@@ -236,6 +263,7 @@ def main():
         sys.stderr.write("Blocked: %s.\nIf your task genuinely needs it, say so in your report "
                          "and carry on with what you have.\n" % why)
         return 2
+    log_read(payload)
     return 0
 
 
