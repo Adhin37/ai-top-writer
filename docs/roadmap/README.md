@@ -27,8 +27,9 @@ in `docs/sessions/`, and the `handoff` skill resumes it (the same session, or a 
 | 06d | [Session 7d: model and effort by role; the skill-authoring guide against `kb/`](06d-model-effort-and-kb.md) | **built** 2026-10-04: no role changes model (the Sonnet roles mostly read; on Opus +$6–10 a run); the rule *Sonnet only at `high`*, warned by `kb_check`; `trace.py --reprice`; the continuity editor checks its own file; a prompt audit (one fossil removed); `kb_check` warns on dated text; a bible read-set tool measured and dropped. No agent spawned | 06c |
 | 07 | [Session 8: retire skilled-writer](07-retire-skilled-writer.md) | **done** 2026-10-04: the coverage diff (64 areas; 8 gaps filled, one as a new planner doc and seven as examples; the rest covered, or waived with a reason) and the `sw` tools diff in [kb-mapping.md](../kb-mapping.md); [history.md](../history.md); an archive notice in the old repo; both projects' memory updated, lessons 35–36. No agent spawned | 05 |
 
-**After 07, no plan is written.** What remains is the next full run, which checks the 06b–06d
-checklists and the examples 07 added to `kb/`, and the first human read of a chapter 1, once the
+**After 07, no plan is written.** What remains is the next full run, which works through
+[the next-run checklist](../next-run-checklist.md) (the 06–07 items and the post-07 audit's), and
+the first human read of a chapter 1, once the
 user lifts the standing decision that they read nothing ([07 § After the rebuild](07-retire-skilled-writer.md#after-the-rebuild)).
 
 ## Why this order
@@ -63,7 +64,7 @@ table: it is what the user reads.
 
 | feature | plan | built | worked in a run |
 |---|---|---|---|
-| six roles: thin agent files and per-role knowledge bases | 1 | yes | yes (01) |
+| the room's roles (six at first, seven from 02): thin agent files and per-role knowledge bases | 1 | yes | yes (01) |
 | isolation guard (`tools/guard.py`) and prose-only exports (`tools/export_prose.py`) | 1 | yes | yes (01) |
 | premise sheet and reader ledger (planner) | 1 | yes | yes (01) |
 | in-loop cold beta reader, calibrated | 1, 01 | yes | yes (01) |
@@ -87,12 +88,13 @@ table: it is what the user reads.
 | cross-chapter detectors: motif, signature, two-hander, tempo (`tools/history.py`), read by the story and line editors from ch 3 | 06 | yes | on run #7's chapters, offline (06): both refrains the judges named, at their counts; the two-hander warning a chapter before the reader's complaint. In the loop: not yet (06b) |
 | context hygiene: no IDE diagnostics or connector instructions in agents' contexts (`.markdownlintignore`, `disableClaudeAiConnectors`, runs from the terminal CLI) | 06b | yes | not yet: the next run's probes |
 | showrunner levers: `medium` effort; `tools/room.py`, one call per loop step printing the next dispatches; auto-compaction at 250k with compact instructions and a pointer back after it (the chosen context lever, B); a pause at chapter boundaries past 80% of the 5-hour window, resumed by `CronCreate` | 06b | yes | not yet: the next full run measures turns, context, compactions and the showrunner's share against run #7's 36 turns, 344k and 41% |
-| role cost levers (effort, read-set, model, loop cap), blind-tested | 06c | yes | partly: story editor `medium` kept on agreement with an A/A baseline (−26% a spawn); loop cap, continuity `medium` and clerk on Haiku lost; read-set measured, not built; writer revisions on Sonnet, planner effort and the line editor untested. Savings unconfirmed until the next full run |
+| role cost levers (effort, read-set, model, loop cap), blind-tested | 06c | yes | partly: story editor `medium` kept on agreement with an A/A baseline (−26% a spawn); loop cap, continuity `medium` and clerk on Haiku lost; read-set measured, not built; the writer's revisions at Opus `medium` (re-aimed by 06d) and the planner's effort untested; the line editor at `medium` not scheduled. Savings unconfirmed until the next full run |
 | model and effort by role: *Sonnet only at `high`* (warned by `kb_check`), `trace.py --reprice` | 06d | yes | on run #7's transcripts (06d): the four Sonnet roles cost $11.90, $22.13 at Opus rates. Live: nothing changed to test |
 | continuity editor checks its own file (`wire.py check`) before its status line | 06d | yes | not yet: the next run |
 | prompt audit against Opus 5.5 / Sonnet 5.5; `kb_check` warns on dated text in `kb/` | 06d | yes | partly: one fossil removed from the continuity editor (its final message must stay one line in the next run); `kb/` has no dated text |
 | conformity guards from Anthropic's multi-agent study: a judge panel on two models (`bench.py panel`, `judge--fable`); `scaffold.py check` warns on a name another novel uses; a planner example for names the world gives | — | yes | partly: the names check found the five shared names in the two existing novels. The panel waits for the next benchmark |
 | skilled-writer retired: coverage and tools diff, history, archive notice, memory | 07 | yes | yes (07): `kb_check` clean; the old repo's `sw health` 0/0/0 and its tests pass with the notice. The 8 filled gaps are new knowledge-base examples, first read in the next full run |
+| post-07 audit: the guard refuses a working role's unscoped search, the grading rubric and any shell but `python3 tools/…`; reading folders are never rebuilt over a reader's work, and a lost memory is rebuilt by a fresh re-read (`beats`, `adopt`, `where`); `--` refused in slugs and bench names; `wire.py` parses `PLANNER DONE fold|init`; one owner per rule and one tempo threshold; the knowledge base's nouns renamed and `kb_check` warns on near names; one checklist for the next run ([next-run-checklist.md](../next-run-checklist.md)) | — | yes | partly: 291 tests, `kb_check` clean on the repo and both novels, the guard probed by hand. Live behaviour: the next run (checklist, *the audit's changes*) |
 
 ## Standing decisions (from the user, 2026-09-26)
 

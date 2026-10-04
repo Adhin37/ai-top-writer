@@ -151,6 +151,20 @@ class BenchTest(unittest.TestCase):
         code, _ = self.run_bench("freeze", "novels/long-ebb", "2", "0", "e", "a", "--role", "clerk")
         self.assertEqual(code, 1)
 
+    def test_freeze_refuses_a_bad_name(self):
+        for exp, arm in (("e", "../x"), ("e--f", "a"), ("E", "a")):
+            with self.assertRaises(ValueError):
+                bench.freeze("novels/long-ebb", 2, 0, exp, arm, "clerk", self.root)
+
+    def test_cut_rows_reads_each_table_by_its_own_header(self):
+        text = ("| ch | what |\n|---|---|\n| 1 | a |\n| 3 | b |\n\n"
+                "| what | ch |\n|---|---|\n| c | 1 |\n| d | 3 |\n")
+        cut = bench._cut_rows(text, "ch", 2)
+        self.assertIn("| 1 | a |", cut)
+        self.assertIn("| c | 1 |", cut)
+        self.assertNotIn("| 3 | b |", cut)
+        self.assertNotIn("| d | 3 |", cut)
+
     def test_freeze_for_the_clerk_keeps_the_accepted_chapter(self):
         self.run_bench("freeze", "novels/long-ebb", "2", "1", "e", "c", "--role", "clerk")
         copy = self.p("novels", "long-ebb--e-c")
@@ -177,6 +191,10 @@ class BenchTest(unittest.TestCase):
         self.assertFalse(os.path.exists(self.p(".claude", "agents", "story-editor--medium.md")))
         code, _ = self.run_bench("arm", "story-editor", "x")
         self.assertEqual(code, 1)
+        for name in ("../../x", "A B", "fable"):        # a path; not a name; the panel's own
+            role = "judge" if name == "fable" else "story-editor"
+            code, _ = self.run_bench("arm", role, name, "--remove")
+            self.assertEqual(code, 1, name)
 
     # ------------------------------------------------------------ pair
 

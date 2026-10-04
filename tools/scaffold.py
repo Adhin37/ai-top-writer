@@ -32,7 +32,7 @@ from state_check import Findings, due_chapter, first_int  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEMPLATE = os.path.join(ROOT, "novels", "_template")
-SLUG = re.compile(r"^[a-z0-9][a-z0-9-]{0,59}$")
+SLUG = re.compile(r"^(?!.*--)[a-z0-9][a-z0-9-]{0,59}$")   # `--` marks a frozen copy (bench.py)
 PLACEHOLDER = re.compile(r"\{\{")
 SKIP = (".gitkeep",)
 REQUIRED_KEYS = ("title", "slug", "platform", "exposition", "genre", "narration.person",
@@ -61,8 +61,9 @@ def template_files(template=TEMPLATE):
 def new(slug, novels_dir=None, template=TEMPLATE):
     """Copy the template to novels_dir/slug and return the new path. Raises ValueError."""
     if not SLUG.match(slug or ""):
-        raise ValueError("a slug is lowercase letters, digits and hyphens, at most 60, and does "
-                         "not start with a hyphen or an underscore: %r" % slug)
+        raise ValueError("a slug is lowercase letters, digits and hyphens, at most 60; it does "
+                         "not start with a hyphen or an underscore, and has no `--` (that marks "
+                         "an experiment's frozen copy): %r" % slug)
     novels_dir = novels_dir or os.path.join(ROOT, "novels")
     dest = os.path.join(novels_dir, slug)
     if os.path.exists(dest):
@@ -253,7 +254,8 @@ def check_shared_names(nov, out):
     parent = os.path.dirname(nov.root)
     for other in sorted(os.listdir(parent)) if mine else []:
         o = Novel(os.path.join(parent, other))
-        if other.startswith("_") or o.root == nov.root or not o.exists():
+        if (other.startswith("_") or "--" in other or o.root == nov.root
+                or not o.exists()):            # `--`: an experiment's frozen copy of a novel
             continue
         theirs = name_words(o)
         for w in sorted(set(mine) & set(theirs)):

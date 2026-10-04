@@ -85,7 +85,7 @@ def when(value):
 
 
 def iso(t):
-    return t.isoformat(timespec="minutes") if t else ""
+    return t.isoformat(timespec="seconds") if t else ""
 
 
 def hm(t):

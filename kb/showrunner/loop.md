@@ -13,7 +13,8 @@ wrong, improve its `kb/<role>/prompt.md` and run it again, and say that you did.
 Name the agent that is working at each step, so the user can tell whose edit they are looking at.
 
 **Every role ends on one status line** ([wire](../shared/wire.md)): `DRAFT READY`, `NOTES READY`,
-`PLANNER DONE`, `POLISHED`, `CONTINUITY READY`, `CLERK DONE`. Act on that line. Open a role's file
+`PLANNER DONE`, `POLISHED`, `CONTINUITY READY`, `CLERK DONE` (during init, also `PLANNER ASKS` and
+`SAMPLES READY`; the beta reader ends on its report instead). Act on that line. Open a role's file
 only to make a decision (the beat sheet, step 1), or when the line does not parse:
 `python3 tools/wire.py status "<line>"`. What one role needs from another travels in files, by
 path; you do not carry it in your head.
@@ -42,7 +43,9 @@ From chapter 2 on, the previous chapter's `room.py fold` printed this step: cont
 warm. For chapter 1, the first chapter of a session, or when no fold ran:
 `python3 tools/room.py beats novels/{slug} N`. It stops if the chapter has no plan row or the
 ledger has rows past due ([plan.md](plan.md) first; `fold` says the same for the next chapter), and
-it prints a `PAUSE` line when the usage window is nearly spent (below).
+it prints a `PAUSE` line when the usage window is nearly spent (below). If the reader's memory is
+missing, it prints a fresh **beta-reader** for the chapters so far instead of the planner: send it,
+then `room.py adopt`, then `beats` again.
 
 Read `work/chNNNN/beats.md` (`room.py` printed its path). Approve it **as written** unless:
 - it breaks the plan row's event;
@@ -63,7 +66,8 @@ On `DRAFT READY`: `python3 tools/room.py round novels/{slug} N K`. It builds the
 folder (the reader's notes, the last two accepted chapters, the draft as `pending/chNN.md`; a
 round's reader never sees an earlier round) and, from chapter 3 on, the history report for the
 story editor and the line editor. Spawn the two dispatches it prints, a fresh **beta-reader** and a
-**continuity-editor**, in one message, and wait for both.
+**continuity-editor**, in one message, and wait for both. It will not rebuild a folder the reader
+has worked in: when the readers are back, the next step is `judge`, not `round` again.
 
 ## 4. Judge the round — story editor
 

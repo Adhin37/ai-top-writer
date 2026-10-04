@@ -16,9 +16,9 @@ anything else. Check the arithmetic, and read the small time words ("that aftern
 
 ### The time word that moved a day
 
-> Draft (day 4, evening): "She said it to the man who had carried the Harrow boy up from the water
+> Draft (day 4, evening): "She said it to the man who had carried the Calder boy up from the water
 > that afternoon."
-> C0002 header: "day 3" · C0002 ev: "Doran carries the Harrow boy up from the quay"
+> C0002 header: "day 3" · C0002 ev: "Doran carries the Calder boy up from the quay"
 
 "That afternoon", in a chapter set on day 4, says the boy was carried up today; the block says
 yesterday. A reader stops, counts, and loses the line's weight. This is the slip easiest to miss,
@@ -26,7 +26,7 @@ because the sentence reads fine on its own. Read every time word against the hea
 points back to.
 
 ```
-F1 time  "carried the Harrow boy up from the water that afternoon" | C0002 header: "day 3" | that was yesterday; this chapter is day 4
+F1 time  "carried the Calder boy up from the water that afternoon" | C0002 header: "day 3" | that was yesterday; this chapter is day 4
 ```
 
 ### The journey too fast

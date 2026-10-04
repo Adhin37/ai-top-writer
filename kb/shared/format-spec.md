@@ -2,7 +2,7 @@
 type: reference
 title: Format spec
 description: The facts every chapter file follows — text channels, viewpoint and tense, numbers and spellings, and the file's own frontmatter.
-roles: [writer, line-editor, story-editor]
+roles: [writer, line-editor, story-editor, continuity-editor]
 ---
 # Format spec
 

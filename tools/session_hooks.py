@@ -34,6 +34,17 @@ THRESHOLD = 95
 PAUSE_AT = 80           # the 5-hour window: finish the step, start no new chapter
 FRESH_S = 600
 WINDOWS = {"five_hour": "5-hour", "seven_day": "7-day"}
+SPAN_S = {"five_hour": 5 * 3600, "seven_day": 7 * 86400}
+
+
+def fresh(usage, now):
+    """True when a status-line reading is a dict written in the last FRESH_S seconds."""
+    if not isinstance(usage, dict):
+        return False
+    updated = usage.get("updated")
+    if not isinstance(updated, (int, float)) or isinstance(updated, bool):
+        return False
+    return now - updated <= FRESH_S
 
 
 def sessions_dir(root):
@@ -119,7 +130,7 @@ def usage_warning(root, now=None):
     status-line reading."""
     now = now or time.time()
     usage = _load(os.path.join(sessions_dir(root), "usage.json"), {})
-    if not isinstance(usage, dict) or now - (usage.get("updated") or 0) > FRESH_S:
+    if not fresh(usage, now):
         return None
     limits = usage.get("rate_limits") if isinstance(usage.get("rate_limits"), dict) else {}
     warned_path = os.path.join(sessions_dir(root), "warned.json")
@@ -133,7 +144,8 @@ def usage_warning(root, now=None):
         if not isinstance(pct, (int, float)) or pct < at:
             continue
         resets = checkpoint.when(window.get("resets_at"))
-        stamp = checkpoint.iso(resets) or "unknown"
+        # no reset time: one warning per window-length span, not one ever
+        stamp = checkpoint.iso(resets) or "unknown-%d" % int(now // SPAN_S[key])
         if warned.get(mark) == stamp:
             continue
         warned[mark] = stamp

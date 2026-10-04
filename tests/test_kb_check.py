@@ -102,6 +102,32 @@ class KbCheckTest(unittest.TestCase):
         self.assertEqual(len(details), 4, details)   # Tally mid-sentence, Nessa, Long Ebb, Merrow
         self.assertFalse(any("line 8 names 'Tally'" in d for d in details), details)
 
+    def test_a_near_name_is_a_warn_and_a_sentence_head_is_not(self):
+        novel = os.path.join(self.tmp, "novels", "tide")
+        self.write("novels/tide/bible/lexicon.md", LEXICON)
+        self.write("novels/tide/bible/world.md", WORLD)
+        self.write("kb/writer/a.md", DOC + "\nThe boy from Merrows waved to Nessia.\n"
+                   "Nessas of the world. Merrowed paths.\n")
+        warns = sorted(d.split(" names ")[1] for lv, c, d in kb_check.run(self.tmp, [novel])
+                       if (lv, c) == ("warn", "leak"))
+        self.assertEqual(warns, ["'Merrows', near 'Merrow' from tide",
+                                 "'Nessia', near 'Nessa' from tide"])
+        for a, b in (("Ness", "Nessa"), ("Varrow", "Harrow"), ("Barrow", "Harrow")):
+            self.assertTrue(kb_check._near(a, b), (a, b))
+        for a, b in (("Pell", "Bell"), ("Nessa", "Nessa"), ("Ash", "Ashe"), ("Tovi", "Tovianne")):
+            self.assertFalse(kb_check._near(a, b), (a, b))
+
+    def test_the_sweep_from_a_noun_list(self):
+        nouns = self.write("study/names.txt", "# a studied book\nOrlan Vey\nthe Greywater\n\n")
+        self.assertEqual(kb_check.file_nouns(nouns), ["Greywater", "Orlan", "Orlan Vey",
+                                                      "the Greywater"])
+        self.write("kb/writer/a.md", DOC + "\nOrlan crossed the bridge.\nThe Greywaters ran.\n")
+        found = [(lv, d.split(" names ")[1]) for lv, c, d
+                 in kb_check.run(self.tmp, noun_files=[nouns]) if c == "leak"]
+        self.assertEqual(sorted(found), [("defect", "'Orlan', from %s" % nouns),
+                                         ("warn", "'Greywaters', near 'Greywater' from %s"
+                                          % nouns)])
+
     def test_counts(self):
         rows = dict((p, (w, n)) for p, w, n in kb_check.counts(self.kb))
         self.assertEqual(rows["kb/writer/a.md"], (8, 2))   # "#" counts as a word

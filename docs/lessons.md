@@ -180,3 +180,10 @@ as a rule.
     proof passing by inspecting nothing. Derive what a test walks from the same table the code
     uses, and assert a floor on how much it inspected. Mutate a guard's branches once: two of its
     tests were green whether the rule they named existed or not.
+37. **A search tool's ignore rules are not a permission boundary, and an example's nouns are not
+    inert.** The guard skipped working roles' searches over the project root, safe only because
+    ripgrep skips the gitignored `reading/` and `bench/`; `kb/judge/`, the critics' rubrics and
+    `docs/` were in reach all along (post-07 audit). Refuse a search whose root holds a denied
+    folder. Separately, the knowledge base's example names (Merrow, Harrow, Nessa) turned up, near
+    or exact, in a later novel's cast: the kb leaked into the book, not the reverse. `kb_check`
+    now warns on near names too.

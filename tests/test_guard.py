@@ -113,6 +113,42 @@ class GuardTest(unittest.TestCase):
         self.assertFalse(self.allowed(call("Read", "line-editor", file_path=p("reading/r1/report.md"))))
         self.assertFalse(self.allowed(call("Write", "line-editor", file_path=p("bench/e/originals/B1.md"))))
 
+    def test_writer_and_planner_cannot_open_the_grading_rubric(self):
+        for role in ("writer", "planner"):
+            self.assertFalse(self.allowed(call("Read", role, file_path=p("kb/shared/grading.md"))), role)
+        self.assertTrue(self.allowed(call("Read", "story-editor", file_path=p("kb/shared/grading.md"))))
+        self.assertTrue(self.allowed(call("Read", "judge", file_path=p("kb/shared/grading.md"))))
+
+    def test_working_roles_searches_must_not_reach_a_denied_folder(self):
+        self.assertFalse(self.allowed(call("Grep", "writer", pattern="Pell")))
+        self.assertFalse(self.allowed(call("Grep", "writer", pattern="Pell", path=PROJECT)))
+        self.assertFalse(self.allowed(call("Grep", "writer", pattern="x", path="kb", glob="judge/**")))
+        self.assertFalse(self.allowed(call("Glob", "writer", pattern="**/*.md")))
+        self.assertFalse(self.allowed(call("Glob", "planner", pattern="novels/*/../../kb/judge/*")))
+        self.assertTrue(self.allowed(call("Grep", "writer", pattern="Pell", path=p("novels/x/bible"))))
+        self.assertTrue(self.allowed(call("Glob", "writer", pattern="kb/writer/*.md")))
+        self.assertTrue(self.allowed(call("Grep", "continuity-editor", pattern="x", path="novels/x")))
+
+    def test_an_alias_of_a_denied_path_is_still_denied(self):
+        self.assertFalse(self.allowed(call("Read", "writer", file_path="/" + p("kb/judge/prompt.md"))))
+        self.assertFalse(self.allowed(call("Read", "writer",
+                                           file_path=p("novels/x/../../kb/judge/prompt.md"))))
+
+    def test_working_roles_shell_runs_the_tools_only(self):
+        ok = ("python3 tools/state_check.py novels/x",
+              "python3 tools/lint.py novels/x/work/ch0001/draft-r0.md --out novels/x/work/ch0001/lint-r0.txt",
+              "python3 tools/state_check.py novels/x --last 5 2>&1 | tail -n 40",
+              "python3 /proj/tools/wire.py check novels/x/work/ch0001/continuity-r0.md")
+        for cmd in ok:
+            self.assertTrue(self.allowed(call("Bash", "clerk", command=cmd)), cmd)
+        for cmd in ("cat reading/r1/report.md", "python3 -c 'print(1)'",
+                    "python3 tools/lint.py x; cat kb/judge/prompt.md",
+                    "python3 tools/lint.py x > reading/r1/notes.md",
+                    "python3 tools/lint.py $(cat docs/lessons.md)",
+                    "python3 tools/lint.py x | grep y kb/judge/prompt.md", ""):
+            self.assertFalse(self.allowed(call("Bash", "continuity-editor", command=cmd)), cmd)
+        self.assertTrue(self.allowed(call("Bash", None, command="cat reading/r1/report.md")))
+
     # --- everyone else --------------------------------------------------------------------
 
     def test_main_session_is_free(self):

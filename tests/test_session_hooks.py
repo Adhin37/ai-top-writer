@@ -172,6 +172,27 @@ class UsageTest(unittest.TestCase):
         self.reading(99, age=session_hooks.FRESH_S + 1)
         self.assertIsNone(self.tool())
 
+    def test_a_window_with_no_reset_time_warns_again_in_its_next_span(self):
+        self.reading(96, resets=None)
+        self.assertIn("5-hour limit", self.tool())
+        self.assertIsNone(self.tool())
+        later = time.time() + 5 * 3600 + 1
+        with open(self.usage) as fh:
+            data = json.load(fh)
+        data["updated"] = later
+        with open(self.usage, "w") as fh:
+            json.dump(data, fh)
+        self.assertIn("5-hour limit", session_hooks.usage_warning(self.root, now=later))
+
+    def test_a_reading_with_a_bad_timestamp_is_ignored(self):
+        self.reading(99)
+        with open(self.usage) as fh:
+            data = json.load(fh)
+        data["updated"] = "yesterday"
+        with open(self.usage, "w") as fh:
+            json.dump(data, fh)
+        self.assertIsNone(self.tool())
+
     def test_no_reading_no_warning(self):
         self.assertIsNone(self.tool())
 

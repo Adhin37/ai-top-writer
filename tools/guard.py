@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """PreToolUse hook: which role may read and write which paths.
 
-Registered once in `.claude/settings.json` for Read|Grep|Glob|Write|Edit|NotebookEdit. It reads the
-hook payload on stdin, and exits 2 with a reason on stderr to refuse a call (0 allows it).
+Registered once in `.claude/settings.json` for Read|Grep|Glob|Write|Edit|MultiEdit|NotebookEdit|Bash.
+It reads the hook payload on stdin, and exits 2 with a reason on stderr to refuse a call (0 allows it).
 
 Who is calling: a payload with no `agent_id` is the main session (the showrunner); otherwise
 `agent_type` names the role. Roles not in ROLES are not judged — the guard fails open on anything it
@@ -13,11 +13,15 @@ Two kinds of role:
     plan, the author's intent — is exactly what they must not see. Their searches must be scoped.
   * **working** roles read everything except a denylist (other roles' rubrics, experiment arms,
     maintainer docs). This is routing, not a sandbox: it keeps the writer from writing toward the
-    reader's questionnaire and the planner from designing toward the judge.
+    reader's questionnaire and the planner from designing toward the judge. A working role's search
+    must not reach a denied folder: `Grep` over the project root, or over `kb/`, is refused
+    (ripgrep skips gitignored `reading/` and `bench/`, but not `kb/judge/` or `docs/`).
 Every role writes only its allowlist. An experiment's variant of a role, `<role>--<arm>` (an agent
 file that changes only effort or model, `tools/bench.py`), is held to its role's rules.
 
-Not covered: Bash. The cold roles are given no Bash tool, which is their real wall.
+Bash: the cold roles are given none, which is their real wall. A working role that has Bash (clerk,
+continuity editor) may run only the project's tools, `python3 tools/<name>.py ...`, optionally piped
+into `head` or `tail`; `cat reading/...` or `python3 -c` would walk around every rule above.
 The main session may do anything, except write under novels/ while a `.test-run` file exists at
 the project root (a benchmark run measures the room, not the showrunner).
 
@@ -33,7 +37,7 @@ import sys
 
 COMMON_DENY = ["bench/**", "docs/**", "kb/judge/**"]
 CRITIC_KBS = ["kb/beta-reader/**", "kb/story-editor/**", "kb/line-editor/**",
-              "kb/continuity-editor/**"]
+              "kb/continuity-editor/**", "kb/shared/grading.md"]
 
 ROLES = {
     "beta-reader": {
@@ -54,7 +58,7 @@ ROLES = {
                "the reader's questionnaire or the critics' rubrics",
     },
     "planner": {
-        "read_deny": COMMON_DENY + ["kb/beta-reader/**"],
+        "read_deny": COMMON_DENY + ["kb/beta-reader/**", "kb/shared/grading.md"],
         "write": ["novels/*/novel.md", "novels/*/bible/**", "novels/*/plan/**",
                   "novels/*/state/**", "novels/*/work/**"],
         "why": "the planner designs the story, not toward the reader's questionnaire or the judge",
@@ -86,6 +90,10 @@ ROLES = {
 WRITE_TOOLS = {"Write", "Edit", "MultiEdit", "NotebookEdit"}
 SEARCH_TOOLS = {"Grep", "Glob"}
 GLOB_CHARS = re.compile(r"[*?\[{]")
+# A working role's Bash: one project tool, optionally piped into head or tail. No other shell syntax.
+TOOL_CMD = re.compile(r"^python3\s+(?:\S*/)?tools/[\w-]+\.py(?:\s+[^\s;&|`$<>(){}\\]+)*"
+                      r"(?:\s+2>&1)?"
+                      r"(?:\s*\|\s*(?:head|tail)(?:\s+-n)?(?:\s+-?\d+)?)*\s*$")
 
 
 def _glob_re(pattern):
@@ -117,14 +125,17 @@ def matches(pattern, rel):
 
 
 def project_root(payload):
-    return os.path.normpath(os.environ.get("CLAUDE_PROJECT_DIR") or payload.get("cwd")
-                            or os.getcwd())
+    cwd = payload.get("cwd")
+    return os.path.realpath(os.environ.get("CLAUDE_PROJECT_DIR")
+                            or (cwd if isinstance(cwd, str) and cwd else os.getcwd()))
 
 
 def relpath(path, root):
-    """Repo-relative POSIX path, "" for the root itself, None for anything outside the project."""
+    """Repo-relative POSIX path, "" for the root itself, None for anything outside the project.
+    Symlinks, `..` and a leading `//` are resolved first, so an alias cannot pass for an outsider."""
     p = path if os.path.isabs(path) else os.path.join(root, path)
-    p = os.path.normpath(p)
+    p = os.path.realpath(p)
+    root = os.path.realpath(root)
     if p == root:
         return ""
     if p.startswith(root + os.sep):
@@ -157,14 +168,14 @@ def _search_targets(tool, ti):
     base = _path_arg(ti, "path") or ""
     pattern = _path_arg(ti, "pattern") if tool == "Glob" else None
     if not pattern:
-        return [("read", base or ".")]
+        return [("search", base or ".")]
     prefix = _static_prefix(pattern)
     if os.path.isabs(pattern):
-        out = [("read", prefix or os.sep)]
+        out = [("search", prefix or os.sep)]
     else:
-        out = [("read", os.path.join(base or ".", prefix) if prefix else (base or "."))]
+        out = [("search", os.path.join(base or ".", prefix) if prefix else (base or "."))]
     if ".." in pattern.replace(os.sep, "/").split("/"):
-        out.append(("read", os.sep))    # climbs out of wherever it starts: judge it as outside
+        out.append(("search", os.sep))  # climbs out of wherever it starts: judge it as outside
     return out
 
 
@@ -182,6 +193,9 @@ def targets(payload):
         return [("read", path)] if path else []
     if tool in SEARCH_TOOLS:
         return _search_targets(tool, ti)
+    if tool == "Bash":
+        cmd = ti.get("command")
+        return [("bash", cmd if isinstance(cmd, str) else "")]
     return []
 
 
@@ -190,15 +204,31 @@ def _showrunner_verdict(payload, root):
     if not os.path.exists(os.path.join(root, ".test-run")):
         return None
     for kind, path in targets(payload):
+        if kind != "write":
+            continue
         rel = relpath(path, root)
-        if kind == "write" and rel is not None and matches("novels/**", rel):
+        if rel is not None and matches("novels/**", rel):
             return ("`%s`: a test run is armed (.test-run exists), and the showrunner writes "
                     "nothing under novels/ during a run - a chapter repaired by hand measures the "
                     "showrunner, not the room" % rel)
     return None
 
 
+def _denied_below(spec, rel):
+    """A denied folder inside the searched one: `kb/judge/**` lies below `kb` and below the root."""
+    for pattern in spec["read_deny"]:
+        fixed = _static_prefix(pattern)
+        if fixed and (rel == "" or fixed.startswith(rel + "/")):
+            return fixed
+    return None
+
+
 def _one_target(spec, kind, rel, shown):
+    if kind == "bash":
+        if "read_only" in spec or not TOOL_CMD.match(shown.strip()):
+            return "`%s`: your shell runs the project's tools only (python3 tools/<name>.py)" % (
+                shown.strip()[:80])
+        return None
     if kind == "write":
         if rel is None or not any(matches(p, rel) for p in spec["write"]):
             return "`%s` is not yours to write" % shown
@@ -211,6 +241,12 @@ def _one_target(spec, kind, rel, shown):
         return None
     if rel is not None and any(matches(p, rel) for p in spec["read_deny"]):
         return "`%s` is not yours to open" % shown
+    if kind == "search":
+        if rel is None:
+            return "this search leaves the project"
+        below = _denied_below(spec, rel)
+        if below:
+            return "this search reaches `%s`; scope it to the folder you need" % below
     return None
 
 
@@ -228,8 +264,8 @@ def verdict(payload):
     if spec is None:
         return None                     # a role this guard was not written for
     for kind, path in targets(payload):
-        rel = relpath(path, root)
-        what = _one_target(spec, kind, rel, rel if rel is not None else path)
+        rel = None if kind == "bash" else relpath(path, root)
+        what = _one_target(spec, kind, rel, path if kind == "bash" or rel is None else rel)
         if what:
             return "%s - %s" % (what, spec["why"])
     return None

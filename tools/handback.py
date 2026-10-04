@@ -37,6 +37,8 @@ def default_transcripts():
 
 
 def find_transcript(agent_id, base):
+    if not re.match(r"^[\w-]+$", agent_id or ""):
+        raise FileNotFoundError("not an agent id: %r" % agent_id)
     hits = glob.glob(os.path.join(base, "**", "agent-%s.jsonl" % agent_id), recursive=True)
     if not hits:
         raise FileNotFoundError("no transcript for agent %s under %s" % (agent_id, base))

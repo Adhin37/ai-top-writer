@@ -50,12 +50,19 @@ force a decision, or show an earlier cost was paid for nothing.
 
 ### The consequence above the ceiling
 
-> Chapter 2: she mentions the Deck Nine pump. Chapter 3: Security has her name. Chapter 4: she is
-> arrested for sabotage.
+> "The council cut the Ashwell family's air to half-ration, and Tovi felt the deck tilt under her."
 
-Each step may be logical, but the reader does not yet know what Security does to people, so the
-arrest reads as plot rather than dread. Before a consequence lands, the reader must have seen what
-it costs someone. Usually that is a bystander, earlier.
+The narration says it is a disaster; nothing on the page has shown what half-ration does to anyone,
+so the reader takes it on trust. Before a consequence lands, the reader must have seen what it costs
+someone. Check the scene log and the reader's memory for the scene that priced it.
+
+```
+N3 the consequence lands before the reader can price it
+where "cut the Ashwell family's air to half-ration"
+ev    no scene in ch 1–4 shows half-ration (state/scenes.md) · reader's memory: "not sure how bad that is"
+eff   the chapter's turn reads as a fact, not as dread
+dir   price it before it lands: a neighbour on half-ration, seen earlier in this chapter
+```
 
 ### The mystery without fair play
 

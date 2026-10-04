@@ -7,6 +7,9 @@ novels/*
 reading/
 bench/
 
+# Genre studies (tools/study.py): published books' chapters, saved by the user, and notes quoting them.
+research/
+
 # The test-run marker arms tools/guard.py for the main session.
 .test-run
 

@@ -33,16 +33,16 @@ The loop, step by step: [kb/showrunner/loop.md](kb/showrunner/loop.md). A new no
 
 ## The room
 
-| role | agent | model | job |
+| role | agent | model, effort | job |
 |---|---|---|---|
-| planner | `planner` | opus | world, cast, arcs; `premise.md`; the reader ledger; each chapter's beat sheet; folds new facts into the bible |
-| writer | `writer` | opus | drafts from the beat sheet; revises warm against notes; may stet a note with a reason |
-| beta reader | `beta-reader` | sonnet | reads prose-only exports with no bible; retells, reports confusion and skimming, keeps its own notes |
-| story editor | `story-editor` | opus | grades the retell against what the chapter owed; ACCEPT, or at most five specific notes |
-| continuity editor | `continuity-editor` | sonnet | every round, beside the reader: the draft against the bible and state; one finding a line |
-| line editor | `line-editor` | sonnet | one polish pass after ACCEPT; reads the last two chapters for recurring habits |
-| clerk | `clerk` | sonnet | after the line pass: state, ledger status, the reader's memory; lists new facts for the fold |
-| judge | `judge`, `judge--fable` | opus 5, fable | benchmark only, never in the loop; blind; a different questionnaire; a panel on two models (`bench.py panel`) |
+| planner | `planner` | opus, high | world, cast, arcs; `premise.md`; the reader ledger; each chapter's beat sheet; folds new facts into the bible |
+| writer | `writer` | opus, high | drafts from the beat sheet; revises warm against notes; may stet a note with a reason |
+| beta reader | `beta-reader` | sonnet, high | reads prose-only exports with no bible; retells, reports confusion and skimming, keeps its own notes |
+| story editor | `story-editor` | opus, medium | grades the retell against what the chapter owed; ACCEPT, or at most five specific notes |
+| continuity editor | `continuity-editor` | sonnet, high | every round, beside the reader: the draft against the bible and state; one finding a line |
+| line editor | `line-editor` | sonnet, high | one polish pass after ACCEPT; reads the last two chapters for recurring habits |
+| clerk | `clerk` | sonnet, high | after the line pass: state, ledger status, the reader's memory; lists new facts for the fold |
+| judge | `judge`, `judge--fable` | opus 5, fable; high | benchmark only, never in the loop; blind; a different questionnaire; a panel on two models (`bench.py panel`) |
 
 Why each role exists and what it may read: [docs/architecture.md](docs/architecture.md).
 
@@ -54,12 +54,13 @@ Why each role exists and what it may read: [docs/architecture.md](docs/architect
 | `.claude/commands/` | `/new`, `/write`, `/plan`, `/status`: short procedures that point at `kb/showrunner/` |
 | `.claude/skills/handoff/` | the main session's procedure for handing over across a usage-limit reset, and resuming |
 | `kb/<role>/` | each role's knowledge base (OKF): `index.md`, `prompt.md`, typed docs. `kb/shared/` for docs several roles use |
-| `tools/` | Python tools: `room.py` (the loop's deterministic steps, one call each, printing the next dispatches), `scaffold.py` (a new novel from `novels/_template/`, and the check that init filled it), `status.py` (where a novel stands; the ledger's debt against the plan), `export_prose.py` (prose-only exports), `reading.py` (the reader's shelf and each round's view of it), `lint.py` (per-chapter prose report), `history.py` (the book across chapters: motifs, signature phrases, two-handers, tempo runs; the editors' report from ch 3), `state_check.py` (state against chapters and plan), `kb_check.py` (the knowledge bases' shape, and a leak sweep for a novel's proper nouns), `clean.py` (what each novel left in `reading/` and `bench/`; removes a novel with all of it), `lib/` (markdown, novel and prose readers), `guard.py` (the path hook; logs every allowed Read to `docs/sessions/<session>.reads.tsv`), `handback.py` (files a hand-back from a transcript, or appends it to a log), `wire.py` (parses status lines, notes, facts, continuity and fold files), `trace.py` (a session's cost per role and per chapter, from its transcripts: time, effort, cache expiries, injected context, docs opened, and a cross-check against Claude Code's own count), `bench.py` (experiments on frozen rounds: a round frozen for one role, an effort or model arm, blind pairs, agreement between two notes or continuity files), `checkpoint.py` + `session_hooks.py` + `statusline.py` (session handoffs) |
+| `tools/` | Python tools: `room.py` (the loop's deterministic steps, one call each, printing the next dispatches), `scaffold.py` (a new novel from `novels/_template/`, and the check that init filled it), `status.py` (where a novel stands; the ledger's debt against the plan), `export_prose.py` (prose-only exports), `reading.py` (the reader's shelf and each round's view of it), `lint.py` (per-chapter prose report), `history.py` (the book across chapters: motifs, signature phrases, two-handers, tempo runs; the editors' report from ch 3), `state_check.py` (state against chapters and plan), `kb_check.py` (the knowledge bases' shape, and a leak sweep for a novel's proper nouns), `clean.py` (what each novel left in `reading/` and `bench/`; removes a novel with all of it), `lib/` (markdown, novel and prose readers), `guard.py` (the path hook; logs every allowed Read to `docs/sessions/<session>.reads.tsv`), `handback.py` (files a hand-back from a transcript, or appends it to a log), `wire.py` (parses status lines, notes, facts, continuity and fold files), `trace.py` (a session's cost per role and per chapter, from its transcripts: time, effort, cache expiries, injected context, docs opened, and a cross-check against Claude Code's own count), `study.py` (a genre study's steps: intake of saved chapters, the next dispatch; `docs/genre-study.md`), `bench.py` (experiments on frozen rounds: a round frozen for one role, an effort or model arm, blind pairs, agreement between two notes or continuity files), `checkpoint.py` + `session_hooks.py` + `statusline.py` (session handoffs) |
 | `tests/` | `python3 -m unittest discover tests` |
 | `novels/<slug>/` | a novel — format in [docs/novel-format.md](docs/novel-format.md); `novels/_template/` is the empty one `/new` copies |
 | `reading/<id>/` | everything the beta reader did for one novel: `shelf/` (accepted chapters, prose only, and its `notes.md`), `chNN-rK/` (one round's view), `fresh-chNN/` (gitignored). `<id>` is neutral; `tools/clean.py` names each folder's novel |
+| `research/<genre>/` | a genre study (gitignored: published books' chapters the user saved, and the readers' notes on them). Protocol: [docs/genre-study.md](docs/genre-study.md); steps: `tools/study.py` |
 | `bench/<experiment>/` | experiment arms and blind copies for the judge (gitignored); name the novel (`novels/<slug>/`) in its `key.md` so `tools/clean.py` can find it |
-| `docs/` | for maintainers only; no agent reads it. Roadmap, architecture, format, lessons, history, experiments |
+| `docs/` | for maintainers only; no room agent reads it (a genre study's agents read `docs/genre-study.md`). Roadmap, architecture, format, lessons, history, experiments |
 | `docs/sessions/` | each session's handoff, rebuilt by hooks every turn and at a usage limit (gitignored) |
 
 ## The principles, short

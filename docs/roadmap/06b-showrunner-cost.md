@@ -84,7 +84,7 @@ context, and the cost of each usage-limit pause, from the trace. Record the resu
 ## Exit criteria
 
 - No `ide_diagnostics` or connector instructions in a spawn's transcript.
-- The showrunner's share of a run is measured below run #7's 44%, with routing clean:
+- The showrunner's share of a run is measured below run #7's 41% (44% as traced), with routing clean:
   `status.py` matches the files, and `state_check.py` is clean after every chapter.
 - The chosen context lever is written into `kb/showrunner/loop.md` and the *Features* table.
 

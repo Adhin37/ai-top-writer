@@ -1,6 +1,6 @@
 ---
 name: judge--fable
-description: Experiment arm only, never in the loop (tools/bench.py arm). Blind benchmark reader, never part of the writing loop - reads the copies in a blind folder and answers a fixed questionnaire, compares two texts, or grades a retell. Spawned by the showrunner for experiments only.
+description: The judge panel's second model (tools/bench.py panel). Blind benchmark reader, never part of the writing loop - reads the copies in a blind folder and answers a fixed questionnaire, compares two texts, or grades a retell. Spawned by the showrunner for experiments only.
 tools: Read, Glob, Grep
 effort: high
 omitClaudeMd: true

@@ -29,6 +29,8 @@ import sys
 
 FRONTMATTER = re.compile(r"\A---[ \t]*\n(.*?)\n---[ \t]*(?:\n|\Z)", re.S)
 COMMENT = re.compile(r"<!--.*?-->\n?", re.S)
+# a `# comment` after the value, outside quotes: `title: "Feed Day"  # working title`
+TRAILING_COMMENT = re.compile(r"""^((?:"[^"]*"|'[^']*'|[^"'#])*?)\s+#.*$""")
 CHAPTER_FILE = re.compile(r"^\d+.*\.md$")
 
 
@@ -44,7 +46,7 @@ def split_frontmatter(text):
         key, sep, value = line.partition(":")
         if not sep:
             continue
-        value = value.strip()
+        value = TRAILING_COMMENT.sub(r"\1", value).strip()     # as lib/mdio.py reads it
         if len(value) >= 2 and value[0] == value[-1] and value[0] in "\"'":
             value = value[1:-1]
         fields[key.strip()] = value

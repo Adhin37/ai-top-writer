@@ -222,7 +222,7 @@ class NewTest(unittest.TestCase):
     def test_refuses_a_bad_slug(self):
         tmp = tempfile.mkdtemp(prefix="atw-scaffold-")
         try:
-            for slug in ("_template", "Thirty Days", "-x", "", "a/b"):
+            for slug in ("_template", "Thirty Days", "-x", "", "a/b", "dusk--redux"):
                 with self.subTest(slug=slug):
                     with self.assertRaises(ValueError):
                         scaffold.new(slug, novels_dir=tmp)
@@ -333,6 +333,8 @@ class CheckTest(unittest.TestCase):
             self.assertFalse(has(found, "warn", "Tovi"))
             fx.write("bible/lexicon.md", FILLED["bible/lexicon.md"] + "| Kell | the boss | |\n")
             self.assertTrue(has(fx.found(), "warn", "Kell (Kell) is also in other-book (Kell Arden)"))
+            os.rename(other, os.path.join(fx.tmp, "other-book--e-a"))   # a frozen copy
+            self.assertFalse(has(fx.found(), "warn", "Kell (Kell) is also in"))
 
     def test_style_anchor_and_blurb(self):
         with Fixture() as fx:

@@ -38,6 +38,10 @@ class RoomTest(unittest.TestCase):
         self.novel = "novels/long-ebb"
         self.id = export_prose.novel_id(self.fx.root)
         self.fx.write("state/threads.md", "# Threads\n")
+        self.shelf = os.path.join(self.root, "reading", self.id, "shelf")
+        os.makedirs(self.shelf)
+        with open(os.path.join(self.shelf, "notes.md"), "w", encoding="utf-8") as fh:
+            fh.write("The reader's memory after chapter 1.\n")
         self.transcripts = os.path.join(self.root, "transcripts")
         self.cwd = os.getcwd()
         os.chdir(self.root)
@@ -84,7 +88,30 @@ class RoomTest(unittest.TestCase):
         code, out = self.run_room("beats", self.novel, "2")
         self.assertIn("STOP: state/threads.md is missing", out)
 
+    def test_beats_rebuilds_a_lost_memory_before_the_planner(self):
+        os.remove(os.path.join(self.shelf, "notes.md"))
+        with open(os.path.join(self.shelf, "ch01.md"), "w", encoding="utf-8") as fh:
+            fh.write("Text 1.\n")
+        code, out = self.run_room("beats", self.novel, "2")
+        self.assertEqual(code, 0, out)
+        self.assertIn("warn: the reader has no memory before chapter 2", out)
+        self.assertIn('@ spawn beta-reader as "beta-reader fresh ch01"', out)
+        self.assertIn("room.py adopt novels/long-ebb 1 <agent id>", out)
+        self.assertNotIn("@ spawn planner", out)
+
     # ------------------------------------------------------------ round
+
+    def test_round_will_not_rebuild_a_folder_the_reader_worked_in(self):
+        self.fx.write("work/ch0002/draft-r0.md", DRAFT)
+        self.assertEqual(self.run_room("round", self.novel, "2", "0")[0], 0)
+        folder = os.path.join(self.root, "reading", self.id, "ch02-r0")
+        with open(os.path.join(folder, "report.md"), "w", encoding="utf-8") as fh:
+            fh.write("filed")
+        code, out = self.run_room("round", self.novel, "2", "0")
+        self.assertEqual(code, 2, out)
+        self.assertIn("holds the reader's work", out)
+        self.assertEqual(self.run_room("round", self.novel, "2", "0", "--force")[0], 0)
+        self.assertFalse(os.path.exists(os.path.join(folder, "report.md")))
 
     def test_round_builds_the_view_and_dispatches_both_readers(self):
         self.fx.write("work/ch0002/draft-r0.md", DRAFT)
@@ -212,8 +239,9 @@ class RoomTest(unittest.TestCase):
         self.assertIn("fold novels/long-ebb/work/ch0001/fold.md: 1 line(s) for the bible", out)
         self.assertIn('@ spawn planner as "planner-ch02"\nNovel: novels/long-ebb. Task: fold '
                       'chapter 1.', out)
-        self.assertIn("@ continue planner-ch02\n  Task: beats for chapter 2. Editor's notes for "
-                      "the planner: novels/long-ebb/work/ch0001/notes-r0.md.", out)
+        self.assertIn("@ continue planner-ch02\n  Task: beats for chapter 2. Reader's notes: "
+                      "reading/%s/shelf/notes.md. Editor's notes for "
+                      "the planner: novels/long-ebb/work/ch0001/notes-r0.md." % self.id, out)
         self.assertTrue(out.splitlines()[1].startswith("state_check "))
 
     def test_a_ledger_row_past_due_sends_the_run_to_plan_first(self):
@@ -234,8 +262,7 @@ class RoomTest(unittest.TestCase):
         self.assertIn("room.py beats novels/long-ebb 2", out)
 
     def test_fold_at_ten_builds_the_fresh_re_read(self):
-        shelf = os.path.join(self.root, "reading", self.id, "shelf")
-        os.makedirs(shelf)
+        shelf = self.shelf
         for n in range(1, 11):
             with open(os.path.join(shelf, "ch%02d.md" % n), "w", encoding="utf-8") as fh:
                 fh.write("Text %d.\n" % n)
@@ -270,6 +297,33 @@ class RoomTest(unittest.TestCase):
         self.fx.write("work/ch0001/fold.md", "none\n")
         self.assertEqual(room.where(self.fx.root, self.root)[0], 2)
 
+    def test_where_holds_the_next_chapter_until_the_re_read_is_adopted(self):
+        self.fx.chapter(1, title="The Tally", slug="the-tally")
+        self.fx.write("work/ch0001/fold.md", "none\n")
+        fresh = os.path.join(self.root, "reading", self.id, "fresh-ch01")
+        os.makedirs(fresh)
+        n, line = room.where(self.fx.root, self.root)
+        self.assertEqual(n, 1)
+        self.assertIn("room.py adopt novels/long-ebb 1 <beta-reader agent id>", line)
+        with open(os.path.join(fresh, "ch01.md"), "w", encoding="utf-8") as fh:
+            fh.write("Text 1.\n")
+        with open(os.path.join(fresh, "notes.md"), "w", encoding="utf-8") as fh:
+            fh.write("Fresh notes.\n")
+        self.agent("f1", "# Report\nfresh read")
+        code, out = self.run_room("adopt", self.novel, "1", "f1")
+        self.assertEqual(code, 0, out)
+        self.assertIn("adopted", out)
+        self.assertEqual(read(os.path.join(self.shelf, "notes.md")), "Fresh notes.\n")
+        self.assertTrue(os.path.isfile(os.path.join(fresh, "report.md")))
+        self.assertTrue(os.path.isfile(os.path.join(self.shelf, "ch01.md")))
+        self.assertEqual(room.where(self.fx.root, self.root)[0], 2)
+
+    def test_adopt_stops_when_the_reader_handed_back_nothing(self):
+        os.makedirs(os.path.join(self.root, "reading", self.id, "fresh-ch01"))
+        code, out = self.run_room("adopt", self.novel, "1", "nobody")
+        self.assertNotEqual(code, 0)
+        self.assertIn("STOP", out)
+
     # ------------------------------------------------------------ usage
 
     def test_the_pause_reads_a_fresh_five_hour_reading(self):
@@ -285,8 +339,11 @@ class RoomTest(unittest.TestCase):
         self.assertIsNone(room.usage_pause(path))
         reading(81)
         self.assertIn("PAUSE: the 5-hour window is at 81% (resets ", room.usage_pause(path))
-        reading(90, age=room.FRESH_S + 1)
+        reading(90, age=600 + 1)
         self.assertIsNone(room.usage_pause(path))
+        with open(path, "w", encoding="utf-8") as fh:
+            json.dump({"updated": "now", "rate_limits": []}, fh)
+        self.assertIsNone(room.usage_pause(path))            # a bad reading, not a crash
 
 
 if __name__ == "__main__":

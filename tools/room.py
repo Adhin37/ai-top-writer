@@ -9,9 +9,11 @@ showrunner to send unchanged. It prints paths and short findings, never a file's
 Steps (NOVEL is the novel directory, N the chapter, K the round):
 
   room.py beats NOVEL N              before the chapter: plan row, threads, the usage pause; the
-                                     planner's beats task (step 1)
+                                     planner's beats task (step 1). With no reader's memory before
+                                     a chapter N > 1, a fresh re-read of ch01-N-1 comes first
   room.py round NOVEL N K            after DRAFT READY: the round's reading folder, the history
-                                     report (ch 3 on); the beta reader and continuity editor (step 3)
+                                     report (ch 3 on); the beta reader and continuity editor (step
+                                     3). It never rebuilds a folder the reader worked in (--force)
   room.py judge NOVEL N K READER_ID  after both are back: files the reader's report, checks the
                                      continuity file; the story editor (step 4), and the two
                                      dispatches its verdict chooses between
@@ -49,7 +51,7 @@ import handback  # noqa: E402
 import reading  # noqa: E402
 import status  # noqa: E402
 import wire  # noqa: E402
-from session_hooks import FRESH_S, PAUSE_AT  # noqa: E402
+from session_hooks import PAUSE_AT, fresh  # noqa: E402
 from lib import mdio  # noqa: E402
 from lib.novel import Novel  # noqa: E402
 
@@ -242,9 +244,10 @@ def usage_pause(path=USAGE, now=None):
     except (OSError, ValueError):
         return None
     now = now or time.time()
-    if not isinstance(usage, dict) or now - (usage.get("updated") or 0) > FRESH_S:
+    if not fresh(usage, now):
         return None
-    window = (usage.get("rate_limits") or {}).get("five_hour") or {}
+    limits = usage.get("rate_limits")
+    window = (limits if isinstance(limits, dict) else {}).get("five_hour") or {}
     pct = window.get("used_percentage") if isinstance(window, dict) else None
     if not isinstance(pct, (int, float)) or pct < PAUSE_AT:
         return None
@@ -310,16 +313,30 @@ def step_beats(c):
     pause = usage_pause()
     if pause:
         lines.append(pause)
+    if c.n > 1 and not os.path.isfile(c.abs("reading/%s/shelf/notes.md" % c.id)):
+        prev = Chapter(c.abs(c.novel), c.n - 1, c.root)
+        try:
+            folder = c.rel(reading.build_fresh(c.abs(c.novel), prev.n, c.root))
+        except ValueError as exc:
+            raise Stop(str(exc))
+        lines.append("warn: the reader has no memory before chapter %d (no reading/%s/shelf/"
+                     "notes.md): a fresh reader re-reads ch01-ch%02d first" % (c.n, c.id, prev.n))
+        return lines, [fresh_reader(prev, folder)], (
+            "then, with its report back: python3 tools/room.py adopt %s %d <agent id>, then "
+            "python3 tools/room.py beats %s %d again" % (c.novel, prev.n, c.novel, c.n)), []
     then = ("then: read %s and approve it (loop.md step 1), then send the writer:"
             % c.wfile("beats.md"))
     return lines, [planner_beats(c, warm=False)], then, [writer(c)]
 
 
-def step_round(c, k):
+def step_round(c, k, force=False):
     draft = c.wfile("draft-r%d.md" % k)
     if not os.path.isfile(c.abs(draft)):
         raise Stop("no draft: %s" % draft)
-    folder = reading.build_round(c.abs(c.novel), c.n, c.abs(draft), k, c.root)
+    try:
+        folder = reading.build_round(c.abs(c.novel), c.n, c.abs(draft), k, c.root, force)
+    except ValueError as exc:
+        raise Stop(str(exc))
     lines = ["ch %d · round %d · step 3 read and check" % (c.n, k),
              "reading %s/ (%s)" % (c.rel(folder), ", ".join(sorted(
                  os.path.relpath(os.path.join(d, f), folder)
@@ -395,7 +412,10 @@ def step_fold(c):
     nxt = Chapter(c.abs(c.novel), c.n + 1, c.root)
     dispatches = []
     if c.n % reading.REREAD_EVERY == 0:
-        folder = c.rel(reading.build_fresh(c.abs(c.novel), c.n, c.root))
+        try:
+            folder = c.rel(reading.build_fresh(c.abs(c.novel), c.n, c.root))
+        except ValueError as exc:
+            raise Stop(str(exc))
         lines.append("due: the every-%d re-read, before chapter %d" % (reading.REREAD_EVERY,
                                                                        c.n + 1))
         dispatches.append(fresh_reader(c, folder))
@@ -443,6 +463,10 @@ def step_adopt(c, reader_id, transcripts=None):
 # ---------------------------------------------------------------- where
 
 
+def _read_or_none(path):
+    return mdio.read_text(path) if os.path.isfile(path) else None
+
+
 def last_round(c):
     ks = []
     work = c.abs(c.work)
@@ -467,6 +491,13 @@ def where(novel, root=ROOT):
             k, _ = last_round(c)
             return n, ("step 6: the chapter is polished; the clerk has not written fold.md -> "
                        "python3 tools/room.py clerk %s %d %d" % (c.novel, n, k or 0))
+        fresh = reading.fresh_dir(c.abs(c.novel), n, root)
+        shelf_notes = os.path.join(reading.shelf(c.abs(c.novel), root), "notes.md")
+        if os.path.isdir(fresh) and _read_or_none(os.path.join(fresh, "notes.md")) != \
+                _read_or_none(shelf_notes):
+            return n, ("re-read: %s is not adopted -> python3 tools/room.py adopt %s %d "
+                       "<beta-reader agent id> once the fresh reader is back"
+                       % (os.path.relpath(fresh, root), c.novel, n))
     c = Chapter(novel, n + 1, root)
     if not os.path.isfile(c.abs(c.wfile("beats.md"))):
         return c.n, ("step 1: no beat sheet -> python3 tools/room.py beats %s %d"
@@ -480,8 +511,12 @@ def where(novel, root=ROOT):
     kn, verdict = last_round(c)
     if kn != k:
         if not os.path.isfile(c.abs(c.round_dir(k) + "/report.md")):
-            return c.n, ("step 3: draft-r%d has no filed report -> python3 tools/room.py round "
-                         "%s %d %d (or judge, if both readers are back)" % (k, c.novel, c.n, k))
+            if os.path.isdir(c.abs(c.round_dir(k))):
+                return c.n, ("step 3: draft-r%d is out with the readers -> python3 tools/room.py "
+                             "judge %s %d %d <beta-reader agent id> once both are back"
+                             % (k, c.novel, c.n, k))
+            return c.n, ("step 3: draft-r%d has no reading folder -> python3 tools/room.py round "
+                         "%s %d %d" % (k, c.novel, c.n, k))
         return c.n, ("step 4: round %d is read; no notes -> the story editor (room.py judge "
                      "printed its dispatch)" % k)
     if verdict == "REVISE" and k < MAX_ROUND:
@@ -503,6 +538,8 @@ def main(argv=None):
     ap.add_argument("--log", help="append hand-backs and dispatches to this working log")
     ap.add_argument("--agent", action="append", default=[], help="an agent whose hand-back "
                     "goes into --log (repeatable)")
+    ap.add_argument("--force", action="store_true", help="round: rebuild a reading folder the "
+                    "reader has already worked in (its work is lost)")
     ap.add_argument("--transcripts", help="directory holding the transcripts (tests)")
     ap.add_argument("--root", default=ROOT, help=argparse.SUPPRESS)
     args = ap.parse_args(argv)
@@ -523,7 +560,7 @@ def main(argv=None):
             lines, sends, then, after = step_beats(c)
             came, then = [], render([then], after)
         elif args.step == "round":
-            lines, sends, then, came = step_round(c, k)
+            lines, sends, then, came = step_round(c, k, args.force)
         elif args.step == "judge":
             lines, sends, then, came = step_judge(c, k, args.rest[2], args.transcripts)
         elif args.step == "clerk":

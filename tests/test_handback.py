@@ -63,6 +63,9 @@ class HandbackTest(unittest.TestCase):
         self.assertEqual(handback.find_transcript("abc", self.base), self.path)
         with self.assertRaises(FileNotFoundError):
             handback.find_transcript("zzz", self.base)
+        for bad in ("*", "../abc", "a/b", ""):
+            with self.assertRaises(FileNotFoundError):
+                handback.find_transcript(bad, self.base)
 
     def test_append_adds_a_fenced_entry_named_by_the_spawn_label(self):
         transcript(self.path, [use("SubagentHandback", {"message": "NOTES READY w/n.md | ACCEPT"})])

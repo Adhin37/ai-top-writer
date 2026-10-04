@@ -45,13 +45,27 @@ class ShelfTest(unittest.TestCase):
                                                                                "ch04.md")])
         self.assertNotIn("number:", read(os.path.join(folder, "pending", "ch04.md")))
 
-    def test_a_rebuilt_round_forgets_what_an_earlier_build_left(self):
+    def test_a_round_the_reader_worked_in_is_not_rebuilt_without_force(self):
         draft = self.fx.write("work/ch0004/draft-r1.md", "Draft.\n")
         folder = reading.build_round(self.fx.root, 4, draft, 1, self.fx.tmp)
+        reading.build_round(self.fx.root, 4, draft, 1, self.fx.tmp)    # untouched: rebuilt
+        with open(os.path.join(folder, "notes.md"), "a", encoding="utf-8") as fh:
+            fh.write("What the reader added.\n")
+        with self.assertRaisesRegex(ValueError, "holds the reader's work"):
+            reading.build_round(self.fx.root, 4, draft, 1, self.fx.tmp)
+        self.assertIn("What the reader added.", read(os.path.join(folder, "notes.md")))
         with open(os.path.join(folder, "report.md"), "w", encoding="utf-8") as fh:
             fh.write("an old report")
-        reading.build_round(self.fx.root, 4, draft, 1, self.fx.tmp)
+        reading.build_round(self.fx.root, 4, draft, 1, self.fx.tmp, force=True)
         self.assertFalse(os.path.exists(os.path.join(folder, "report.md")))
+
+    def test_a_round_after_chapter_one_needs_the_readers_memory(self):
+        os.remove(os.path.join(self.shelf, "notes.md"))
+        draft = self.fx.write("work/ch0004/draft-r0.md", "Draft.\n")
+        with self.assertRaisesRegex(ValueError, "no memory before chapter 4"):
+            reading.build_round(self.fx.root, 4, draft, 0, self.fx.tmp)
+        draft = self.fx.write("work/ch0001/draft-r0.md", "Draft.\n")
+        reading.build_round(self.fx.root, 1, draft, 0, self.fx.tmp)       # chapter 1 has none
 
     def test_accept_copies_the_rounds_notes_byte_for_byte_and_shelves_the_chapter(self):
         self.fx.chapter(4, "The accepted text.\n", title="Four")
@@ -83,6 +97,22 @@ class ShelfTest(unittest.TestCase):
             fh.write("Fresh notes.\n")
         reading.adopt(self.fx.root, folder, self.fx.tmp)
         self.assertEqual(read(os.path.join(self.shelf, "notes.md")), "Fresh notes.\n")
+        with self.assertRaisesRegex(ValueError, "holds the reader's work"):
+            reading.build_fresh(self.fx.root, 3, self.fx.tmp)
+
+    def test_a_lost_shelf_is_rebuilt_from_the_accepted_chapters(self):
+        import shutil
+        shutil.rmtree(self.shelf)
+        for n in (1, 2):
+            self.fx.chapter(n, "Accepted %d.\n" % n, title="T%d" % n)
+        folder = reading.build_fresh(self.fx.root, 2, self.fx.tmp)
+        self.assertEqual(read(os.path.join(folder, "ch02.md")), "# T2\n\nAccepted 2.\n")
+        with open(os.path.join(folder, "notes.md"), "w", encoding="utf-8") as fh:
+            fh.write("Rebuilt.\n")
+        reading.adopt(self.fx.root, folder, self.fx.tmp)
+        self.assertEqual(sorted(os.listdir(self.shelf)), ["ch01.md", "ch02.md", "notes.md"])
+        with self.assertRaisesRegex(ValueError, "chapter 3 is neither"):
+            reading.build_fresh(self.fx.root, 3, self.fx.tmp)
 
 
 if __name__ == "__main__":

@@ -66,7 +66,7 @@ class AgentWiringTest(unittest.TestCase):
         for name, fields, _ in agents():
             if name in COLD:
                 tools = {t.strip() for t in fields["tools"].split(",")}
-                self.assertNotIn("Bash", tools, "%s must not have Bash: the guard cannot see it" % name)
+                self.assertNotIn("Bash", tools, "%s must not have Bash: its wall is having none" % name)
                 self.assertIn("read_only", guard.ROLES[name])
 
     def test_models(self):
@@ -85,6 +85,10 @@ class AgentWiringTest(unittest.TestCase):
         commands = [h["command"] for entry in settings["hooks"]["PreToolUse"]
                     for h in entry["hooks"]]
         self.assertTrue(any("tools/guard.py" in c for c in commands))
+        matchers = [m for entry in settings["hooks"]["PreToolUse"]
+                    for m in entry.get("matcher", "").split("|")]
+        for tool in ("Read", "Grep", "Glob", "Write", "Edit", "MultiEdit", "NotebookEdit", "Bash"):
+            self.assertIn(tool, matchers)
         self.assertTrue(os.path.isfile(os.path.join(ROOT, "tools", "guard.py")))
 
     def test_settings_wire_the_session_hooks(self):

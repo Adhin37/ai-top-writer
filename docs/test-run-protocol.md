@@ -165,6 +165,8 @@ The fixes come after the run is written up, never during it (§2).
 
 ## 10. Checklist
 
+What the run must also report on, beyond this list: [next-run-checklist.md](next-run-checklist.md).
+
 ```
 before   [ ] fresh session, from the terminal CLI; no agent file edited since it started
          [ ] no rehearsal chapter; stop declared (five unless the user says otherwise)

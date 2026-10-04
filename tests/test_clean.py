@@ -26,6 +26,9 @@ class CleanTest(unittest.TestCase):
         self.write("bench/vt/key.md", "| a | bench/vt/blind/x | A | B | A=novels/tide--vt-a/c.md |")
         self.write("bench/both/notes.txt", "novels/tide/chapters and novels/ash/chapters")
         self.write("bench/cal/key.md", "no novel here")
+        self.write("bench/dot/key.md", "Arms of novels/tide, compared with novels/ash.")
+        self.write("bench/csv/key.md", "novels/tide/chapters")
+        self.write("bench/csv/rows.csv", "arm,novel\nb,novels/ash/bible\n")
 
     def tearDown(self):
         shutil.rmtree(self.root)
@@ -49,13 +52,15 @@ class CleanTest(unittest.TestCase):
         self.assertEqual(got["bench/vt"], ["tide"])
         self.assertEqual(got["bench/both"], ["ash", "tide"])
         self.assertEqual(got["bench/cal"], [])
+        self.assertEqual(got["bench/dot"], ["ash", "tide"])     # a slug before a full stop
+        self.assertEqual(got["bench/csv"], ["ash", "tide"])     # any text file, not just .md
 
     def test_a_novel_owns_its_copies_their_reading_and_its_own_bench(self):
         paths, shared = clean.owned("tide", self.root)
         self.assertEqual(sorted(paths), sorted([
             "novels/tide", "novels/tide--vt-a", "reading/%s" % self.tide,
             "reading/%s" % self.copy, "bench/vt"]))
-        self.assertEqual(shared, ["bench/both"])
+        self.assertEqual(sorted(shared), ["bench/both", "bench/csv", "bench/dot"])
 
     def test_delete_removes_only_what_the_novel_owns(self):
         with contextlib.redirect_stdout(io.StringIO()):

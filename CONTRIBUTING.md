@@ -11,7 +11,7 @@ definitions, and Python tools that run the loop. It ships no novels. What the ro
 | what | version | why |
 |---|---|---|
 | [Claude Code](https://docs.claude.com/en/docs/claude-code) | recent (agent `effort` frontmatter, `StopFailure` hooks) | runs the room; the terminal CLI is preferred over an IDE panel, which injects its diagnostics into agents' contexts |
-| a Claude plan with Opus and Sonnet | — | planner, writer, story editor and judge run on Opus; the rest on Sonnet |
+| a Claude plan with Opus and Sonnet | — | planner, writer, story editor and judge run on Opus; the rest on Sonnet; the judge panel's second judge runs on Fable |
 | Python | 3.8+, as `python3` on `PATH` | the tools, the hooks and the status line call `python3` |
 | git | any | |
 

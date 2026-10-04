@@ -15,14 +15,14 @@ they play the walk to the door at length and report the argument behind it in on
 
 **The turn, reported — the reader is told a scene happened:**
 
-> By the time the Ebb came, Nessa had already argued with the harbourmaster and won the right to
+> By the time the Ebb came, Ysolde had already argued with the harbourmaster and won the right to
 > take the boat out alone.
 
 **The turn, played — the reader is there when it turns:**
 
 > The harbourmaster did not look up from the tally. "No single rowers. You know that."
-> "I know Tagge's got the fever and Doran's drunk." Nessa put her hand flat on the page, over the
-> Harrow boy's name. "So it's me alone, or he stays on the sand till noon and walks up into town.
+> "I know Tagge's got the fever and Doran's drunk." Ysolde put her hand flat on the page, over the
+> Calder boy's name. "So it's me alone, or he stays on the sand till noon and walks up into town.
 > Which do you want to explain to his mother?"
 > He looked at her hand for a long moment. Then he took the pen and wrote her name beside the
 > boy's.

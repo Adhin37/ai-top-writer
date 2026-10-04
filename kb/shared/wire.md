@@ -35,7 +35,7 @@ The world is invented: a harbour town where the sea returns its drowned once a y
 The same note in prose, about 120 words:
 
 > **N1 — the Ebb is never explained**
-> where: "Nessa had four hours until the Long Ebb, and the Harrow boy was still on the tally."
+> where: "Ysolde had four hours until the Long Ebb, and the Calder boy was still on the tally."
 > evidence: the reader's retell says "some kind of tide festival (guess)"; *Long Ebb* and *tally*
 > are both on their guessed-terms list; owed item P1 (the sea returns the drowned, who must be
 > rowed out by dawn) graded **missing**.
@@ -47,7 +47,7 @@ As wire, about 70 words:
 
 ```
 N1 Ebb never explained
-where "Nessa had four hours until the Long Ebb, and the Harrow boy was still on the tally."
+where "Ysolde had four hours until the Long Ebb, and the Calder boy was still on the tally."
 ev    P1 missing · retell "some kind of tide festival (guess)" · guessed: Long Ebb, tally
 eff   the reader didn't know the boy was dead, so the last scene read as a family quarrel, not grief
 dir   the rule in plain words where the tally is first named

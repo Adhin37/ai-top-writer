@@ -37,7 +37,7 @@ their hands besides talk. The note for the planner is the run itself.
 
 ### One tempo
 
-Five chapters at `tense` read as one long chapter. The scene log shows the tempo, and the plan row's
+Three chapters at `tense` read as one long chapter. The scene log shows the tempo, and the plan row's
 `temp` shows what was meant. If they disagree, the draft played it differently from the plan.
 
 ```

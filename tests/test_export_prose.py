@@ -53,6 +53,12 @@ class ExportTest(unittest.TestCase):
         for leak in ("event", "delivers", "intent", "author note", "---", "pov"):
             self.assertNotIn(leak, text)
 
+    def test_a_trailing_comment_is_not_the_title(self):
+        for line, want in (('title: "Feed Day"  # working', "Feed Day"), ("title: Feed # Day", "Feed"),
+                           ('title: "A # B"', "A # B"), ("title: plain", "plain")):
+            fields, _ = export_prose.split_frontmatter("---\n%s\n---\nx" % line)
+            self.assertEqual(fields["title"], want, line)
+
     def test_no_title(self):
         src = os.path.join(self.dir, "a.md")
         write(src, CHAPTER)

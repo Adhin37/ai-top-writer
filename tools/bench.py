@@ -148,7 +148,9 @@ def _cut_rows(text, col, n):
     for line in text.split("\n"):
         cells = [c.strip() for c in line.strip().strip("|").split("|")] if line.startswith("|") \
             else None
-        if cells and idx is None and col in cells:
+        if not cells:
+            idx = None                  # the table ended; the next one has its own header
+        elif idx is None and col in cells:
             idx = cells.index(col)
         elif cells and idx is not None and idx < len(cells) and cells[idx].isdigit() \
                 and int(cells[idx]) >= n:
@@ -177,6 +179,10 @@ def _round_of(name):
 def freeze(novel, n, k, exp, arm, role, root=ROOT):
     """Copy novel to novels/<slug>--<exp>-<arm>/ as it stood when round k of chapter n reached
     role. Returns (the copy's repo-relative path, the source chapter)."""
+    for name in (exp, arm):
+        if not re.match(r"^[a-z0-9]+(-[a-z0-9]+)*$", name or ""):
+            raise ValueError("%r: experiment and arm names are lowercase words joined by one `-`"
+                             % name)
     src = room.Chapter(novel, n, root)
     slug = os.path.basename(src.novel)
     dest_rel = "novels/%s--%s-%s" % (slug, exp, arm)
@@ -274,8 +280,12 @@ ARM_NOTE = "Experiment arm only, never in the loop (tools/bench.py arm). "
 
 def arm(role, name, effort=None, model=None, remove=False, root=ROOT):
     """Write (or remove) the agent file of an experiment's variant of role. Returns its path."""
+    if not re.match(r"^[a-z0-9][a-z0-9-]*$", name or ""):
+        raise ValueError("an arm's name is lowercase letters, digits and hyphens: %r" % name)
     agents = os.path.join(root, ".claude", "agents")
     path = os.path.join(agents, "%s--%s.md" % (role, name))
+    if "%s--%s" % (role, name) in PANEL:
+        raise ValueError("%s--%s is the judge panel's, not an experiment's arm" % (role, name))
     if remove:
         if os.path.isfile(path):
             os.remove(path)

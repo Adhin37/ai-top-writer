@@ -271,11 +271,6 @@ def table_with(text, *names):
     return None
 
 
-def tables_under(text, heading_substr):
-    want = heading_substr.lower()
-    return [t for t in parse_tables(text) if want in t.heading.lower()]
-
-
 def section(text, heading_substr, level=None):
     """The first section whose heading contains `heading_substr`, heading line included, up to the
     next heading of the same or a shallower level. '' if there is none."""

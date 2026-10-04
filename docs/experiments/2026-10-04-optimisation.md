@@ -68,6 +68,8 @@ a response in the transcript; the trace's cross-check against Claude Code's own 
 
 ### To measure in the next full run
 
+Carried into [next-run-checklist.md](../next-run-checklist.md) with 06c–07's items; tick them there.
+
 - [ ] the trace's *injected context* line: no `mcp`, no `ide_diagnostics`, for any role (from the
       pre-run probes);
 - [ ] the showrunner's effort reads `medium` per response;

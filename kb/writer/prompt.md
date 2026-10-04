@@ -58,7 +58,7 @@ the reader's evidence, and says what the reader experienced.
 ## The facts file
 
 Beside each draft, write its facts file: `facts-rK.md` for `draft-rK.md`, in the same folder. The
-story editor reads it next round, and the planner reads it when the chapter is accepted. It is
+story editor reads it next round, and the clerk reads it when the chapter is accepted. It is
 [wire](../shared/wire.md): ids, short quotes, one item per line.
 
 ```
@@ -73,7 +73,8 @@ choices   <a staging choice the beat sheet did not ask for, one line; at most th
 
 `notes` is for revision rounds only. `choices` is optional.
 
-`new` matters: the planner writes those facts into the bible after the chapter is accepted. A fact
+`new` matters: after the chapter is accepted the clerk hands those facts to the planner, who writes
+them into the bible. A fact
 you invent and do not list is a contradiction waiting to happen three chapters later. List one fact
 a line, each one a reader could check against the bible.
 
@@ -99,7 +100,8 @@ nothing else.
 
 ## Your final message
 
-Exactly one line, nothing before or after it:
+One line, with nothing before it, and nothing after it unless the facts file could not be written
+(below):
 
 ```
 DRAFT READY <draft path> | facts <facts path> | new <n> | stets <n> | couldn't <n>

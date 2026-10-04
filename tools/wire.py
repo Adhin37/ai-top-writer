@@ -70,14 +70,16 @@ def parse_status(line):
         if verb == "NOTES READY" and part in VERDICTS:
             fields["verdict"] = part
             continue
-        if verb == "PLANNER DONE" and "files" not in fields and not fields:
-            fields["files"] = part
+        if (verb == "PLANNER DONE" and not fields
+                and part.split(" ", 1)[0] not in VERBS[verb][1]):
+            fields["files"] = part      # optional: a fold that changed no file names none
             continue
         key, _, value = part.partition(" ")
         fields[key] = value.strip()
     if not head:
         found.append(finding("defect", "status", "%s names no %s" % (verb, VERBS[verb][0])))
-    for key in VERBS[verb][1]:
+    required = () if (verb, head) == ("PLANNER DONE", "init") else VERBS[verb][1]
+    for key in required:                # init's check is scaffold.py's, run by the showrunner
         if key not in fields:
             found.append(finding("defect", "status", "%s has no `%s`" % (verb, key)))
     if verb == "NOTES READY":

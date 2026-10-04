@@ -69,6 +69,12 @@ class StatusTest(unittest.TestCase):
             "PLANNER DONE beats | w/beats.md | gaps 1 | changed 0")
         self.assertEqual(fields["files"], "w/beats.md")
 
+    def test_a_planner_line_with_no_files_and_init_parse_clean(self):
+        _, _, fields, found = wire.parse_status("PLANNER DONE fold | gaps 0 | changed 0")
+        self.assertEqual((found, fields.get("files"), fields["gaps"]), ([], None, "0"))
+        self.assertEqual(wire.parse_status("PLANNER DONE init")[3], [])
+        self.assertIn("defect", levels(wire.parse_status("PLANNER DONE plan")[3]))
+
     def test_old_and_broken_lines_are_defects(self):
         verb, _, _, found = wire.parse_status("NOTES READY — w/notes-r0.md — REVISE — 2 notes")
         self.assertEqual(verb, "NOTES READY")

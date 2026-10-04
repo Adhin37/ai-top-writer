@@ -23,15 +23,15 @@ The world in these examples is invented. Borrow the moves, never the nouns.
 
 **Dropped in — the reader is lost:**
 
-> Nessa had four hours until the Long Ebb, and the Harrow boy was still on the tally. "Third year,"
+> Ysolde had four hours until the Long Ebb, and the Calder boy was still on the tally. "Third year,"
 > her uncle said, as if that settled it.
 
 **Oriented — same scene, two plain sentences added where they hurt:**
 
-> Nessa had four hours until the Long Ebb. Once a year the sea at Merrow drew back past the
+> Ysolde had four hours until the Long Ebb. Once a year the sea at Saltmere drew back past the
 > harbour bar and gave back everyone it had drowned since the last one — walking, cold, not quite
 > who they had been — and by dawn somebody had to row each of them out past the bar again, or
-> they stayed. The Harrow boy had been on her tally for three years running. His mother had never
+> they stayed. The Calder boy had been on her tally for three years running. His mother had never
 > once come down to the water to help.
 
 The added sentences state the rule in words a reader could repeat to a friend, and they arrive
@@ -63,9 +63,9 @@ is the part the reader now wants.
 > "Meter's the meter," Dask said, and went back to his tea.
 >
 > Everyone on the Stack knew the arithmetic. The air came up from the processors on Deck Nine, it
-> was counted by the litre, and it was billed every shift to whoever breathed it. The Board set
+> was counted by the litre, and it was billed every shift to whoever breathed it. The Gradehall set
 > each worker's grade once a year, and the grade decided how much air the Stack paid for. Meters
-> were sealed by the Board's own engineers, and a fitter who broke a seal lost her grade. There was
+> were sealed by the Gradehall's own engineers, and a fitter who broke a seal lost her grade. There was
 > no appeal. Nobody argued with a meter.
 >
 > "It's billing him for two," Tovi said.
@@ -78,7 +78,7 @@ is the part the reader now wants.
 > cat; he did not breathe for two. Every litre that came up from Deck Nine was billed to whoever
 > breathed it, and her grade paid for his until he had one of his own, so the meter was spending
 > her. She could have the seal off in a minute with the kit on her belt. But the seal was the
-> Board's, and a fitter who broke one lost her grade, and then she would be paying for both of them
+> Gradehall's, and a fitter who broke one lost her grade, and then she would be paying for both of them
 > on a meter she did not trust.
 >
 > She left the seal on and started writing the readings down.

@@ -11,7 +11,11 @@ Checks (OKF, and this repo's wiring):
   * no doc carries dated text (a date, a run, plan, session or lesson number; warn): an agent
     reading why a rule exists spends attention on the past, and the history lives in `docs/`;
   * with --novel, no doc names the novel's own proper nouns (its lexicon's Names table, and its
-    capitalised terms of art): the last novel leaks into the examples written right after it.
+    capitalised terms of art): the last novel leaks into the examples written right after it. A
+    near match (one letter off, or the name plus a short ending: Varrow and Harrow, Ness and Nessa)
+    is a warn: it runs the other way just as often, an example's noun copied into a new novel;
+  * with --nouns, the same sweep for the names in a plain list (a studied book's, from
+    tools/study.py): a finding taken from a published book goes in with invented nouns.
 
 Then, as information only, each doc's words and negations ("not", "never", "don't" …). A doc that
 grows by adding "don't" lines is getting worse, whatever its length; the count is a trend to watch,
@@ -20,7 +24,7 @@ never a limit.
 Findings print as `level check: detail`; the exit status is 0 whatever is found.
 
 Usage:
-  kb_check.py [--novel NOVEL_DIR ...] [--counts]
+  kb_check.py [--novel NOVEL_DIR ...] [--nouns FILE ...] [--counts]
 """
 import argparse
 import os
@@ -157,10 +161,21 @@ def novel_nouns(novel):
     return sorted(names), sorted(terms | words)
 
 
-def check_leaks(kb, novel, out):
-    names, terms = novel_nouns(novel)
+def file_nouns(path):
+    """The names in a plain list, one a line (`#` starts a comment): a studied book's people,
+    places and coinages, from tools/study.py. Every one is matched anywhere."""
+    names = set()
+    for line in mdio.read_text(path).splitlines():
+        line = line.split("#", 1)[0].strip()
+        if line:
+            names.add(line)
+            names.update(w for w in line.split() if len(w) >= 4 and w[:1].isupper())
+    return sorted(names)
+
+
+def check_leaks(kb, names, terms, source, out):
     if not names and not terms:
-        out.append(("warn", "leak", "no proper nouns found in %s/bible/" % novel))
+        out.append(("warn", "leak", "no proper nouns found in %s" % source))
         return
     patterns = [(n, re.compile(r"\b%s\b" % re.escape(n))) for n in names]
     for t in terms:
@@ -168,14 +183,50 @@ def check_leaks(kb, novel, out):
             patterns.append((t, re.compile(r"\b%s\b" % re.escape(t))))
         else:   # mid-sentence only: after a lowercase word, a comma or "the"
             patterns.append((t, re.compile(r"(?<=[a-z,;] )%s\b" % re.escape(t))))
-    slug = os.path.basename(os.path.normpath(novel))
     for path in docs(kb):
         text = mdio.read_text(path)
         for noun, rx in patterns:
             for m in rx.finditer(text):
                 line = text.count("\n", 0, m.start()) + 1
                 out.append(("defect", "leak", "%s line %d names %r, from %s"
-                            % (os.path.relpath(path, os.path.dirname(kb)), line, noun, slug)))
+                            % (os.path.relpath(path, os.path.dirname(kb)), line, noun, source)))
+
+
+def _near(a, b):
+    """True when two different names are one edit apart (both 5+ letters), or one is the other
+    plus at most two letters (both 4+): the copies a new name makes of an old one."""
+    if a == b or min(len(a), len(b)) < 4:
+        return False
+    if abs(len(a) - len(b)) <= 2 and (a.startswith(b) or b.startswith(a)):
+        return True
+    if min(len(a), len(b)) < 5 or abs(len(a) - len(b)) > 1:
+        return False
+    if len(a) == len(b):
+        return sum(x != y for x, y in zip(a, b)) == 1
+    short, long_ = sorted((a, b), key=len)
+    return any(long_[:i] + long_[i + 1:] == short for i in range(len(long_)))
+
+
+def check_near_names(kb, names, source, out):
+    singles = {n for n in names if " " not in n and len(n) >= 4}
+    texts = [(path, mdio.read_text(path)) for path in docs(kb)]
+    # a word the knowledge base uses as a name somewhere (capitalised mid-sentence), not "Borrow"
+    # at the head of a sentence
+    proper = {m.group(1) for _p, text in texts
+              for m in re.finditer(r"(?<=[a-z,;] )([A-Z][a-z]{3,})\b", text)}
+    seen = set()
+    for path, text in texts:
+        for m in re.finditer(r"\b[A-Z][a-z]{3,}\b", text):
+            word = m.group(0)
+            if word not in proper:
+                continue
+            for name in singles:
+                if (name, word) not in seen and _near(name, word):
+                    seen.add((name, word))
+                    line = text.count("\n", 0, m.start()) + 1
+                    out.append(("warn", "leak", "%s line %d names %r, near %r from %s"
+                                % (os.path.relpath(path, os.path.dirname(kb)), line, word,
+                                   name, source)))
 
 
 def counts(kb):
@@ -188,7 +239,7 @@ def counts(kb):
     return rows
 
 
-def run(root=ROOT, novels=()):
+def run(root=ROOT, novels=(), noun_files=()):
     kb = os.path.join(root, "kb")
     out = []
     check_types(kb, out)
@@ -196,7 +247,14 @@ def run(root=ROOT, novels=()):
     check_agents(os.path.join(root, ".claude", "agents"), root, out)
     check_dated(kb, out)
     for novel in novels:
-        check_leaks(kb, novel, out)
+        names, terms = novel_nouns(novel)
+        source = os.path.basename(os.path.normpath(novel))
+        check_leaks(kb, names, terms, source, out)
+        check_near_names(kb, names, source, out)
+    for path in noun_files:
+        names = file_nouns(path)
+        check_leaks(kb, names, [], path, out)
+        check_near_names(kb, names, path, out)
     return out
 
 
@@ -204,9 +262,11 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--novel", action="append", default=[],
                     help="sweep kb/ for this novel's proper nouns (repeatable)")
+    ap.add_argument("--nouns", action="append", default=[],
+                    help="sweep kb/ for the names in this file, one a line (repeatable)")
     ap.add_argument("--counts", action="store_true", help="print words and negations per doc")
     args = ap.parse_args(argv)
-    found = run(novels=args.novel)
+    found = run(novels=args.novel, noun_files=args.nouns)
     order = {"defect": 0, "warn": 1, "note": 2}
     for level, check, detail in sorted(found, key=lambda f: order[f[0]]):
         print("%s %s: %s" % (level, check, detail))

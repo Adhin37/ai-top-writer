@@ -19,9 +19,6 @@ Write `novels/<slug>/bible/premise.md` per [premise.md](premise.md): the three t
 reader must hold by the end of chapter 1, in words a reader could repeat, each citing its source in
 the bible or `novel.md`.
 
-If your instructions say **restate only**, add nothing the bible does not already contain — list
-any gap you find as a `gap` line in your final message instead of filling it.
-
 ## Task: ledger
 
 Write or extend `novels/<slug>/plan/reader-ledger.md` per [reader-ledger.md](reader-ledger.md).

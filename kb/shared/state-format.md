@@ -21,11 +21,11 @@ Appended, in chapter order, never rewritten. A header, then one line per key.
 
 ```
 =C0003= day 12, dusk to night | words 2410
-ev    Nessa rows the Harrow boy out past the bar alone, against the harbourmaster's order
-at    Nessa: the boathouse · Quell: the harbour office · Tam: the quay steps
-kno   Nessa+ the tally was signed before the boy drowned (the date on it) · Quell? suspects she has seen it · Tam- does not know she went out
-has   Nessa: the Harrow tally, folded in her boot · Tam: the boathouse key
-cost  Nessa: two fingers frostbitten, no grip in her left hand for days
+ev    Ysolde rows the Calder boy out past the bar alone, against the harbourmaster's order
+at    Ysolde: the boathouse · Quell: the harbour office · Tam: the quay steps
+kno   Ysolde+ the tally was signed before the boy drowned (the date on it) · Quell? suspects she has seen it · Tam- does not know she went out
+has   Ysolde: the Calder tally, folded in her boot · Tam: the boathouse key
+cost  Ysolde: two fingers frostbitten, no grip in her left hand for days
 thr   ^T2 ~T4
 hook  Quell's lamp is lit in the office window when she comes back in
 ```
@@ -48,7 +48,7 @@ hook  Quell's lamp is lit in the office window when she comes back in
 
 | id | thread | ledger | opened | last | status |
 |---|---|---|---|---|---|
-| T2 | who signed the Harrow tally, and when | R3 | 1 | 3 | open |
+| T2 | who signed the Calder tally, and when | R3 | 1 | 3 | open |
 | T4 | Quell knows she went out | — | 3 | 3 | open |
 | T5 | the drowned who were never rowed out | R6 | — | — | planned |
 
@@ -63,7 +63,7 @@ hook  Quell's lamp is lit in the office window when she comes back in
 | day | ch | where | what happens |
 |---|---|---|---|
 | 11 | 2 | the quay | the Long Ebb begins at dusk |
-| 12 | 3 | the bar; the boathouse | Nessa rows the boy out; back before dawn |
+| 12 | 3 | the bar; the boathouse | Ysolde rows the boy out; back before dawn |
 
 One row per in-world day a chapter covers. Distances and travel times are in the bible; this says
 when.
@@ -72,15 +72,15 @@ when.
 
 | ch | scene | who | where | tempo | two-hander |
 |---|---|---|---|---|---|
-| 3 | 1 | Nessa, Tam | the quay steps | quiet | yes |
-| 3 | 2 | Nessa, the Harrow boy (dead) | the bar at night | tense | no |
-| 3 | 3 | Nessa, Quell | the harbour office | tense | yes |
+| 3 | 1 | Ysolde, Tam | the quay steps | quiet | yes |
+| 3 | 2 | Ysolde, the Calder boy (dead) | the bar at night | tense | no |
+| 3 | 3 | Ysolde, Quell | the harbour office | tense | yes |
 
 - `who`: everyone present, speaking or not.
 - `tempo`: one of fast, tense, loud, warm, funny, bleak, procedural, quiet.
 - `two-hander`: `yes` when the scene is two people talking and nothing else happens.
 
-The log is for shape across chapters: a run of two-handers, or one tempo for five chapters, reads
+The log is for shape across chapters: a run of two-handers, or one tempo for three chapters, reads
 as sameness to a reader long before anyone can name it.
 
 ## The reader ledger's status
@@ -105,7 +105,7 @@ it into the bible; the clerk never edits `bible/`.
 ```
 # Fold — chapter 3
 new    the bar can be crossed on foot for an hour at the Long Ebb's lowest | bible/world.md | "the bar was dry for the length of a prayer"
-new    Tam is Nessa's cousin, not her brother | bible/cast/_extras.md | "your mother's sister's boy"
+new    Tam is Ysolde's cousin, not her brother | bible/cast/_extras.md | "your mother's sister's boy"
 stale  "the Long Ebb — first appears ch 4" | bible/lexicon.md | on the page from ch 1
 ```
 

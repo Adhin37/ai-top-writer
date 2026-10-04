@@ -31,8 +31,8 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import export_prose  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-NAMED = re.compile(r"novels/([a-z0-9][a-z0-9-]*?)(?:--[\w-]+)?(?=[/`'\"\s|,)]|$)")
-TEXT = (".md", ".txt", ".json", ".tsv")
+NAMED = re.compile(r"novels/([a-z0-9][a-z0-9-]*?)(?:--[\w-]+)?(?![\w-])")
+BIG = 8 * 1024 * 1024       # a file this large is not a key or a log; skip it
 
 
 def _dirs(path):
@@ -47,20 +47,17 @@ def novels(root=ROOT):
             if not n.startswith("_")}
 
 
-def base_slug(name):
-    """A frozen copy's novel: `grown-houses--vt-a` -> `grown-houses`."""
-    return name.split("--", 1)[0]
-
-
 def bench_owners(folder):
-    """The novels a bench folder's text files name, as base slugs."""
+    """The novels a bench folder's text files name, as base slugs. Every file that reads as text
+    counts: a folder that names another novel anywhere is shared, never deleted with this one."""
     found = set()
     for dirpath, _dirs_, files in os.walk(folder):
         for name in files:
-            if not name.endswith(TEXT):
-                continue
+            path = os.path.join(dirpath, name)
             try:
-                with open(os.path.join(dirpath, name), encoding="utf-8") as fh:
+                if os.path.getsize(path) > BIG:
+                    continue
+                with open(path, encoding="utf-8") as fh:
                     found.update(NAMED.findall(fh.read()))
             except (OSError, UnicodeDecodeError):
                 continue

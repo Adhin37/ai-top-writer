@@ -36,17 +36,17 @@ What carries over from skilled-writer: [lessons.md](lessons.md).
 
 ## Roles
 
-| role | agent | model | reads | writes | job |
+| role | agent | model, effort | reads | writes | job |
 |---|---|---|---|---|---|
 | **showrunner** | main session | (session) | everything | `bench/`, `reading/` via tools; nothing in `novels/` beyond setup copies | runs the loop, approves beat sheets, relays hand-offs verbatim |
-| **planner** | `planner` | opus | novel, `reading/*/notes.md` | `novel.md`, `bible/`, `plan/`, `state/` seeds, `work/` | the new-novel interview; world, cast, arcs; `premise.md`; reader ledger; each chapter's beat sheet; folds new facts into the bible |
-| **writer** | `writer` | opus | novel (not `reading/`, not `bench/`) | `work/`, `chapters/` | prose from the beat sheet; revises warm against the editor's notes; may *stet* a note with a reason |
-| **beta reader** | `beta-reader` | sonnet | its reading folder only | its reading folder | retell, world-as-understood, who's who, terms guessed, confusion and skim quotes, best moment, predictions, click-next; keeps its notes |
-| **story editor** | `story-editor` | opus | novel, reading reports | `work/` | grades the retell against the ledger; merges reader (and continuity) reports against the beat sheet's intent; from ch 3 weighs `tools/history.py`'s two-hander and tempo runs; ACCEPT or ≤5 notes |
-| **line editor** | `line-editor` | sonnet | novel (not `reading/`) | `work/`, `chapters/` | one polish pass after ACCEPT: AI-default tells, tics, format, numerals, lexicon, voice cadence; from ch 3 `tools/history.py`'s motif and signature counts across the book |
-| **continuity editor** | `continuity-editor` | sonnet | novel (not `reading/`) | `work/` | every round, beside the reader: contradictions with the bible and state, time and travel, spelling and number drift, who could know what; runs `tools/lint.py` |
-| **clerk** | `clerk` | sonnet | novel, reading folder | `state/`, ledger status, the reader's shelf, `work/` | the state write after the line pass; copies the accepted round's reader notes into memory; lists new facts for the planner's fold |
-| **judge** | `judge`, `judge--fable` | `claude-opus-5` and `claude-fable-5-1`, pinned | `bench/*/blind/` only | nothing | not in the loop: the blind benchmark reader, with a different questionnaire from the beta reader's so the loop cannot tune itself to its judge; a panel on two models, neither a loop model, because copies of one model share one taste |
+| **planner** | `planner` | opus, high | novel, `reading/*/notes.md` | `novel.md`, `bible/`, `plan/`, `state/` seeds, `work/` | the new-novel interview; world, cast, arcs; `premise.md`; reader ledger; each chapter's beat sheet; folds new facts into the bible |
+| **writer** | `writer` | opus, high | novel (not `reading/`, not `bench/`) | `work/`, `chapters/` | prose from the beat sheet; revises warm against the editor's notes; may *stet* a note with a reason |
+| **beta reader** | `beta-reader` | sonnet, high | its reading folder only | its reading folder | retell, world-as-understood, who's who, terms guessed, confusion and skim quotes, best moment, predictions, click-next; keeps its notes |
+| **story editor** | `story-editor` | opus, medium | novel, reading reports | `work/` | grades the retell against the ledger; merges reader (and continuity) reports against the beat sheet's intent; from ch 3 weighs `tools/history.py`'s two-hander and tempo runs; ACCEPT or ≤5 notes |
+| **line editor** | `line-editor` | sonnet, high | novel (not `reading/`) | `work/`, `chapters/` | one polish pass after ACCEPT: AI-default tells, tics, format, numerals, lexicon, voice cadence; from ch 3 `tools/history.py`'s motif and signature counts across the book |
+| **continuity editor** | `continuity-editor` | sonnet, high | novel (not `reading/`) | `work/` | every round, beside the reader: contradictions with the bible and state, time and travel, spelling and number drift, who could know what; runs `tools/lint.py` |
+| **clerk** | `clerk` | sonnet, high | novel, reading folder | `state/`, ledger status, the reader's shelf, `work/` | the state write after the line pass; copies the accepted round's reader notes into memory; lists new facts for the planner's fold |
+| **judge** | `judge`, `judge--fable` | `claude-opus-5` and `claude-fable-5-1`, pinned; high | `bench/*/blind/` only | nothing | not in the loop: the blind benchmark reader, with a different questionnaire from the beta reader's so the loop cannot tune itself to its judge; a panel on two models, neither a loop model, because copies of one model share one taste |
 
 ## The loop, per chapter
 
@@ -157,7 +157,7 @@ What goes in a doc and how it is written: [roadmap/03-knowledge-bases.md](roadma
 
 ## Isolation
 
-`tools/guard.py` is a `PreToolUse` hook on `Read|Grep|Glob|Write|Edit`, registered once in
+`tools/guard.py` is a `PreToolUse` hook on `Read|Grep|Glob|Write|Edit|MultiEdit|NotebookEdit|Bash`, registered once in
 `.claude/settings.json`. It identifies the caller from the payload: no `agent_id` means the main
 session; otherwise `agent_type` names the role. The source of truth for the table below is `ROLES`
 in `tools/guard.py`.
@@ -166,9 +166,9 @@ in `tools/guard.py`.
 |---|---|---|
 | beta reader | `reading/**`, `kb/beta-reader/**` — **nothing else** | `reading/**` |
 | judge | `bench/*/blind/**`, `kb/judge/**`, `kb/shared/grading.md` — **nothing else** | (no write tool) |
-| writer | everything except `reading/`, `bench/`, `docs/`, and the critics' and judge's `kb/` folders | `novels/*/work/**`, `novels/*/chapters/**` |
+| writer | everything except `reading/`, `bench/`, `docs/`, the critics' and judge's `kb/` folders, and `kb/shared/grading.md` | `novels/*/work/**`, `novels/*/chapters/**` |
 | line editor | everything except `reading/`, `bench/`, `docs/`, `kb/beta-reader/`, `kb/judge/` | `novels/*/work/**`, `novels/*/chapters/**` |
-| planner | everything except `bench/`, `docs/`, `kb/beta-reader/`, `kb/judge/` | `novels/*/{novel.md,bible,plan,state,work}/**` |
+| planner | everything except `bench/`, `docs/`, `kb/beta-reader/`, `kb/judge/`, `kb/shared/grading.md` | `novels/*/{novel.md,bible,plan,state,work}/**` |
 | story editor | everything except `bench/`, `docs/`, `kb/judge/` | `novels/*/work/**` |
 | continuity editor | everything except `reading/`, `bench/`, `docs/`, `kb/beta-reader/`, `kb/judge/` | `novels/*/work/**` |
 | clerk | everything except `bench/`, `docs/`, `kb/judge/` | `novels/*/{state,plan,work}/**`, `reading/**` |
@@ -176,16 +176,21 @@ in `tools/guard.py`.
 | any other agent | not judged (fails open) | not judged |
 
 Searches (`Grep`, `Glob`) by the beta reader and the judge must name a path inside their area; an
-unscoped search is refused, because it would search the whole repository.
+unscoped search is refused, because it would search the whole repository. A working role's search
+must not reach a folder it is denied: `Grep` over the root or over `kb/` is refused (ripgrep skips
+the gitignored `reading/` and `bench/`, but not `kb/judge/` or `docs/`). Paths are resolved
+(symlinks, `..`, a leading `//`) before they are judged.
 
 **Why the working roles are kept out of each other's `kb/`:** the writer writing toward the beta
 reader's questionnaire, or the planner designing toward the judge's, is the loop learning its
 instrument instead of the craft.
 
-**What this does not cover:** `Bash`. The beta reader and the judge are given no `Bash` tool, which
-is the real wall for them. Other roles are routed, not sandboxed. The continuity editor and the
-clerk have `Bash` to run the tools (`lint.py`, `state_check.py`, `reading.py`); their `Read` and
-`Write` are still routed.
+**Bash.** The beta reader and the judge are given no `Bash` tool, which is the real wall for
+them. The continuity editor and the clerk have `Bash` to run the tools (`lint.py`,
+`state_check.py`, `reading.py`, `wire.py`), and the guard lets them run nothing else:
+`python3 tools/<name>.py …`, optionally piped into `head` or `tail`. `cat reading/…` or
+`python3 -c` would walk around every rule above. A tool's own reads are not routed; the tools are
+the repository's, and none prints a rubric.
 
 **Why not agent teams:** they are experimental, teammates load `CLAUDE.md` and every skill (fatal for
 a cold reader), and they do not spawn in non-interactive runs. Named subagents plus `SendMessage`
