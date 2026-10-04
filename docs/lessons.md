@@ -143,3 +143,13 @@ as a rule.
     in `/config`, so a session cannot build and probe one alone. The docs do not say whether
     `autoCompactWindow` also reaches subagents, so the window stays above every role's peak context
     (run #7: planner 194k, writer 141k) until a trace shows it does not (plan 06b).
+32. **Pick the instrument that can see the effect.** A blind judge reading one chapter alone
+    cannot see a revision that fixes what the reader carries from earlier chapters, and run #7's
+    round-2 notes were nearly all of that kind. The in-loop reader's reports before and after could
+    see it (plan 06c, lever 1). Likewise, `state_check` passes a clerk block that is well formed but
+    wrong or thin: a cheaper clerk is checked by reading its block against the baseline's.
+33. **A critic's A/A is loose; read what the arm missed.** Two `high` continuity replays of one
+    draft shared under half their findings, so a count of matches cannot separate an arm from noise.
+    What decided it was the kind of finding lost: at `medium` the continuity editor did no thinking
+    and dropped the "who could know it" checks, while the story editor at `medium` stayed within its
+    A/A (plan 06c, lever 2).

@@ -14,7 +14,8 @@ Two kinds of role:
   * **working** roles read everything except a denylist (other roles' rubrics, experiment arms,
     maintainer docs). This is routing, not a sandbox: it keeps the writer from writing toward the
     reader's questionnaire and the planner from designing toward the judge.
-Every role writes only its allowlist.
+Every role writes only its allowlist. An experiment's variant of a role, `<role>--<arm>` (an agent
+file that changes only effort or model, `tools/bench.py`), is held to its role's rules.
 
 Not covered: Bash. The cold roles are given no Bash tool, which is their real wall.
 The main session may do anything, except write under novels/ while a `.test-run` file exists at
@@ -213,12 +214,17 @@ def _one_target(spec, kind, rel, shown):
     return None
 
 
+def role_of(agent_type):
+    """The role an agent type answers to: `story-editor--medium` is the story editor."""
+    return str(agent_type or "").strip().split("--", 1)[0]
+
+
 def verdict(payload):
     """None to allow, or the reason the call is refused."""
     root = project_root(payload)
     if not payload.get("agent_id"):
         return _showrunner_verdict(payload, root)
-    spec = ROLES.get(str(payload.get("agent_type") or "").strip())
+    spec = ROLES.get(role_of(payload.get("agent_type")))
     if spec is None:
         return None                     # a role this guard was not written for
     for kind, path in targets(payload):

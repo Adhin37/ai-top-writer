@@ -89,4 +89,25 @@ money), an advisor model, and a 1-hour cache for the writer (break-even).
 
 ## Session log
 
-*(filled in when this plan runs)*
+**2026-10-04.** Evidence: [2026-10-04-optimisation.md § 06c](../experiments/2026-10-04-optimisation.md).
+
+- Built `tools/bench.py`: it freezes a round for one role, writes effort and model arms, makes
+  blind pairs and the key, and scores agreement between notes or continuity files. Also built
+  `guard.role_of`, so an arm keeps its role's path rules. Tests in `tests/test_bench.py`.
+- **Lever 1, cap at one round: lost, with no spawn.** A single-chapter blind judge cannot see
+  cross-chapter fixes, so the in-loop reader's round-1 and round-2 reports decided it: at least 7 of
+  13 round-1 notes fixed something the next reader no longer reported. Keep two rounds. The
+  continuity editor found something in every round after ch 3, and three findings became notes:
+  keep it every round.
+- **Wire format across the arc: holds.**
+- **Lever 3, read-set: measured, not built.** Worth ~$1 a run.
+- **First wave, approved by the user (~$6; spent $5.66 on spawns):**
+  - 2b, story editor at `medium`: **kept.** Its agreement matches the A/A on ch 3 r1 and ch 4 r1,
+    with the same verdicts. Saves ~26% a spawn.
+  - 2a, continuity editor at `medium`: **lost.** It found 1 finding on ch 4, against 3–6 from the
+    baselines, and missed their "who could know" catches.
+  - 4, clerk on Haiku: **lost.** It misdated a ledger landing, put beat-sheet-only names in `at`,
+    and wrote a thin `ev`. `state_check` passed all of it.
+- Not run: 2c, the line editor at `medium` (it needed 2a to hold); 5, the writer's revisions on
+  Sonnet (live, ~$5, not approved in this wave); 6, planner effort; 7, the warm writer. The next
+  full run measures the kept lever against run #7's $3.18 per 1,000 words.

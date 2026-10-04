@@ -46,6 +46,13 @@ class GuardTest(unittest.TestCase):
                     "bench/e/blind/X.md", "docs/architecture.md", "CLAUDE.md"):
             self.assertFalse(self.allowed(call("Read", "beta-reader", file_path=p(rel))), rel)
 
+    def test_an_experiments_variant_keeps_its_roles_rules(self):
+        self.assertFalse(self.allowed(call("Read", "continuity-editor--medium",
+                                           file_path=p("reading/r1abcd/report.md"))))
+        self.assertTrue(self.allowed(call("Read", "continuity-editor--medium",
+                                          file_path=p("novels/x/bible/world.md"))))
+        self.assertFalse(self.allowed(call("Read", "judge--a", file_path=p("novels/x/bible/world.md"))))
+
     def test_beta_reader_refused_outside_the_project(self):
         self.assertFalse(self.allowed(call("Read", "beta-reader", file_path="/etc/passwd")))
 
