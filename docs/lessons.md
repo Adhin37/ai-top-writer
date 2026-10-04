@@ -1,6 +1,6 @@
 # Lessons carried forward
 
-What six benchmark runs of [skilled-writer](../../skilled-writer) (2026-09-06 → 09-26) taught, kept
+What six benchmark runs of [skilled-writer](https://github.com/Adhin37/skilled-writer) (2026-09-06 → 09-26) taught, kept
 because the evidence still applies to this design. Everything else from the old repo was left
 behind on purpose — the user's standing instruction is to carry a rule over only when its evidence
 still holds. This file is for maintainers; no agent reads `docs/`.

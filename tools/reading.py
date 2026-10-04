@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """The beta reader's serial memory: one reading folder per novel, and a fresh view of it per round.
 
-`reading/<id>/` is the reader's shelf: the accepted chapters, prose only, as `ch01.md` … `chNN.md`,
-and `notes.md`, the reader's memory in its own words. `<id>` is neutral (`export_prose.py
---print-id`).
+`reading/<id>/` holds everything the reader did for one novel; `<id>` is neutral (`export_prose.py
+--print-id`), and `tools/clean.py` maps it back to its novel. `reading/<id>/shelf/` is the reader's
+shelf: the accepted chapters, prose only, as `ch01.md` … `chNN.md`, and `notes.md`, the reader's
+memory in its own words.
 
-A draft is never read in the shelf itself. Each round gets its own folder, `reading/<id>-chNN-rK/`,
+A draft is never read in the shelf itself. Each round gets its own folder, `reading/<id>/chNN-rK/`,
 holding a copy of the notes, the last two accepted chapters and the draft as `pending/chNN.md`.
 The round's fresh reader updates the notes there, and the report is filed there. So no round's
 reader sees an earlier round, and a draft-round reader's beliefs never reach the shelf: after
@@ -13,10 +14,10 @@ ACCEPT the clerk copies the accepted round's notes onto the shelf, byte for byte
 
 Usage:
   reading.py id NOVEL
-  reading.py round NOVEL N DRAFT K     build reading/<id>-chNN-rK/ and print its path
+  reading.py round NOVEL N DRAFT K     build reading/<id>/chNN-rK/ and print its path
   reading.py accept NOVEL N ROUND_DIR  chapter N's file onto the shelf; the round's notes become
                                        the reader's memory
-  reading.py fresh NOVEL N             reading/<id>-fresh-chNN/: ch01 … chNN, no notes, for a
+  reading.py fresh NOVEL N             reading/<id>/fresh-chNN/: ch01 … chNN, no notes, for a
                                        reader who re-reads everything (every 10 chapters)
   reading.py adopt NOVEL FRESH_DIR     a fresh reader's notes replace the running ones
 
@@ -38,8 +39,21 @@ NOTES_CAP = 800
 REREAD_EVERY = 10
 
 
-def shelf(novel, root=ROOT):
+def folder(novel, root=ROOT):
+    """reading/<id>/: everything the reader did for this novel."""
     return os.path.join(root, "reading", export_prose.novel_id(novel))
+
+
+def shelf(novel, root=ROOT):
+    return os.path.join(folder(novel, root), "shelf")
+
+
+def round_dir(novel, n, k, root=ROOT):
+    return os.path.join(folder(novel, root), "ch%02d-r%d" % (n, k))
+
+
+def fresh_dir(novel, n, root=ROOT):
+    return os.path.join(folder(novel, root), "fresh-ch%02d" % n)
 
 
 def chapter_file(novel, n):
@@ -64,21 +78,21 @@ def notes_line(path):
 
 
 def build_round(novel, n, draft, k, root=ROOT):
-    """reading/<id>-chNN-rK/, rebuilt from scratch. Returns its path."""
+    """reading/<id>/chNN-rK/, rebuilt from scratch. Returns its path."""
     base = shelf(novel, root)
-    folder = "%s-ch%02d-r%d" % (base, n, k)
-    if os.path.isdir(folder):
-        shutil.rmtree(folder)
-    os.makedirs(folder)
+    out = round_dir(novel, n, k, root)
+    if os.path.isdir(out):
+        shutil.rmtree(out)
+    os.makedirs(out)
     notes = os.path.join(base, "notes.md")
     if os.path.isfile(notes):
-        shutil.copyfile(notes, os.path.join(folder, "notes.md"))
+        shutil.copyfile(notes, os.path.join(out, "notes.md"))
     for prev in (n - 2, n - 1):
         src = os.path.join(base, "ch%02d.md" % prev)
         if prev > 0 and os.path.isfile(src):
-            shutil.copyfile(src, os.path.join(folder, "ch%02d.md" % prev))
-    export_prose.export([draft], os.path.join(folder, "pending"), as_name="ch%02d.md" % n)
-    return folder
+            shutil.copyfile(src, os.path.join(out, "ch%02d.md" % prev))
+    export_prose.export([draft], os.path.join(out, "pending"), as_name="ch%02d.md" % n)
+    return out
 
 
 def accept(novel, n, round_dir, root=ROOT):
@@ -104,16 +118,16 @@ def accept(novel, n, round_dir, root=ROOT):
 
 def build_fresh(novel, n, root=ROOT):
     base = shelf(novel, root)
-    folder = "%s-fresh-ch%02d" % (base, n)
-    if os.path.isdir(folder):
-        shutil.rmtree(folder)
-    os.makedirs(folder)
+    out = fresh_dir(novel, n, root)
+    if os.path.isdir(out):
+        shutil.rmtree(out)
+    os.makedirs(out)
     for i in range(1, n + 1):
         src = os.path.join(base, "ch%02d.md" % i)
         if not os.path.isfile(src):
             raise ValueError("the shelf has no ch%02d.md" % i)
-        shutil.copyfile(src, os.path.join(folder, "ch%02d.md" % i))
-    return folder
+        shutil.copyfile(src, os.path.join(out, "ch%02d.md" % i))
+    return out
 
 
 def adopt(novel, fresh_dir, root=ROOT):
@@ -146,11 +160,11 @@ def main(argv=None):
         if args.cmd == "id":
             print(export_prose.novel_id(args.novel))
         elif args.cmd == "round":
-            folder = build_round(args.novel, int(args.n), args.draft, int(args.k))
-            print(os.path.relpath(folder, ROOT))
-            for dirpath, _dirs, files in sorted(os.walk(folder)):
+            out = build_round(args.novel, int(args.n), args.draft, int(args.k))
+            print(os.path.relpath(out, ROOT))
+            for dirpath, _dirs, files in sorted(os.walk(out)):
                 for name in sorted(files):
-                    print("  " + os.path.relpath(os.path.join(dirpath, name), folder))
+                    print("  " + os.path.relpath(os.path.join(dirpath, name), out))
         elif args.cmd == "accept":
             print("\n".join(accept(args.novel, int(args.n), args.round_dir)))
         elif args.cmd == "fresh":

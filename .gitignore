@@ -15,5 +15,14 @@ docs/sessions/
 
 __pycache__/
 *.pyc
-.claude/settings.local.json
 .venv
+
+# One machine's preferences and secrets: Claude Code's local overrides, env files, editors, OS.
+CLAUDE.local.md
+.claude/*.local.*
+.env
+.env.*
+.vscode/
+.idea/
+.DS_Store
+*.log

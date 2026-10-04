@@ -164,20 +164,23 @@ hook  Quell's lamp is lit in the office window when she comes back in
 After the block, the clerk lists the chapter's new facts in `work/chNNNN/fold.md`, and the planner
 folds them into the bible. The clerk never edits `bible/`.
 
-## The reader's shelf — `reading/<id>/`
+## The reader's folder — `reading/<id>/`
 
-The beta reader's serial memory, outside the novel (`tools/reading.py`):
+The beta reader's serial memory, one folder per novel, outside the novel (`tools/reading.py`).
+`<id>` is neutral, so the reader's path does not name the book; `tools/clean.py` lists which novel
+each folder belongs to, and removes it with its novel.
 
 ```
-reading/<id>/             the shelf: the accepted chapters, prose only, and the reader's memory
-  ch01.md … chNN.md
-  notes.md                in the reader's own words, under 800 words; the reader compresses it
-reading/<id>-chNN-rK/     one draft round's view: a copy of notes.md, the last two accepted
-  notes.md                chapters, and the draft. The round's fresh reader updates notes.md
-  chNN-2.md, chNN-1.md    here, and its report is filed here. Only the accepted round's notes
-  pending/chNN.md         are copied onto the shelf (by the clerk, byte for byte)
-  report.md
-reading/<id>-fresh-chNN/  every 10 chapters: ch01 … chNN and no notes; a fresh reader's notes
+reading/<id>/
+  shelf/                  the accepted chapters, prose only, and the reader's memory
+    ch01.md … chNN.md
+    notes.md              in the reader's own words, under 800 words; the reader compresses it
+  chNN-rK/                one draft round's view: a copy of notes.md, the last two accepted
+    notes.md              chapters, and the draft. The round's fresh reader updates notes.md
+    chNN-2.md, chNN-1.md  here, and its report is filed here. Only the accepted round's notes
+    pending/chNN.md       are copied onto the shelf (by the clerk, byte for byte)
+    report.md
+  fresh-chNN/             every 10 chapters: ch01 … chNN and no notes; a fresh reader's notes
                           replace the running ones
 ```
 

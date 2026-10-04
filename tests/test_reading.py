@@ -29,14 +29,16 @@ class ShelfTest(unittest.TestCase):
     def tearDown(self):
         self.fx.__exit__(None, None, None)
 
-    def test_the_shelf_is_named_by_the_neutral_id(self):
-        self.assertEqual(os.path.basename(self.shelf), export_prose.novel_id(self.fx.root))
+    def test_the_novels_folder_is_named_by_the_neutral_id_and_holds_the_shelf(self):
+        self.assertEqual(os.path.basename(reading.folder(self.fx.root, self.fx.tmp)),
+                         export_prose.novel_id(self.fx.root))
+        self.assertEqual(os.path.dirname(self.shelf), reading.folder(self.fx.root, self.fx.tmp))
 
     def test_a_round_holds_the_notes_the_last_two_chapters_and_the_draft(self):
         draft = self.fx.write("work/ch0004/draft-r0.md",
                               "---\nnumber: 4\ntitle: \"Four\"\npov: \"N\"\n---\n\nDraft.\n")
         folder = reading.build_round(self.fx.root, 4, draft, 0, self.fx.tmp)
-        self.assertTrue(folder.endswith("-ch04-r0"))
+        self.assertEqual(folder, os.path.join(reading.folder(self.fx.root, self.fx.tmp), "ch04-r0"))
         files = sorted(os.path.relpath(os.path.join(d, f), folder)
                        for d, _s, fs in os.walk(folder) for f in fs)
         self.assertEqual(files, ["ch02.md", "ch03.md", "notes.md", os.path.join("pending",

@@ -12,7 +12,7 @@ whether they were two people talking. The history report counts the runs for you
 with this draft in them, tempos from the scene log, which ends at the last accepted chapter. Its
 lines under *for the story editor* are yours, and the rest are the line editor's.
 A `warn` there is a run of the length readers have named; whether it costs this chapter is your
-call, on the evidence below. The reader's memory (`reading/<id>/notes.md`) shows what the
+call, on the evidence below. The reader's memory (`reading/<id>/shelf/notes.md`) shows what the
 reader believes and expects. Sameness and drift are notes for the planner when they are not yet a
 cost to this chapter, and notes for the writer when they already are.
 

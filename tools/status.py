@@ -82,7 +82,7 @@ def click_next(nov, n, reading_root):
     if k is None:
         return ""
     rid = export_prose.novel_id(nov.root)
-    report = os.path.join(reading_root, "%s-ch%02d-r%d" % (rid, n, k), "report.md")
+    report = os.path.join(reading_root, rid, "ch%02d-r%d" % (n, k), "report.md")
     sec = mdio.section(mdio.read_text(report), "would i click next")
     lines = [l.strip() for l in sec.split("\n")[1:] if l.strip()]
     if lines:

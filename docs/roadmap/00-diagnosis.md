@@ -3,7 +3,7 @@
 Written 2026-09-26, after skilled-writer's benchmark run #6. It records why the old toolkit was
 retired rather than patched, and it is the evidence behind every decision in
 [architecture.md](../architecture.md). Old-repo paths are relative to
-`/home/adhin/projects/skilled-writer/`.
+`../skilled-writer/`.
 
 ## What happened
 

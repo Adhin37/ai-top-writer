@@ -1,6 +1,6 @@
 # Roadmap
 
-The rebuild of [skilled-writer](../../../skilled-writer) as a writers' room. Each plan below is one
+The rebuild of [skilled-writer](https://github.com/Adhin37/skilled-writer) as a writers' room. Each plan below is one
 working session. They are ordered by what has to be true before the next one is worth doing.
 
 **To run a plan:** open a Claude Code session **in this repository**. Agents register when a

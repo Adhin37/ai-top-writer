@@ -19,7 +19,7 @@ with `_` are skipped). The chapter number comes from frontmatter `number`, else 
 leading digits, else a counter starting at --start.
 
 --print-id prints the neutral folder id for a novel: `r` + the first 6 hex digits of sha1(slug),
-where slug is novel.md's `slug:` or the directory name. Use it as `reading/<id>/`.
+where slug is novel.md's `slug:` or the directory name. Use it as `reading/<id>/` (tools/reading.py).
 """
 import argparse
 import hashlib

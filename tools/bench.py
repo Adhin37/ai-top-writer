@@ -221,7 +221,7 @@ def freeze(novel, n, k, exp, arm, role, root=ROOT):
     c = room.Chapter(dest_rel, n, root)
     memory = _memory_before(src, n)
     if memory:
-        shelf = c.abs("reading/%s" % c.id)
+        shelf = c.abs("reading/%s/shelf" % c.id)
         os.makedirs(shelf, exist_ok=True)
         shutil.copy(memory, os.path.join(shelf, "notes.md"))
     if role in ("story-editor", "clerk"):

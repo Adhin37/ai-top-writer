@@ -18,9 +18,9 @@ they come in [02](02-full-loop.md).
 
 - Session 1 is done: this repo has the six agents, their `kb/<role>/prompt.md`, `tools/guard.py` and
   `tools/export_prose.py`, and tests pass.
-- **The session is opened in `/home/adhin/projects/ai-top-writer`**, and the folder is trusted when
+- **The session is opened in the repo root**, and the folder is trusted when
   Claude Code asks. Project hooks need workspace trust.
-- The old repo exists read-only at `/home/adhin/projects/skilled-writer`.
+- The old repo exists read-only at `../skilled-writer`.
 
 ## Rules for this session
 
@@ -57,7 +57,7 @@ they come in [02](02-full-loop.md).
      that Ruck cannot read a form). **Record this confound.** It slightly favours the new arms, and
      there is no pre-run snapshot to use instead.
 2. **Arm A** is run #6's final chapter 1. Copy
-   `/home/adhin/projects/skilled-writer/novels/unwritten-surveyor/chapters/0001-the-last-marker.md`
+   `../skilled-writer/novels/unwritten-surveyor/chapters/0001-the-last-marker.md`
    to `bench/ch1-abc/originals/A.md`.
 3. **Calibration control.** Fetch chapter I of H. G. Wells, *The Time Machine* (public domain,
    Project Gutenberg #35) into `bench/calibration/originals/control.md`. It explains an invented
@@ -169,7 +169,7 @@ Record per round: words, the reader's retell grade, the verdict, and the number 
 ### Step 7 — cost and time
 
 - Run the old toolkit's trace against this session:
-  `python3 /home/adhin/projects/skilled-writer/scripts/sw.py trace --session <this session id>`,
+  `python3 ../skilled-writer/scripts/sw.py trace --session <this session id>`,
   using `--transcripts` if needed.
 - If it cannot read another project's transcripts, sum `usage` from the subagent JSONL files with a
   throwaway script in the scratchpad. Porting the trace properly is [06](06-measure-and-optimise.md).

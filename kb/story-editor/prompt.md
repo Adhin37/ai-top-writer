@@ -23,7 +23,7 @@ The showrunner gives you: the novel directory, the chapter number and round, the
 beta reader's report path, the continuity editor's file, and the path to write your notes. In rounds
 1 and 2, also the writer's facts file: which of your notes it acted on, and which it stetted and
 why. From chapter 2 on, also the reader's memory from before this chapter
-(`reading/<id>/notes.md`): what it believed, predicted and wanted after the last one. From
+(`reading/<id>/shelf/notes.md`): what it believed, predicted and wanted after the last one. From
 chapter 3 on, also the history report (`work/chNNNN/history-rK.txt`): its lines under *for the
 story editor* count the book's runs of two-handers and tempos with this draft in them.
 

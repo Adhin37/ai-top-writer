@@ -76,10 +76,10 @@ class BenchTest(unittest.TestCase):
         fx.write(w + "fold.md", "# Fold\n")
         self.id = export_prose.novel_id(fx.root)
         for k in (0, 1):
-            fx.write("../../reading/%s-ch02-r%d/report.md" % (self.id, k), "report %d" % k)
-            fx.write("../../reading/%s-ch02-r%d/notes.md" % (self.id, k), "memory %d" % k)
+            fx.write("../../reading/%s/ch02-r%d/report.md" % (self.id, k), "report %d" % k)
+            fx.write("../../reading/%s/ch02-r%d/notes.md" % (self.id, k), "memory %d" % k)
         fx.write("work/ch0001/notes-r0.md", NOTES % (0, "ACCEPT", "none\n"))
-        fx.write("../../reading/%s-ch01-r0/notes.md" % self.id, "memory after ch1")
+        fx.write("../../reading/%s/ch01-r0/notes.md" % self.id, "memory after ch1")
 
     def tearDown(self):
         os.chdir(self.cwd)
@@ -128,7 +128,7 @@ class BenchTest(unittest.TestCase):
         self.assertEqual(ledger.count("| owed |"), 2)
         self.assertIn('slug: "long-ebb--eff-med"', read(os.path.join(copy, "novel.md")))
         cid = export_prose.novel_id(copy)
-        self.assertEqual(read(self.p("reading", cid, "notes.md")), "memory after ch1")
+        self.assertEqual(read(self.p("reading", cid, "shelf", "notes.md")), "memory after ch1")
         # the source is untouched
         self.assertTrue(os.path.isfile(self.fx.path("work", "ch0002", "continuity-r0.md")))
 
@@ -143,7 +143,7 @@ class BenchTest(unittest.TestCase):
         self.assertNotIn("notes-r1.md", work)
         self.assertNotIn("fold.md", work)
         cid = export_prose.novel_id(copy)
-        self.assertEqual(read(self.p("reading", "%s-ch02-r1" % cid, "report.md")), "report 1")
+        self.assertEqual(read(self.p("reading", "%s/ch02-r1" % cid, "report.md")), "report 1")
         self.assertIn("@ spawn story-editor as", out)
 
     def test_freeze_refuses_an_existing_copy(self):

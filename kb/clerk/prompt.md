@@ -17,7 +17,7 @@ Read [index.md](index.md) now. Every format is in [state-format.md](../shared/st
 
 The showrunner gives you: the novel directory; the chapter number N; the accepted chapter
 (`chapters/NNNN-*.md`); the story editor's last notes file and the writer's last facts file for it;
-the beat sheet; and the reading folder of the accepted round (`reading/<id>-chNN-rK/`).
+the beat sheet; and the reading folder of the accepted round (`reading/<id>/chNN-rK/`).
 
 ## Procedure
 

@@ -90,7 +90,7 @@ class RoomTest(unittest.TestCase):
         self.fx.write("work/ch0002/draft-r0.md", DRAFT)
         code, out = self.run_room("round", self.novel, "2", "0")
         self.assertEqual(code, 0, out)
-        folder = "reading/%s-ch02-r0" % self.id
+        folder = "reading/%s/ch02-r0" % self.id
         self.assertTrue(os.path.isfile(os.path.join(self.root, folder, "pending", "ch02.md")))
         self.assertIn('@ spawn beta-reader as "beta-reader ch02 r0"\nYour reading folder is '
                       '%s/. Report on chapter 2, pending/ch02.md.' % folder, out)
@@ -133,10 +133,10 @@ class RoomTest(unittest.TestCase):
         self.judge_ready(0)
         code, out = self.run_room("judge", self.novel, "2", "0", "b0")
         self.assertEqual(code, 0, out)
-        report = os.path.join(self.root, "reading", "%s-ch02-r0" % self.id, "report.md")
+        report = os.path.join(self.root, "reading", "%s/ch02-r0" % self.id, "report.md")
         self.assertTrue(read(report).startswith("# Report — chapter 2"))
         self.assertIn('@ spawn story-editor as "story-editor ch02 r0"', out)
-        self.assertIn("Reader's memory before this chapter: reading/%s/notes.md." % self.id, out)
+        self.assertIn("Reader's memory before this chapter: reading/%s/shelf/notes.md." % self.id, out)
         self.assertNotIn("Writer's facts", out)       # round 0
         self.assertIn("REVISE  -> @ continue writer-ch02", out)
         self.assertIn("ACCEPT -> @ spawn line-editor as \"line-editor ch02\"", out)
@@ -174,7 +174,7 @@ class RoomTest(unittest.TestCase):
 
     def clerk_ready(self, notes_words):
         self.fx.chapter(2, title="The Bar", slug="the-bar")
-        folder = os.path.join(self.root, "reading", "%s-ch02-r1" % self.id)
+        folder = os.path.join(self.root, "reading", "%s/ch02-r1" % self.id)
         os.makedirs(folder, exist_ok=True)
         with open(os.path.join(folder, "notes.md"), "w", encoding="utf-8") as fh:
             fh.write("word " * notes_words)
@@ -186,7 +186,7 @@ class RoomTest(unittest.TestCase):
         self.assertIn('@ spawn clerk as "clerk ch02"\nNovel: novels/long-ebb. Chapter 2: '
                       'novels/long-ebb/chapters/0002-the-bar.md. Notes: '
                       'novels/long-ebb/work/ch0002/notes-r1.md.', out)
-        self.assertIn("Accepted round: reading/%s-ch02-r1/." % self.id, out)
+        self.assertIn("Accepted round: reading/%s/ch02-r1/." % self.id, out)
 
     def test_clerk_asks_the_reader_to_compress_first_over_the_cap(self):
         self.clerk_ready(812)
@@ -234,7 +234,7 @@ class RoomTest(unittest.TestCase):
         self.assertIn("room.py beats novels/long-ebb 2", out)
 
     def test_fold_at_ten_builds_the_fresh_re_read(self):
-        shelf = os.path.join(self.root, "reading", self.id)
+        shelf = os.path.join(self.root, "reading", self.id, "shelf")
         os.makedirs(shelf)
         for n in range(1, 11):
             with open(os.path.join(shelf, "ch%02d.md" % n), "w", encoding="utf-8") as fh:
@@ -243,7 +243,7 @@ class RoomTest(unittest.TestCase):
         code, out = self.run_room("fold", self.novel, "10")
         self.assertEqual(code, 0, out)
         self.assertIn('@ spawn beta-reader as "beta-reader fresh ch10"\nYour reading folder is '
-                      'reading/%s-fresh-ch10/. There are no notes' % self.id, out)
+                      'reading/%s/fresh-ch10/. There are no notes' % self.id, out)
         self.assertIn("room.py adopt novels/long-ebb 10", out)
         self.assertIn("no plan row for chapter 11", out)
 
@@ -256,8 +256,8 @@ class RoomTest(unittest.TestCase):
         self.assertTrue(w().startswith("step 2"))
         self.fx.write("work/ch0001/draft-r0.md", DRAFT)
         self.assertTrue(w().startswith("step 3"))
-        os.makedirs(os.path.join(self.root, "reading", "%s-ch01-r0" % self.id))
-        self.fx.write("../../reading/%s-ch01-r0/report.md" % self.id, "# Report\n")
+        os.makedirs(os.path.join(self.root, "reading", "%s/ch01-r0" % self.id))
+        self.fx.write("../../reading/%s/ch01-r0/report.md" % self.id, "# Report\n")
         self.assertTrue(w().startswith("step 4: round 0 is read"))
         self.fx.write("work/ch0001/notes-r0.md", "verdict REVISE | owed 0/1\n")
         self.assertIn("continue writer-ch01 for draft-r1", w())

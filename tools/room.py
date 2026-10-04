@@ -86,7 +86,7 @@ class Chapter(object):
         return "%s/%s" % (self.work, name)
 
     def round_dir(self, k):
-        return "reading/%s-ch%02d-r%d" % (self.id, self.n, k)
+        return "reading/%s/ch%02d-r%d" % (self.id, self.n, k)
 
     @property
     def title_slug(self):
@@ -136,7 +136,7 @@ def planner_beats(c, warm=True):
     """Warm: planner-chNN, spawned for the previous chapter's fold, continued. Otherwise a
     fresh planner (chapter 1, a new session, or no fold)."""
     text = "Task: beats for chapter %d." % c.n
-    notes = "reading/%s/notes.md" % c.id
+    notes = "reading/%s/shelf/notes.md" % c.id
     if c.n > 1 and os.path.isfile(c.abs(notes)):
         text += " Reader's notes: %s." % notes
     prev = c.last_notes()
@@ -177,7 +177,7 @@ def story_editor(c, k):
                                            c.round_dir(k), c.wfile("continuity-r%d.md" % k),
                                            c.wfile("notes-r%d.md" % k)))
     if c.n > 1:
-        text += " Reader's memory before this chapter: reading/%s/notes.md." % c.id
+        text += " Reader's memory before this chapter: reading/%s/shelf/notes.md." % c.id
     if c.n >= HISTORY_FROM:
         text += " History: %s." % c.wfile("history-r%d.txt" % k)
     if k > 0:
@@ -427,7 +427,7 @@ def step_fold(c):
 
 
 def step_adopt(c, reader_id, transcripts=None):
-    folder = "reading/%s-fresh-ch%02d" % (c.id, c.n)
+    folder = "reading/%s/fresh-ch%02d" % (c.id, c.n)
     out = folder + "/report.md"
     args = [os.path.join(TOOLS, "handback.py"), reader_id, out, "--report"]
     if transcripts:

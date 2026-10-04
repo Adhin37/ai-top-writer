@@ -89,8 +89,8 @@ to say. The *notes* that become the reader's memory come only from the reader of
 round.
 
 **The reader's memory is serial.** The accepted chapters and the reader's `notes.md` live on one
-shelf per novel, `reading/<id>/`. Each round's reader works in a fresh view of it
-(`reading/<id>-chNN-rK/`: the notes, the last two chapters, the draft in `pending/`), and the clerk
+shelf per novel, `reading/<id>/shelf/`. Each round's reader works in a fresh view of it
+(`reading/<id>/chNN-rK/`: the notes, the last two chapters, the draft in `pending/`), and the clerk
 copies only the accepted round's notes back. Every 10 chapters a fresh reader re-reads everything,
 and its notes replace the running ones, which catches drift. `tools/reading.py` does all of it.
 
@@ -195,6 +195,6 @@ give warm continuation without any of that.
 
 | path | what | git |
 |---|---|---|
-| `reading/<id>/` | a novel's prose-only exports, the beta reader's reports and notes. `<id>` is neutral: `r` + first 6 hex of sha1(slug), from `tools/export_prose.py --print-id` | ignored |
-| `bench/<experiment>/` | experiment arms: `originals/`, `blind/` (what the judge sees), `key.md` (never judged) | ignored |
+| `reading/<id>/` | one novel's reading: `shelf/`, each round's `chNN-rK/`, `fresh-chNN/` — prose-only exports, the beta reader's reports and notes. `<id>` is neutral: `r` + first 6 hex of sha1(slug), from `tools/export_prose.py --print-id`; `tools/clean.py` maps it back. Outside `novels/` on purpose: the reader's path must not name the novel, and a writer grepping its novel must not hit the reader's reports | ignored |
+| `bench/<experiment>/` | experiment arms: `originals/`, `blind/` (what the judge sees), `key.md` (never judged; names the novel as `novels/<slug>/`, which `tools/clean.py` reads) | ignored |
 | `docs/experiments/` | write-ups of experiments and benchmark runs | committed |

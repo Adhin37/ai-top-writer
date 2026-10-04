@@ -74,8 +74,8 @@ class ClickNextTest(unittest.TestCase):
             fx.write("work/ch0001/notes-r1.md", "# Notes\nverdict ACCEPT | owed 2/2 | click-next 4\n")
             reading = os.path.join(fx.tmp, "reading")
             rid = export_prose.novel_id(fx.root)
-            os.makedirs(os.path.join(reading, "%s-ch01-r1" % rid))
-            with open(os.path.join(reading, "%s-ch01-r1" % rid, "report.md"), "w") as fh:
+            os.makedirs(os.path.join(reading, rid, "ch01-r1"))
+            with open(os.path.join(reading, rid, "ch01-r1", "report.md"), "w") as fh:
                 fh.write(REPORT)
             self.assertEqual(line(lines(fx, reading), "reader"),
                              "reader    ch 1 r1: 4 — I want to know who chalked the name.")
