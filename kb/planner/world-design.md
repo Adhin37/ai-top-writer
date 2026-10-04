@@ -66,6 +66,18 @@ If the world rests on one invented technology or power, name its second-order ef
 life and use that instead of the spectacle: if air is billed, then breath-holding is a habit of the
 poor, and a child who holds his breath on the ladder is a character note.
 
+### An oath the plot can stand on
+
+An oath binds a character the reader believes will not break it, so a plot can be built on it
+holding. Design the words, who witnesses, and what the breaker loses.
+
+> A fitter signs a gauge reading under the words "my reading is my breath". A false reading costs
+> the grade, and no fitter on the deck takes that person's word again. Kell signed one, nine years
+> ago. Ossie's father witnessed it.
+
+Now a character can be trapped by their own integrity, which the reader cannot wish away the way
+they wish away a locked door.
+
 ## When to break it
 
 A setting the reader already knows (a real city, a borrowed canon) needs less bible, and its central

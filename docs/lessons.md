@@ -1,6 +1,6 @@
 # Lessons carried forward
 
-What six benchmark runs of [skilled-writer](https://github.com/Adhin37/skilled-writer) (2026-09-06 → 09-26) taught, kept
+What six benchmark runs of [skilled-writer](https://github.com/Adhin37/skilled-writer) (2026-09-05 → 09-26) taught, and what this repo's own runs have added since, kept
 because the evidence still applies to this design. Everything else from the old repo was left
 behind on purpose — the user's standing instruction is to carry a rule over only when its evidence
 still holds. This file is for maintainers; no agent reads `docs/`.
@@ -66,10 +66,16 @@ as a rule.
     repo. Plan 02: two agent files *created* mid-session were listed as spawnable about 25 minutes
     later, by a system notice. Wait for the notice; do not assume either way.
 16. **`omitClaudeMd: true` also drops the auto-memory index** — measured both ways. Use it on the
-    beta reader and the judge; it is part of what keeps them cold.
+    beta reader and the judge; it is part of what keeps them cold. The converse matters too: every
+    agent without the flag reads `MEMORY.md`, so its one-line hooks are a prompt. Write them as
+    navigation (what a file is about, when to open it). A verdict in a hook contaminates an
+    instrument, and a guard's weakness in a hook tells the guarded agent how to get round it.
 17. **Hooks see `agent_id` and `agent_type`.** No `agent_id` means the main session. Project hooks
     need the folder to be trusted. Permissions are inherited: a subagent cannot be granted what the
-    parent lacks, and deny rules are global.
+    parent lacks, and deny rules are global. Name a hook's script with `"${CLAUDE_PROJECT_DIR}"`:
+    hooks run in the current directory, and a relative path that misses is skipped in silence,
+    leaving the agent unguarded. A guard fails open on a payload it cannot parse; one that blocks on
+    its own bug stops the session.
 18. **Path guards do not cover `Bash`.** A `cat` is not judged by a `Read` hook. The only real wall
     is not giving the tool.
 19. **The scratchpad is turn-scoped.** It was emptied mid-session once, taking measurement files
@@ -160,3 +166,17 @@ as a rule.
     three copies of Opus 5. Agreement between copies is one vote. The judge panel now has two models
     (`bench.py panel`), and `scaffold.py check` warns on a name another novel uses
     ([experiment](experiments/2026-10-04-multiagent-paper.md)).
+
+## About the harness and the toolkit's own tests
+
+35. **A custom `ANTHROPIC_BASE_URL` costs the 1M context window.** Behind skilled-writer's
+    compressing proxy (2026-09-12 → 20), every main session compacted at ~165k; without it,
+    sessions ran to 300–530k. Claude Code enables the 1M window only against the official
+    endpoint, and setting the variable to that endpoint does not help: unset it. The proxy saved
+    1.6% of prompt tokens, and it shortened one read-set from 515 words to 397 without anyone
+    noticing (run #5).
+36. **A layout-dependent test does not fail when the layout moves; it stops looking.**
+    skilled-writer's role split had four such tests in two sessions, the worst a migration's own
+    proof passing by inspecting nothing. Derive what a test walks from the same table the code
+    uses, and assert a floor on how much it inspected. Mutate a guard's branches once: two of its
+    tests were green whether the rule they named existed or not.

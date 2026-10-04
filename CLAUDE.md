@@ -59,7 +59,7 @@ Why each role exists and what it may read: [docs/architecture.md](docs/architect
 | `novels/<slug>/` | a novel — format in [docs/novel-format.md](docs/novel-format.md); `novels/_template/` is the empty one `/new` copies |
 | `reading/<id>/` | everything the beta reader did for one novel: `shelf/` (accepted chapters, prose only, and its `notes.md`), `chNN-rK/` (one round's view), `fresh-chNN/` (gitignored). `<id>` is neutral; `tools/clean.py` names each folder's novel |
 | `bench/<experiment>/` | experiment arms and blind copies for the judge (gitignored); name the novel (`novels/<slug>/`) in its `key.md` so `tools/clean.py` can find it |
-| `docs/` | for maintainers only; no agent reads it. Roadmap, architecture, format, lessons, experiments |
+| `docs/` | for maintainers only; no agent reads it. Roadmap, architecture, format, lessons, history, experiments |
 | `docs/sessions/` | each session's handoff, rebuilt by hooks every turn and at a usage limit (gitignored) |
 
 ## The principles, short

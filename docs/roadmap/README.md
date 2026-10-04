@@ -25,7 +25,11 @@ in `docs/sessions/`, and the `handoff` skill resumes it (the same session, or a 
 | 06b | [Session 7b: the showrunner's cost, and noise in agents' contexts](06b-showrunner-cost.md) | **built** 2026-10-04: markdownlint and the connector out of agents' contexts; the showrunner at `medium`; `tools/room.py` (one call per step, the dispatches printed: −42% turns predicted); auto-compaction at 250k (candidate B; A needs workflows switched on); a pause at chapter boundaries. No agent spawned: the [checklist](../experiments/2026-10-04-optimisation.md) rides on the next full run | 06 |
 | 06c | [Session 7c: the roles' levers, tested blind and cheaply](06c-role-levers.md) | **done** 2026-10-04: `tools/bench.py` (frozen rounds, arms, blind pairs, agreement); story editor at `medium` kept (−26% a spawn, agreement at the A/A level); loop cap, continuity editor at `medium` and clerk on Haiku lost; the writer's revisions (re-aimed by 06d to Opus `medium`) still to test | 06, 06b |
 | 06d | [Session 7d: model and effort by role; the skill-authoring guide against `kb/`](06d-model-effort-and-kb.md) | **built** 2026-10-04: no role changes model (the Sonnet roles mostly read; on Opus +$6–10 a run); the rule *Sonnet only at `high`*, warned by `kb_check`; `trace.py --reprice`; the continuity editor checks its own file; a prompt audit (one fossil removed); `kb_check` warns on dated text; a bible read-set tool measured and dropped. No agent spawned | 06c |
-| 07 | [Session 8: retire skilled-writer](07-retire-skilled-writer.md) | **next** | 05 |
+| 07 | [Session 8: retire skilled-writer](07-retire-skilled-writer.md) | **done** 2026-10-04: the coverage diff (64 areas; 8 gaps filled, one as a new planner doc and seven as examples; the rest covered, or waived with a reason) and the `sw` tools diff in [kb-mapping.md](../kb-mapping.md); [history.md](../history.md); an archive notice in the old repo; both projects' memory updated, lessons 35–36. No agent spawned | 05 |
+
+**After 07, no plan is written.** What remains is the next full run, which checks the 06b–06d
+checklists and the examples 07 added to `kb/`, and the first human read of a chapter 1, once the
+user lifts the standing decision that they read nothing ([07 § After the rebuild](07-retire-skilled-writer.md#after-the-rebuild)).
 
 ## Why this order
 
@@ -88,7 +92,7 @@ table: it is what the user reads.
 | continuity editor checks its own file (`wire.py check`) before its status line | 06d | yes | not yet: the next run |
 | prompt audit against Opus 5.5 / Sonnet 5.5; `kb_check` warns on dated text in `kb/` | 06d | yes | partly: one fossil removed from the continuity editor (its final message must stay one line in the next run); `kb/` has no dated text |
 | conformity guards from Anthropic's multi-agent study: a judge panel on two models (`bench.py panel`, `judge--fable`); `scaffold.py check` warns on a name another novel uses; a planner example for names the world gives | — | yes | partly: the names check found the five shared names in the two existing novels. The panel waits for the next benchmark |
-| skilled-writer retired | 07 | no | — |
+| skilled-writer retired: coverage and tools diff, history, archive notice, memory | 07 | yes | yes (07): `kb_check` clean; the old repo's `sw health` 0/0/0 and its tests pass with the notice. The 8 filled gaps are new knowledge-base examples, first read in the next full run |
 
 ## Standing decisions (from the user, 2026-09-26)
 

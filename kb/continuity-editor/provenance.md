@@ -48,6 +48,13 @@ If the page shows how she'd know (she's heard the pitch change before, she read 
 it holds. If not, a guess said flat is a provenance break; said as a guess ("I'd bet the third
 shift") it is fine, and a flag the reader will remember if it turns out wrong.
 
+### The skill with no source
+
+> Ossie, who had never held a torch, cut the bulkhead seal clean.
+
+A skill moves forward through a teacher, a reference, or a failure that cost something, never
+through chapters passing. If no earlier chapter or profile gives one, it is a finding.
+
 ### Knowing the future
 
 When `novel.md` gives the protagonist foreknowledge, that is a sixth source, bounded by what the

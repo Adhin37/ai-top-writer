@@ -51,6 +51,16 @@ ev    state C0003 cost: "no grip in her left hand for days" · own reading: one 
 eff   a reader who remembers the frostbite stops trusting that anything here costs
 ```
 
+### The free win
+
+> The chief's son sneered at her grade. She named the fault in his pump before he finished, the
+> hall went quiet, and he apologised.
+
+Nothing was paid and no enemy was made, so the next chapter needs another insult and another win:
+a loop that stops the story. A note asks for one of these: the win costs her something; the insult
+was partly true; winning makes a real enemy; she refuses the fight and the reader sees what that
+cost; nobody in the hall cares.
+
 ### The violence that costs nobody
 
 Someone hurt a person and the chapter moved on. Whoever did it carries it: in their sleep, their

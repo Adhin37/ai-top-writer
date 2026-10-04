@@ -96,6 +96,23 @@ the stores clerk — Deck Four stores — ch 2
 
 Promote them to a profile on a third appearance, or when they make a decision that moves the plot.
 
+### A mind that is not a person
+
+A beast, a construct or a god gets three answers before its profile: what it is made of and what
+that makes impossible, what it wants in its own terms, and what it has no concept of. The third
+does the most work: a mind without a concept of lying, privacy or other minds acts strangely in a
+consistent way, and the strangeness needs no explaining.
+
+```
+the Deck Nine governor — a construct
+made of        the valves and the logic that runs them; cannot leave Deck Nine; has no face to read
+wants          the pressure even on every deck, as it was set ninety years ago
+no concept of  a person: it counts breaths, not who is breathing them
+```
+
+Its want is legible and not sympathetic: the reader understands it and does not agree. If it will
+narrate, `novel.md` lists it as a viewpoint, and its blind spots become the prose's.
+
 ### A name the world gives
 
 **First-draw names, which would fit any book:**

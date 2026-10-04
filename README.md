@@ -34,11 +34,11 @@ with a different questionnaire from the beta reader's, so the room cannot tune i
 
 ## Status
 
-Rebuild in progress. Plans 01 to 06c have run: chapter 1, the wire format, the full loop across
+Rebuild in progress. Plans 01 to 07 have run: chapter 1, the wire format, the full loop across
 chapters, the knowledge bases, setting up a new novel, benchmark run #7 (**4.5 / 5 from three blind
-judges**, against 3.5 for skilled-writer's run #6), and the cost measurements. What is built, and
-whether a run has shown it working: the *Features* table in
-[docs/roadmap/README.md](docs/roadmap/README.md), which also says which plan is next.
+judges**, against 3.5 for skilled-writer's run #6), the cost measurements, and skilled-writer's
+retirement. What is built, and whether a run has shown it working: the *Features* table in
+[docs/roadmap/README.md](docs/roadmap/README.md), which also says what comes next.
 
 ## Using it
 
@@ -187,7 +187,7 @@ tools/             the loop's tools: one call per loop step (room.py), the scaff
                    cleanup, session handoffs
 tests/             python3 -m unittest discover tests
 docs/              for people only (no agent reads it): roadmap, architecture, novel format,
-                   lessons, experiments
+                   lessons, run history, experiments
 novels/            the books (gitignored), and _template/, which /new copies
 reading/, bench/   the reader's folders, one per novel, and experiment arms (gitignored;
                    tools/clean.py says which novel each belongs to)

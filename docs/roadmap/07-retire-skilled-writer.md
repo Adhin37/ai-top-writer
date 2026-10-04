@@ -37,4 +37,46 @@ work is.
 
 ## Session log
 
-*(filled in when this plan runs)*
+2026-10-04, one session in this repo. No agent spawned; nothing committed in either repo.
+
+- **Step 1, the coverage diff** ([kb-mapping.md § The coverage diff](../kb-mapping.md#the-coverage-diff-plan-07)).
+  - I walked all 64 areas of `coverage-map.md` plus its open items against `kb/`, the template and
+    `tools/`, reading the destination doc wherever a grep was not proof. The per-skill mapping
+    from plan 03 had missed eight areas, each a reference inside a skill that was mapped.
+  - **Filled** (one new doc, the rest as examples with the knowledge bases' invented nouns):
+    planner `long-middle.md` (new, indexed), and examples in `stakes.md` (money stops deciding),
+    `arcs-and-chapters.md` (the rate the opening promises), `cast-design.md` (a mind that is not a
+    person), `world-design.md` (an oath), `bias-structural.md` (the stance), writer
+    `scene-and-summary.md` and continuity `provenance.md` (learning a skill), story editor
+    `cost-and-keep.md` (the free win, the face-slap loop), line editor `ai-default-habits.md`
+    (the gasping crowd).
+  - **Covered** under other names: eight areas. **Waived**, each with its reason: four.
+  - Fixed on the way: the mapping named `people-on-the-page.md`, which plan 03 shipped as
+    `people-and-figures.md`.
+- **Step 2, the tools diff** ([kb-mapping.md § The `sw` commands](../kb-mapping.md#the-sw-commands-plan-07)).
+  Six commands ported, three replaced, ten dropped, three hooks replaced by `guard.py`. The
+  expected drops (`health`, `contract`, `load`, `kb`, the budgets) were dropped, and so were `cast`,
+  `curve` and `stamp`: each was a number a drafter writes toward (lesson 8).
+- **Step 3, history**: [history.md](../history.md). It has a table of runs #1–#7, what each
+  established, and the commit holding each old write-up. Runs #1–#2's figures came from the old
+  repo's git history, because its current `benchmark.md` keeps only #3 onward in detail.
+- **Step 4, the archive notice**: `README.md`, `CLAUDE.md` and `AGENTS.md` in the old repo
+  (`AGENTS.md` too, since other harnesses read it first). Its agents, skills and novels are
+  untouched. Its `sw health` is 0/0/0 and its tests pass with the notice. The untracked
+  `plan the following :.md` there is the user's, and I left it alone.
+- **Step 5, memory.**
+  - skilled-writer's 14 memories: each is marked historical in its body, and the index opens on a
+    line saying so. `ai-top-writer-rebuild` had said "next is plan 01"; it now points here.
+  - Lessons that lived only in memory are now in [lessons.md](../lessons.md): 16 (memory hooks are
+    a prompt), 17 (hook paths, failing open), 35 (a custom base URL costs the 1M window), 36 (a
+    test that stops looking).
+  - This repo's two memories still hold, so they are unchanged.
+- **Checks**: `kb_check.py` 0 defect · 0 warn; tests 270 OK.
+- **Found, not fixed**: `kb_check.py --novel novels/varrow-bells` reports three leak defects for
+  "Board" in writer `orienting-the-reader.md`. That predates this plan. The word is generic, the
+  novel is plan 04's throwaway, and the example is the lecture fix's calibrated one, so I left it.
+  Rename it if varrow-bells is ever used again.
+
+**Exit criteria: met.** The coverage diff has no unexplained gap. A new session in the old repo
+reads the archive notice in `CLAUDE.md`, and its memory index opens on a line pointing here. A
+session here reads `CLAUDE.md` and the roadmap.

@@ -35,6 +35,14 @@ If it matters, it gets a scene.
 > The row out took an hour. The boy sat in the bow and said nothing, and his hair dried stiff with
 > salt, and twice she caught him looking back at the lights of the town.
 
+**Learning, in the margins.** A skill grows across chapters that are about something else. The
+practice gets a clause; the moment it changes stage gets the scene.
+
+> Ch 3: the bowline slipped again, and she retied it without looking at the boy.
+> Ch 5: she knew the knot was wrong before she pulled it, which was new.
+> Ch 8, the scene: the line holds with the boy's whole weight on it, and she realises she tied it
+> while arguing with the harbourmaster.
+
 ## When to break it
 
 Some turns are stronger reported late — a reveal that lands as the protagonist *finds out* what

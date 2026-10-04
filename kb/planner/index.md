@@ -12,6 +12,7 @@ Start with [prompt.md](prompt.md) — your tasks and what to hand back.
 | [fold.md](fold.md) | folding an accepted chapter's new facts (the clerk's `fold.md`) into the bible |
 | [stakes.md](stakes.md) | every beat sheet, and planning an arc — what it costs, what it gives back, the gap, the stakes ceiling |
 | [arcs-and-chapters.md](arcs-and-chapters.md) | writing or replanning chapter rows — temperature, ending, build-up, the skim test |
+| [long-middle.md](long-middle.md) | planning arc 3 or later — each arc's own question and permanent change, instead of a bigger threat |
 | [threads.md](threads.md) | a beat sheet plants, advances or pays a thread; the ledger's promises; the thread board |
 | [cast-design.md](cast-design.md) | a new character carries a scene, the protagonist's gift or edges are in play, or a voice row is needed |
 | [world-design.md](world-design.md) | the bible needs a rule, a price, a distance or a power it does not have |

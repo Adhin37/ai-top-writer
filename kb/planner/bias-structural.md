@@ -50,6 +50,16 @@ cannot:                    Tovi's mother, Ossie, the canteen staff (all lower-de
 
 Re-deal: Ossie reads the code better than Kell, and has never been asked.
 
+**What a society expects, and what each person does about it.** The expectation is one rule for a
+whole group; what each character does about it is not. Give each character who carries scenes a
+stance toward it: conforms and benefits, conforms and resents, exploits it, defies it openly,
+defies it quietly, never had to notice, or enforces it. Any character of any gender takes any
+stance.
+
+> On the Stack a son sits the grade exam and a daughter is graded on her father's word. Kell, who
+> has three daughters, enforces it harder than the council does. Tovi's mother sat the exam under
+> her brother's name and never said so. Ossie has never had to notice.
+
 ## When it does not apply
 
 A character's prejudice, voiced and shown costing someone, is depiction. Keep it. Check only that

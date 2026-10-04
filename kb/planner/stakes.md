@@ -65,6 +65,17 @@ who helps is welcome. An ally who finishes the protagonist's work is a shortcut.
 Every row has a `keeps` beside its `cost`: something small and real the reader would not want taken,
 best when it is unearned. A plan where every chapter only takes is relentless, not tense.
 
+### When money stops deciding
+
+A protagonist who starts poor is pressed hardest by prices early, and less as she climbs: the
+prices do not change, she does. Plan the arc after which money is texture rather than a problem
+solved on the page, and move the pressure up the ladder as it fades.
+
+> Arc 1: Tovi counts a clamp in days of air. Arc 3: she signs for the deep crew's air stores
+> without reading the figure. What she can lose now is the crew, and no credit buys that back.
+
+A book where money still decides the outcome in its last arc has a protagonist who never climbed.
+
 ## When to break it
 
 An arc may hold the stake still and widen the gap instead (the same brother, a harder enemy) when the

@@ -58,6 +58,24 @@ price for three chapters.
 For every row, name the one thing a reader would lose by skipping the chapter. If you cannot,
 merge it with its neighbour.
 
+### The rate the opening promises
+
+Chapters 1–3 promise a rate as well as a kind: how much happens in a chapter, and how long a
+problem stays open. A reader who stays has subscribed at that rate, and what loses them later is
+rarely "too slow". It is "it changed".
+
+**An opening faster than the book:**
+
+> Ch 1–3: each chapter raises a problem and settles it. Arc 2: one question runs for twelve
+> chapters.
+
+**An opening at the book's rate:**
+
+> Ch 1: Tovi's grade is struck and her thirty days start. Ch 2–3: the days run, and every fix she
+> tries makes them shorter. The reader learns this is a book where one problem runs an arc.
+
+Plan the opening at the rate the arcs can keep, not the rate that converts best.
+
 ### Replanning
 
 When a chapter's page has moved the story off its row (a character the reader loves, a promise
