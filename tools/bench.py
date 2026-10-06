@@ -8,7 +8,8 @@
   bench.py freeze NOVEL N K EXP ARM --role ROLE [--agent TYPE]
                                            a copy of NOVEL as it stood when round K of chapter N
                                            reached ROLE (continuity-editor, story-editor,
-                                           line-editor, clerk), at novels/<slug>--<exp>-<arm>/;
+                                           line-editor, clerk; planner: before chapter N's
+                                           beats, K ignored), at novels/<slug>--<exp>-<arm>/;
                                            prints the role's dispatch, as TYPE if given (an arm's
                                            variant, `<role>--<arm>`)
   bench.py arm ROLE ARM [--effort LEVEL] [--model MODEL] [--remove]
@@ -59,7 +60,7 @@ import wire  # noqa: E402
 from lib import mdio  # noqa: E402
 
 ROOT = room.ROOT
-ROLES = ("continuity-editor", "story-editor", "line-editor", "clerk")
+ROLES = ("continuity-editor", "story-editor", "line-editor", "clerk", "planner")
 ARM_ROLES = ROLES + ("judge",)
 PANEL = ("judge", "judge--fable", "judge")
 MATCH_WORDS = 5     # a run of this many words in common makes two quotes the same passage
@@ -71,6 +72,7 @@ OUTPUTS = {
     "story-editor": ("notes-r{k}.md",),
     "line-editor": (),
     "clerk": ("fold.md",),
+    "planner": (),          # chapter n's beats: its whole work folder goes (below)
 }
 
 
@@ -212,6 +214,8 @@ def freeze(novel, n, k, exp, arm, role, root=ROOT):
         if m and int(m.group(1)) > n:
             shutil.rmtree(os.path.join(work, name))
     wdir = os.path.join(work, "ch%04d" % n)
+    for name in os.listdir(wdir) if role == "planner" else ():
+        os.remove(os.path.join(wdir, name))
     for name in os.listdir(wdir):
         r = _round_of(name)
         if name in own or (r is not None and r > k) or (name == "fold.md" and role != "clerk"):
@@ -256,7 +260,9 @@ def _memory_before(src, n):
 
 def role_dispatch(c, k, role, agent=None):
     if role == "continuity-editor":
-        d = room.readers(c, k)[1]
+        d = room.continuity(c, k, warm=False)       # a frozen round replays fresh
+    elif role == "planner":
+        d = room.planner_beats(c, warm=False)
     elif role == "story-editor":
         d = room.story_editor(c, k)
     elif role == "line-editor":

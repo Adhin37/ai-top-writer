@@ -113,7 +113,7 @@ class BenchTest(unittest.TestCase):
                                    "continuity-editor--medium")
         self.assertEqual(code, 0, out)
         copy = self.p("novels", "long-ebb--eff-med")
-        self.assertIn('@ spawn continuity-editor--medium as "continuity ch02 r0"\nNovel: '
+        self.assertIn('@ spawn continuity-editor--medium as "continuity-ch02"\nNovel: '
                       'novels/long-ebb--eff-med. Chapter 2, round 0. Draft: '
                       'novels/long-ebb--eff-med/work/ch0002/draft-r0.md.', out)
         work = sorted(os.listdir(os.path.join(copy, "work", "ch0002")))
@@ -164,6 +164,24 @@ class BenchTest(unittest.TestCase):
         self.assertIn("| c | 1 |", cut)
         self.assertNotIn("| 3 | b |", cut)
         self.assertNotIn("| d | 3 |", cut)
+
+    def test_freeze_for_the_planner_stands_before_the_beats(self):
+        code, out = self.run_bench("freeze", "novels/long-ebb", "2", "0", "plan", "med",
+                                   "--role", "planner", "--agent", "planner--medium")
+        self.assertEqual(code, 0, out)
+        copy = self.p("novels", "long-ebb--plan-med")
+        self.assertEqual(os.listdir(os.path.join(copy, "work", "ch0002")), [])
+        self.assertEqual(os.listdir(os.path.join(copy, "chapters")), ["0001-chapter-1.md"])
+        self.assertNotIn("=C0002=", read(os.path.join(copy, "state", "continuity.md")))
+        self.assertIn('@ spawn planner--medium as "planner-ch02"\nNovel: novels/long-ebb--plan-med. '
+                      'Task: beats for chapter 2.', out)
+
+    def test_freeze_continuity_after_round_0_replays_a_fresh_spawn(self):
+        code, out = self.run_bench("freeze", "novels/long-ebb", "2", "1", "w", "a",
+                                   "--role", "continuity-editor")
+        self.assertEqual(code, 0, out)
+        self.assertIn('@ spawn continuity-editor as "continuity-ch02"', out)
+        self.assertNotIn("@ continue", out)
 
     def test_freeze_for_the_clerk_keeps_the_accepted_chapter(self):
         self.run_bench("freeze", "novels/long-ebb", "2", "1", "e", "c", "--role", "clerk")

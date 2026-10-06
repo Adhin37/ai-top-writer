@@ -32,6 +32,16 @@ path to write your file to. Then:
    fiction, `bible/canon.md` too: a canon character's age, status, powers and spelling at the
    story's start, held against its cast row, and a `bible` finding when the page differs.
 
+## Rounds 1 and 2
+
+You are continued with the revised draft, the path to write and your last file. The bible and the
+state have not changed, so do not read them again. Run lint on the new draft, read it through, and
+find what changed against the last draft. Check every changed passage in full: a revision can
+break a fact as easily as fix one. Then check each finding in your last file against the new text.
+Write a new file: a finding the revision fixed is gone; one it did not fix stays, with its new
+quote. Open a bible file only for a name, figure or rule the revision brings in that you have not
+checked.
+
 ## What to check
 
 1. **The bible.** A name, rank, price, distance, rule, date or relationship stated differently from

@@ -39,9 +39,10 @@ dispatches, filled in:
 
 ## 1. Beat sheet — planner
 
-From chapter 2 on, the previous chapter's `room.py fold` printed this step: continue the planner
-warm. For chapter 1, the first chapter of a session, or when no fold ran:
-`python3 tools/room.py beats novels/{slug} N`. It stops if the chapter has no plan row or the
+From chapter 2 on, this step started at the previous chapter's ACCEPT: `room.py judge` printed a
+**planner** for chapter N's beats, to spawn beside the line editor (step 4). When it said the beats
+wait, the previous chapter's `room.py fold` prints them instead. For chapter 1, the first chapter
+of a session, or when neither did: `python3 tools/room.py beats novels/{slug} N`. It stops if the chapter has no plan row or the
 ledger has rows past due ([plan.md](plan.md) first; `fold` says the same for the next chapter), and
 it prints a `PAUSE` line when the usage window is nearly spent (below). If the reader's memory is
 missing, it prints a fresh **beta-reader** for the chapters so far instead of the planner: send it,
@@ -53,7 +54,8 @@ Read `work/chNNNN/beats.md` (`room.py` printed its path). Approve it **as writte
 - a `learns` item names no one who carries it (someone saying it, doing it, or weighing it before a
   decision).
 
-Then send it back saying which. Taste is not a reason.
+Then send it back saying which. Taste is not a reason. A beat sheet started at ACCEPT is approved
+while the previous chapter is polished; the writer waits for that chapter's fold.
 
 ## 2. Draft — writer
 
@@ -65,8 +67,8 @@ the draft and ends on `DRAFT READY`.
 On `DRAFT READY`: `python3 tools/room.py round novels/{slug} N K`. It builds the round's reading
 folder (the reader's notes, the last two accepted chapters, the draft as `pending/chNN.md`; a
 round's reader never sees an earlier round) and, from chapter 3 on, the history report for the
-story editor and the line editor. Spawn the two dispatches it prints, a fresh **beta-reader** and a
-**continuity-editor**, in one message, and wait for both. It will not rebuild a folder the reader
+story editor and the line editor. Send the two dispatches it prints in one message, a fresh **beta-reader** and the
+**continuity-editor** (spawned at round 0, continued warm after), and wait for both. It will not rebuild a folder the reader
 has worked in: when the readers are back, the next step is `judge`, not `round` again.
 
 ## 4. Judge the round — story editor
@@ -76,8 +78,10 @@ the reader's report verbatim from its transcript (Claude Code refuses a subagent
 and checks the continuity file. Spawn the **story-editor** it prints. On its `NOTES READY` line,
 send the branch `room.py judge` printed for that verdict:
 
-- **REVISE** and K < 2: continue `writer-chNN` with the notes, then step 3 with K+1.
-- **ACCEPT**, or round 2 done: spawn the **line-editor**, step 5.
+- **REVISE** and K < 2: continue `writer-chNN` with the notes, then step 3 with K+1. `judge` has
+  already copied the draft for the writer to revise in place.
+- **ACCEPT**, or round 2 done: spawn the **line-editor**, step 5, and in the same message the
+  **planner** for chapter N+1's beats when `judge` printed one and N+1 is in this run (step 1).
 
 ## 5. Polish — line editor
 
@@ -93,9 +97,10 @@ nobody else shortens them. Under the cap, it prints the **clerk**. The clerk wri
 ledger's status, the reader's memory and `work/chNNNN/fold.md`, and ends on `CLERK DONE`.
 
 On `CLERK DONE`: `python3 tools/room.py fold novels/{slug} N`. It runs the state check and counts
-the fold file. If the fold has lines for the bible it prints a **planner**, described
-`planner-ch(N+1)`, to fold them; that planner is continued warm for chapter N+1's beats, which it
-also prints. Send the fold now; the beats when chapter N+1 starts.
+the fold file. When chapter N+1's beats started at ACCEPT, it continues that planner,
+`planner-ch(N+1)`, to fold the lines for the bible, then prints the writer for N+1. Otherwise, if
+the fold has lines, it prints a **planner** described `planner-ch(N+1)` to fold them, continued warm
+for N+1's beats, which it also prints. Send the fold now; the rest when chapter N+1 starts.
 
 **Every 10th chapter** `room.py fold` also builds a fresh reading folder (ch01 … chNN, no notes) and
 prints a fresh **beta-reader** for it. With its report back, `python3 tools/room.py adopt

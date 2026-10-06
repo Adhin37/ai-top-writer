@@ -56,6 +56,23 @@ From the [optimisation write-up](experiments/2026-10-04-optimisation.md#to-measu
       beats` printed the fresh re-read and `adopt` restored the shelf;
 - [ ] `wire.py` raised no false `PLANNER DONE` defect.
 
+## The post-07 audit's speed levers (2026-10-06)
+
+From the [audit](experiments/2026-10-04-optimisation.md#post-07-audit-cheaper-and-faster-chapters-2026-10-06):
+
+- [ ] the writer's revisions are edits: output per revision against run #7's 7–11k; `bench.py
+      rounds` still shows each note acted on (paragraphs changed, `notes` lines in `facts-rK.md`);
+      no `round` STOP on an unrevised copy;
+- [ ] the planner opens no chapter before the previous one and no earlier beat sheet
+      (`reads.tsv`); its peak context against run #7's 143k;
+- [ ] the continuity editor continued warm in rounds 1–2: round time against 5.5–6.4 min, the
+      writer's cache expiries against 6 ($3.37), and its findings a round beside run #7's (run the
+      ~$2 agreement bench first, if the budget allows);
+- [ ] beats started at ACCEPT: wall time from ACCEPT to the next writer's spawn against ch 4's
+      ~16 min; no beat sheet sent back for something the fold changed;
+- [ ] the planner at `medium`: decided by the frozen-round arm, or left at `high` with the reason
+      logged.
+
 ## The bench
 
 - [ ] the blind panel on two models (`bench.py panel`, `judge--fable`): scores per model, with the

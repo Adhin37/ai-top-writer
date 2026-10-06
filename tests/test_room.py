@@ -121,7 +121,7 @@ class RoomTest(unittest.TestCase):
         self.assertTrue(os.path.isfile(os.path.join(self.root, folder, "pending", "ch02.md")))
         self.assertIn('@ spawn beta-reader as "beta-reader ch02 r0"\nYour reading folder is '
                       '%s/. Report on chapter 2, pending/ch02.md.' % folder, out)
-        self.assertIn('@ spawn continuity-editor as "continuity ch02 r0"\nNovel: '
+        self.assertIn('@ spawn continuity-editor as "continuity-ch02"\nNovel: '
                       'novels/long-ebb. Chapter 2, round 0. Draft: '
                       'novels/long-ebb/work/ch0002/draft-r0.md. Write '
                       'novels/long-ebb/work/ch0002/continuity-r0.md.', out)
@@ -135,6 +135,7 @@ class RoomTest(unittest.TestCase):
 
     def test_round_logs_the_hand_backs_and_the_dispatch_that_led_here(self):
         self.fx.write("work/ch0002/draft-r1.md", DRAFT)
+        self.fx.write("work/ch0002/facts-r1.md", "# Facts\n")
         self.agent("w1", "DRAFT READY novels/long-ebb/work/ch0002/draft-r1.md | facts f | new 0 "
                    "| stets 0 | couldn't 0", "writer-ch02")
         log = "docs/experiments/run.md"
@@ -143,7 +144,8 @@ class RoomTest(unittest.TestCase):
         text = read(os.path.join(self.root, log))
         self.assertIn("**writer-ch02** (`w1`), hand-back verbatim", text)
         self.assertIn("continue writer-ch02, verbatim:\n\n```\nNotes: "
-                      "novels/long-ebb/work/ch0002/notes-r0.md. Write draft-r1.md.\n```", text)
+                      "novels/long-ebb/work/ch0002/notes-r0.md. Revise draft-r1.md in place: it "
+                      "is a copy of draft-r0.md.\n```", text)
         self.assertIn('spawn beta-reader as "beta-reader ch02 r1"', text)
         self.assertLess(text.index("w1"), text.index("continue writer-ch02"))
 
@@ -151,6 +153,8 @@ class RoomTest(unittest.TestCase):
 
     def judge_ready(self, k):
         self.fx.write("work/ch0002/draft-r%d.md" % k, DRAFT)
+        if k:
+            self.fx.write("work/ch0002/facts-r%d.md" % k, "# Facts\n")
         self.run_room("round", self.novel, "2", str(k))
         self.fx.write("work/ch0002/continuity-r%d.md" % k,
                       "# Continuity — chapter 2, round %d\nlint     x\nchecked  y\nnone\n" % k)
@@ -274,6 +278,104 @@ class RoomTest(unittest.TestCase):
         self.assertIn("room.py adopt novels/long-ebb 10", out)
         self.assertIn("no plan row for chapter 11", out)
 
+    def test_round_continues_the_continuity_editor_warm_after_round_0(self):
+        self.fx.write("work/ch0002/draft-r1.md", DRAFT + "Revised.\n")
+        self.fx.write("work/ch0002/facts-r1.md", "# Facts\n")
+        code, out = self.run_room("round", self.novel, "2", "1")
+        self.assertEqual(code, 0, out)
+        self.assertIn("@ continue continuity-ch02\nChapter 2, round 1. Draft: "
+                      "novels/long-ebb/work/ch0002/draft-r1.md. Write "
+                      "novels/long-ebb/work/ch0002/continuity-r1.md. Your last file: "
+                      "novels/long-ebb/work/ch0002/continuity-r0.md.", out)
+        self.assertIn('@ spawn beta-reader as "beta-reader ch02 r1"', out)    # the reader stays cold
+        room.WARM_CONTINUITY = False
+        try:
+            code, out = self.run_room("round", self.novel, "2", "1", "--force")
+        finally:
+            room.WARM_CONTINUITY = True
+        self.assertIn('@ spawn continuity-editor as "continuity-ch02"', out)
+
+    def test_judge_copies_the_draft_for_a_revision_in_place(self):
+        self.judge_ready(0)
+        code, out = self.run_room("judge", self.novel, "2", "0", "b0")
+        self.assertEqual(code, 0, out)
+        r0, r1 = self.fx.path("work", "ch0002", "draft-r0.md"), self.fx.path("work", "ch0002",
+                                                                             "draft-r1.md")
+        self.assertEqual(read(r1), read(r0))
+        self.assertIn("copied novels/long-ebb/work/ch0002/draft-r0.md -> "
+                      "novels/long-ebb/work/ch0002/draft-r1.md", out)
+        self.assertIn("Revise draft-r1.md in place: it is a copy of draft-r0.md.", out)
+        # the copy is not a draft yet: where waits for the writer, round refuses it
+        self.fx.write("work/ch0002/notes-r0.md", "verdict REVISE | owed 0/1\n")
+        self.fx.write("work/ch0002/beats.md", "# Ch 2\n")
+        self.fx.chapter(1, title="The Tally", slug="the-tally")
+        self.fx.write("work/ch0001/fold.md", "none\n")
+        self.assertIn("continue writer-ch02 for draft-r1", room.where(self.fx.root, self.root)[1])
+        code, out = self.run_room("round", self.novel, "2", "1")
+        self.assertEqual(code, 2)
+        self.assertIn("has no facts-r1.md: the writer has not finished the revision (the draft is "
+                      "still the unrevised copy)", out)
+        # a revised draft is never overwritten by a second judge call
+        self.fx.write("work/ch0002/draft-r1.md", DRAFT + "Revised.\n")
+        self.run_room("judge", self.novel, "2", "0", "b0")
+        self.assertIn("Revised.", read(r1))
+
+    def test_clerk_removes_an_unrevised_copy_after_accept(self):
+        self.clerk_ready(700)
+        self.fx.write("work/ch0002/draft-r1.md", DRAFT)
+        self.fx.write("work/ch0002/facts-r1.md", "# Facts\n")
+        self.fx.write("work/ch0002/draft-r2.md", DRAFT)            # judge's copy, ACCEPT came
+        code, out = self.run_room("clerk", self.novel, "2", "1")
+        self.assertEqual(code, 0, out)
+        self.assertIn("removed draft-r2.md, the unrevised copy", out)
+        self.assertFalse(os.path.exists(self.fx.path("work", "ch0002", "draft-r2.md")))
+
+    def test_judge_starts_the_next_beats_beside_the_line_editor(self):
+        self.fx.write("work/ch0001/draft-r0.md", DRAFT.replace("number: 2", "number: 1"))
+        self.run_room("round", self.novel, "1", "0")
+        self.fx.write("work/ch0001/continuity-r0.md",
+                      "# Continuity — chapter 1, round 0\nlint     x\nchecked  y\nnone\n")
+        self.agent("b1", REPORT.replace("chapter 2", "chapter 1"), "beta-reader ch01 r0")
+        code, out = self.run_room("judge", self.novel, "1", "0", "b1")
+        self.assertEqual(code, 0, out)
+        accept = out.split("ACCEPT -> ")[1]
+        self.assertIn('in the same message, if chapter 2 is in this run: @ spawn planner as '
+                      '"planner-ch02"\n  Novel: novels/long-ebb. Task: beats for chapter 2. '
+                      'Chapter 1 is accepted and not yet in state/: its text is '
+                      'novels/long-ebb/work/ch0001/draft-r0.md. Reader\'s notes: '
+                      'reading/%s/ch01-r0/notes.md. Editor\'s notes for the planner: '
+                      'novels/long-ebb/work/ch0001/notes-r0.md.' % self.id, accept)
+        self.assertIn("approve it (loop.md step 1)", accept)
+        self.assertIn("room.py clerk novels/long-ebb 1 0", accept)
+
+    def test_judge_holds_the_next_beats_without_a_plan_row(self):
+        self.judge_ready(0)
+        code, out = self.run_room("judge", self.novel, "2", "0", "b0")
+        self.assertEqual(code, 0, out)
+        self.assertNotIn("@ spawn planner", out)
+        self.assertIn("chapter 3's beats wait for room.py fold: no plan row for chapter 3", out)
+
+    def test_fold_after_beats_ahead_continues_that_planner_then_the_writer(self):
+        self.fx.write("work/ch0001/notes-r0.md", "# Notes\nverdict ACCEPT | owed 1/1\n")
+        self.fx.write("work/ch0001/fold.md", '# Fold — chapter 1\nnew    the boathouse has two '
+                      'doors | bible/world.md | "two doors"\n')
+        self.fx.write("work/ch0002/beats.md", "# Ch 2\n")
+        log = "docs/experiments/run.md"
+        code, out = self.run_room("fold", self.novel, "1", "--log", log)
+        self.assertEqual(code, 0, out)
+        self.assertNotIn("@ spawn planner", out)
+        self.assertIn("@ continue planner-ch02\nTask: fold chapter 1. Fold file: "
+                      "novels/long-ebb/work/ch0001/fold.md. Then check your beat sheet for "
+                      "chapter 2 against what you folded.", out)
+        then = out.split("on PLANNER DONE fold, with the beat sheet approved, send the writer:")[1]
+        self.assertIn('@ spawn writer as "writer-ch02"', then)
+        self.assertIn('spawn planner as "planner-ch02"', read(os.path.join(self.root, log)))
+        os.remove(self.fx.path("work", "ch0001", "fold.md"))
+        self.fx.write("work/ch0001/fold.md", "none\n")
+        code, out = self.run_room("fold", self.novel, "1")
+        self.assertNotIn("@ continue planner", out)
+        self.assertIn("with the beat sheet approved, send the writer:", out)
+
     # ------------------------------------------------------------ where
 
     def test_where_follows_the_files(self):
@@ -289,6 +391,7 @@ class RoomTest(unittest.TestCase):
         self.fx.write("work/ch0001/notes-r0.md", "verdict REVISE | owed 0/1\n")
         self.assertIn("continue writer-ch01 for draft-r1", w())
         self.fx.write("work/ch0001/draft-r1.md", DRAFT)
+        self.fx.write("work/ch0001/facts-r1.md", "# Facts\n")
         self.fx.write("work/ch0001/notes-r1.md", "verdict ACCEPT | owed 1/1\n")
         self.assertIn("step 5: ACCEPT at round 1 -> the line editor into "
                       "novels/long-ebb/chapters/0001-the-tally.md", w())

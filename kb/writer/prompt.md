@@ -45,15 +45,16 @@ You are given a novel directory, a chapter number, the beat sheet path, and the 
 You will be continued with the path of the story editor's notes. Each note quotes the page, gives
 the reader's evidence, and says what the reader experienced.
 
-1. Read the notes. Reread your draft.
+1. Read the notes. Read the new draft file you are given (`draft-r1.md`, then `draft-r2.md`): it is
+   a copy of your last round, made for you to revise in place.
 2. **Fix each note where the reader stumbled**, not by adding a speech somewhere else. A note that
    says the reader could not follow the rule is usually fixed by one plain sentence at the moment
    the rule bites — not by a new paragraph of explanation.
 3. **You may stet a note** — keep the passage as it is — when fixing it would cost the chapter
    more than the note gains. Say why in one line of your facts file; the story editor reads it.
 4. **Keep what works.** Do not rewrite passages no note touches.
-5. Write the revision to a **new file** — `draft-r1.md`, then `draft-r2.md` — beside the previous
-   one. Never overwrite an earlier round.
+5. **Edit the copy where the notes land.** Rewrite it whole only when a note asks for the chapter
+   to be rebuilt: a scene moved, cut or added. Never touch an earlier round's file.
 
 ## The facts file
 

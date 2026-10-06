@@ -187,3 +187,9 @@ as a rule.
     folder. Separately, the knowledge base's example names (Merrow, Harrow, Nessa) turned up, near
     or exact, in a later novel's cast: the kb leaked into the book, not the reverse. `kb_check`
     now warns on near names too.
+38. **A longer cache is not a cheaper one when most writes are read once.** Claude Code has
+    `subagentPromptCacheTtl` (`CLAUDE_CODE_SUBAGENT_PROMPT_CACHE_TTL`, `"1h"`). A 1-hour write
+    costs 2× input, a 5-minute one 1.25×. Run #7's subagents wrote $19.2 of cache and lost $3.5 to
+    expiries: the hour would cost ~$11.5 more to save $3.5. Shorten the wait instead: the writer's
+    expiries came from rounds of 5.5–6.4 min against a 5-minute cache, and the continuity editor
+    set that pace ([audit](experiments/2026-10-04-optimisation.md#post-07-audit-cheaper-and-faster-chapters-2026-10-06)).

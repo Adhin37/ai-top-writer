@@ -51,10 +51,16 @@ Write `novels/<slug>/work/chNNNN/beats.md` per [beat-sheet.md](beat-sheet.md), f
   they are confused about;
 - the *For the planner* lines of the previous chapter's last notes file, if the showrunner gives
   its path — what the story editor saw that later chapters must carry;
-- the bible files the chapter touches, and from chapter 2 on the end of the previous chapter;
+- the bible files the chapter touches, and from chapter 2 on the final scene of the previous
+  chapter. Open no chapter before it and no earlier beat sheet: `state/` and the reader's notes
+  stand for them;
 - from chapter 2 on, `state/`: the last continuity block, whose `hook` line is what the last page
   promised (this chapter plays it, pays it or turns it on purpose), and `state/scenes.md`, the
-  shape of the last chapters' scenes ([arcs-and-chapters.md](arcs-and-chapters.md));
+  shape of the last chapters' scenes ([arcs-and-chapters.md](arcs-and-chapters.md)).
+  When the showrunner says the previous chapter is accepted and not yet in `state/`, its text is
+  the draft it names: its last page is the hook, and `state/` stops one chapter earlier. You will
+  fold that chapter after its clerk; if the fold changes something your beat sheet relies on, fix
+  the beat sheet and say so in a `changed` line;
 - [stakes.md](stakes.md) and [threads.md](threads.md), every time, and the other docs your
   [index](index.md) names for what this chapter does.
 

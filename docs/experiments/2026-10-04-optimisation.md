@@ -241,3 +241,61 @@ stays at `high`.**
 
 Lever 2c (the line editor at `medium`) needed both to hold, so it was not run. It rides on the
 next full run only if someone chooses to try it there; the plan does not schedule it.
+
+## Post-07 audit: cheaper and faster chapters (2026-10-06)
+
+The weekly limit ruled out a run, so this audit spawned nothing: run #7's transcripts (session
+`9ae41156`) read with `tools/trace.py --agents --docs` and a timeline of each subagent's first and
+last response, and the installed Claude Code (2.1.291) binary.
+
+### Where chapter 4 went (51 min of wall time)
+
+| step | wall | what drives it |
+|---|---|---|
+| planner: fold ch 3, beats ch 4 | 10.4 min | a ~5 min thinking block (25k tokens) before the beat sheet; context to 143k from earlier chapters and beat sheets read whole |
+| writer draft | 7.0 min | prose, and a cut-off retry |
+| rounds 0, 1, 2 | 5.9, 5.5, ~5 min | the continuity editor (3.2, 2.6, 2.7 min) while the reader takes 0.9; then the story editor (2.9, 2.6, 1.1) |
+| writer revisions | 1.6, 1.2 min | each rewrites the whole chapter (7–11k output tokens) to change 1–27 of ~120 paragraphs |
+| line editor, clerk | 3.8, 2.0 min | then the next chapter's fold and beats wait on them |
+
+The showrunner's gap between steps was ~5 s: `room.py` already works. Planner chapters cost
+$1.55–2.04, about $1 of it output, $0.85 cache writes, $0.35 reads.
+
+### The 1-hour subagent cache: a trap, not a lever
+
+`subagentPromptCacheTtl: "1h"` (setting) or `CLAUDE_CODE_SUBAGENT_PROMPT_CACHE_TTL=1h` exists. Not
+set: see lesson 38. Subagent writes in run #7 were writer $6.40, planner $4.06, story editor $3.55,
+continuity $2.29, reader $1.19, line editor $0.85, clerk $0.82; at 2× instead of 1.25×, +$11.5,
+against $3.5 of expiries. The first response of each spawn read 0 from cache, so there is no
+shared prefix to win back either. `trace.py` already prices 1-hour writes at 2×.
+
+### Built (unit-tested; 328 tests, `kb_check` clean)
+
+| change | where | prediction from run #7 | measured |
+|---|---|---|---|
+| 1. the writer revises in place: `judge` copies draft-rK to draft-r(K+1); `round` stops on a copy without its facts file; `clerk` removes a copy ACCEPT left | `room.py`, `kb/writer/prompt.md` | ~5k output tokens and 1–1.5 min a revision (8 a run: ~$1, ~10 min); a smaller context to rebuild | — |
+| 2. the planner reads the previous chapter's final scene, no earlier chapter or beat sheet | `kb/planner/prompt.md` | 15–25% of its context (ch 3 read ~17k tokens of ch 1–2 and both beat sheets): ~$0.2–0.3 a chapter | — |
+| 3. the continuity editor continued warm in rounds 1–2 (`room.WARM_CONTINUITY`; `bench.py freeze` replays it fresh) | `room.py`, `kb/continuity-editor/prompt.md` | ~1–1.5 min a round, so a round fits the writer's 5-min cache (up to $3.37 of expiries), and ~$1–1.5 of its own cost | — |
+| 4. chapter N+1's beats start at N's ACCEPT, beside the line editor; `fold` continues that planner, then the writer | `room.py judge`/`fold`/`where`, `loop.md`, `kb/planner/prompt.md` | ~6 min a chapter (~12% of wall time), no cost | — |
+| 5. the planner at `medium`: the arm only (`.claude/agents/planner--medium.md`); `bench.py freeze --role planner` stands before a chapter's beats | `bench.py` | −30–40% of the planner's output, 2–3 min a chapter, if it holds | — |
+
+All five: ~$6–8 of ~$70 a run if 3 and 5 hold (~$2 from 1–2 alone), and ~60–70 min of ~4.5 h.
+
+### What waits for the limit to reset
+
+- **3, before the next run (~$2):** freeze ch 4 and ch 5 at round 0 for the continuity editor.
+  Replay round 0, continue that agent with round 1's draft, and spawn a fresh round-1 replay
+  beside it. Compare with `bench.py agree continuity` against the A/A level. If the warm one
+  misses what the fresh one catches, set `WARM_CONTINUITY = False`.
+- **5 (~$4–5):** freeze ch 3 and ch 4 for the planner and run `planner` and `planner--medium`.
+  Compare against `loop.md` step 1's three criteria and the ledger rows scheduled, then a blind
+  pair of the two beat sheets in both orders. Adopt `medium` only on a tie with no criterion
+  broken.
+- **1, 2, 4:** the next full run (checklist).
+
+### Considered, not built
+
+- **Showrunner on Sonnet:** cache reads cost the same ($0.2/M), so about 20% of its share, and the
+  beat-sheet approval is a judgement.
+- **The clerk beside the line editor:** it shelves and records the polished text.
+- **Knowledge-base docs inlined into agent files:** one turn a spawn, against the thin-agent design.

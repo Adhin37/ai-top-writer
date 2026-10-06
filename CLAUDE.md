@@ -97,7 +97,7 @@ Why each role exists and what it may read: [docs/architecture.md](docs/architect
 
 The context is summarised at 250k tokens (`autoCompactWindow`). Keep: the user's request and every
 standing instruction they gave; the novel's slug, the chapter and step, the `/write` count left; the
-id and name of every agent in flight or to be continued warm (`writer-chNN`, `planner-chNN`); the
-working log's path and `.test-run`'s state; decisions made and not yet written down. Drop hand-back
+id and name of every agent in flight or to be continued warm (`writer-chNN`, `planner-chNN`,
+`continuity-chNN`); the working log's path and `.test-run`'s state; decisions made and not yet written down. Drop hand-back
 texts, tool output and file contents: they are on disk, and `python3 tools/room.py where
 novels/<slug>` and the session's handoff in `docs/sessions/` recover them.
