@@ -32,8 +32,8 @@ From the [optimisation write-up](experiments/2026-10-04-optimisation.md#to-measu
       its notes still specific (a quote, the evidence, the effect);
 - [ ] the writer's revisions at Opus `medium`: not yet tested (06c lever 5, re-aimed by 06d).
       Run them at `high` as now unless a frozen-round pair is run first; log the choice;
-- [ ] the planner at `medium` (06c lever 6, "rides on the next full run"): decide before the run,
-      log why, and compare its beat sheets' approvals and the ledger's debt against run #7;
+- [x] the planner at `medium` (06c lever 6): decided 2026-10-10 on a frozen round, it stays at
+      `high` (+6% cost, same sheet; [bench](experiments/2026-10-10-agency-bench.md));
 - [ ] the continuity editor: its final message is one line in every spawn, `wire.py check` is in
       its transcript, and its findings and cost a spawn sit beside run #7's;
 - [ ] the clerk's kept anti-recap sentence and the four low-confidence prompt lines 06d flagged:
@@ -70,8 +70,7 @@ From the [audit](experiments/2026-10-04-optimisation.md#post-07-audit-cheaper-an
       ~$2 agreement bench first, if the budget allows);
 - [ ] beats started at ACCEPT: wall time from ACCEPT to the next writer's spawn against ch 4's
       ~16 min; no beat sheet sent back for something the fold changed;
-- [ ] the planner at `medium`: decided by the frozen-round arm, or left at `high` with the reason
-      logged.
+- [x] the planner at `medium`: left at `high` (2026-10-10, see above).
 
 ## Run #8's fixes (2026-10-10)
 
@@ -102,6 +101,11 @@ From [08](roadmap/08-pressure-and-run-9.md):
 
 - [ ] `/plan` first: the planner adds `L1` and `C1` to `novels/ember-terraces`, one step for each
       of ch 1–5 (`status.py --debt` asks for them), and `state_check` raises no `pressure` warn;
+- [ ] the same `/plan` rewrites the passive rows ahead in `changed` lines (a want she acts on, an
+      event of which she is the subject): rows 8 ("get away from Dao") and 11 ("let her father
+      speak for her") read as holds; a ch 5 bench kept a passive event without this;
+- [ ] the story editor's grade of each `pressure` line against the planner's: stricter, or as
+      lenient as the bench's (a declined move graded `grew`);
 - [ ] every beat sheet has a `pressure` line, every notes file grades `L1` and `C1`, and every
       clerk appends one step to each trail; `room.py` put a `Pressure:` flag in a beats dispatch
       only after a step back or two holds, and the next beat sheet answered it;

@@ -94,6 +94,13 @@ owed past their chapter (reschedule each, `moved to chN — <why>`) and rows due
 (plan the row, or move the debt). For every row due inside the plan, name to yourself the planned
 row whose event carries it; a debt no row can carry is moved, with its reason.
 
+Then walk the rows ahead against the ledger's `L1` and `C1` trails: name to yourself the step each
+row would add. A beat sheet cannot give the lead a move her row's event does not leave room for, so
+the row is where a lever grows. A row that would add `held` or `shrank` beyond the arc's one cool
+chapter gets a want in which she acts, and an event of which she is the subject, not the witness;
+a row that moves the clock `later` gets a reason the reader is given. Say each rewrite in a
+`changed` line.
+
 ## Your final message
 
 One status line, then one `gap` or `changed` line each, and nothing else

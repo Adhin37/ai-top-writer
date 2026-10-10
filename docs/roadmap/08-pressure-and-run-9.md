@@ -55,3 +55,20 @@ window.
 - Verified: 347 tests, three full runs green; `kb_check` clean on the repo and on
   `novels/ember-terraces`; `status.py --debt` on that novel asks for the Pressure rows.
 - Not done here: steps 3 and 4 spend agents and wait for the weekly limit.
+
+**2026-10-10, step 3** ([write-up](../experiments/2026-10-10-agency-bench.md)). Four planner spawns,
+$10.13 in all; nothing committed.
+
+- The agency bench froze run #8 before ch 5's beats. Every arm wrote the Pressure rows unasked (the
+  beat-sheet doc asks for the `pressure` line), so the "without" arm became run #8's own ch 5.
+- All three beat sheets kept the row's event, in which the garrison acts and Kesa watches; arm B
+  wrote it `L1 shrank`, arm A wrote the same declined move `grew`. A blind pair would have measured
+  the writer, so drafts and judges were skipped.
+- **Decided:** the lever is checked where events are chosen. The planner's plan task walks the rows
+  ahead against `L1`/`C1` and rewrites a row that holds or shrinks the lever past one cool chapter
+  an arc, or moves the clock later without a reason; init's last check asks the same.
+- **Decided:** the planner stays at `high`; `medium` cost 6% more for the same sheet (06c lever 6
+  closed).
+- Seen: the room grades its own trail leniently. Run #9 shows whether the story editor's grade is
+  stricter.
+- Step 4 (run #9) waits for the weekly limit. Its first `/plan` must rewrite the passive rows ahead.
