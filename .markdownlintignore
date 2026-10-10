@@ -1,6 +1,9 @@
-# VS Code's markdownlint extension injects its warnings into an agent's context after
-# its edits (plan 06b). Agent-written files are not linted.
+# Agent-written files are not linted. This file is for the markdownlint CLI; the VS Code
+# extension ignores it, so each folder also holds a {"default": false} .markdownlint.json
+# (lesson 39).
 novels/
 reading/
 bench/
 docs/sessions/
+research/
+kb/

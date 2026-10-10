@@ -25,6 +25,8 @@ from lib import mdio  # noqa: E402
 from lib.novel import BLOCK_KEYS, BLOCK_REQUIRED, Novel, thread_refs  # noqa: E402
 
 THREAD_STATUS = ("planned", "open", "paid", "subverted", "dropped")
+LEVER = ("set", "grew", "held", "shrank")
+CLOCK = ("set", "nearer", "held", "later")
 LEDGER_STATUS = re.compile(r"^(?:owed|landed ch\s?\d+|partly ch\s?\d+|moved to ch\s?\d+)\b", re.I)
 YES_NO = ("yes", "no")
 
@@ -196,6 +198,26 @@ def check_ledger(nov, out):
                 out.add("note", "ledger", "%s is still owed; due by ch %d" % (rid, due))
 
 
+def check_pressure(nov, out):
+    """Each Pressure row's trail: steps in the row's vocabulary, none past the last accepted
+    chapter, one for every accepted chapter after the first step."""
+    last = nov.last_chapter
+    for rid, _, trail in nov.pressure():
+        words = LEVER if rid.upper().startswith("L") else CLOCK
+        for n, step, _ in trail:
+            if step not in words:
+                out.add("warn", "pressure", "%s ch%d `%s` is not one of %s"
+                        % (rid, n, step, " / ".join(words)))
+            if n > last:
+                out.add("warn", "pressure", "%s has a step for ch %d, past the last accepted "
+                        "chapter (%d)" % (rid, n, last))
+        have = {n for n, _, _ in trail}
+        missing = [n for n in range(min(have or [last + 1]), last + 1) if n not in have]
+        if missing:
+            out.add("warn", "pressure", "%s has no step for ch %s"
+                    % (rid, ", ".join(str(n) for n in missing)))
+
+
 def run(nov):
     out = Findings()
     if not os.path.isfile(nov.path("state", "continuity.md")):
@@ -205,6 +227,7 @@ def run(nov):
     check_plan(nov, out)
     check_scenes_and_timeline(nov, out)
     check_ledger(nov, out)
+    check_pressure(nov, out)
     return out
 
 

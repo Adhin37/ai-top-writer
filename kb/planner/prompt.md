@@ -33,6 +33,8 @@ Write or extend `novels/<slug>/plan/reader-ledger.md` per [reader-ledger.md](rea
   first appearance: their relation to the protagonist, their power, one concrete stroke.
 - **Promises:** what the page promises the reader (a threat, a mystery, a meeting) and by when it is
   paid.
+- **Pressure:** `L1` and `C1`. A ledger without them gets them now, with one step for each accepted
+  chapter, read from the continuity blocks' `ev` lines and the reader's notes, as the page did it.
 - If the reader's notes are available (the showrunner gives the path), compare them with the
   ledger: anything marked landed that the notes do not show is **not** landed. Reschedule it.
 - **The thread board.** If `state/threads.md` does not exist, write it: one row per thread id the
@@ -46,7 +48,8 @@ Write `novels/<slug>/work/chNNNN/beats.md` per [beat-sheet.md](beat-sheet.md), f
 
 - the chapter's row in `plan/chapters.md` — **keep its event** unless the ledger cannot be served
   without changing it, and then say so in a `changed` line of your final message;
-- the ledger rows due this chapter;
+- the ledger rows due this chapter, and the Pressure trail: this chapter's `pressure` line takes
+  each row one step on, and a `Pressure:` flag in the dispatch is what it must answer;
 - the reader's notes, if the showrunner gives them — what the reader actually believes, and what
   they are confused about;
 - the *For the planner* lines of the previous chapter's last notes file, if the showrunner gives

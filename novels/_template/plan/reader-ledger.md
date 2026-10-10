@@ -14,3 +14,9 @@
 | id | what the page promises | made in ch | paid by ch | status |
 |---|---|---|---|---|
 | R1 | {{a threat, a mystery, a meeting}} | {{ch}} | {{ch}} | owed |
+
+## Pressure
+| id | what the reader tracks | by chapter |
+|---|---|---|
+| L1 | {{the lead's lever: what she can do about the stake, in her own hands}} | ch1 set — {{her first move}} |
+| C1 | {{the clock: when the threat lands, and who can move it}} | ch1 set — {{the date or condition, said on the page}} |

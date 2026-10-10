@@ -58,6 +58,7 @@ import export_prose  # noqa: E402
 import room  # noqa: E402
 import wire  # noqa: E402
 from lib import mdio  # noqa: E402
+from lib.novel import PRESSURE_STEP  # noqa: E402
 
 ROOT = room.ROOT
 ROLES = ("continuity-editor", "story-editor", "line-editor", "clerk", "planner")
@@ -162,10 +163,16 @@ def _cut_rows(text, col, n):
 
 
 def _cut_ledger(text, n):
-    """The reader ledger with every status the clerk wrote at chapter n or later back to `owed`."""
+    """The reader ledger with every status the clerk wrote at chapter n or later back to `owed`,
+    and every Pressure step from chapter n on dropped."""
     def back(m):
         return "| owed |" if int(m.group(1)) >= n else m.group(0)
-    return re.sub(r"\|\s*\w+ ch(\d+)\b[^|\n]*\|(?=\s*$)", back, text, flags=re.M)
+
+    def trail(m):
+        return "" if int(m.group(1)) >= n else m.group(0)
+    text = re.sub(r"\|\s*\w+ ch(\d+)\b[^|\n]*\|(?=\s*$)", back, text, flags=re.M)
+    # a Pressure row's trail: steps from chapter n on are dropped, with their separator
+    return re.sub(r"\s*·?\s*" + PRESSURE_STEP.pattern, trail, text, flags=re.I)
 
 
 def _write(path, text):

@@ -20,6 +20,10 @@ BLOCK_KEYS = ("ev", "at", "kno", "has", "cost", "thr", "hook")
 BLOCK_REQUIRED = ("ev", "at", "kno", "thr", "hook")
 # A walk-on's line in bible/cast/_extras.md: `<Name> — <what> — ch <appearances> — <status>`.
 ROSTER_LINE = re.compile(r"^([^—\n|#<]{2,60}?)\s+—.*?—\s*ch\b")
+# One step of a Pressure row's trail: `ch3 grew — she logs six seals under Kell's code`.
+# The lever (L) sets, grows, holds or shrinks; the clock (C) sets, comes nearer, holds or goes later.
+PRESSURE_WORDS = ("set", "grew", "held", "shrank", "nearer", "later")
+PRESSURE_STEP = re.compile(r"\bch\s?(\d+)\s+(%s)\b([^·|]*)" % "|".join(PRESSURE_WORDS), re.I)
 
 
 def thread_refs(text):
@@ -141,6 +145,17 @@ class Novel(object):
                            ("promises", ("id", "made in ch", "status"))):
             t = mdio.table_with(text, *cols)
             out[kind] = t.rows if t else []
+        return out
+
+    def pressure(self):
+        """The ledger's Pressure rows: [(id, what, [(chapter, step, clause)])], from the trail
+        `ch1 set — <clause> · ch2 grew — <clause>`. Empty when the ledger has no Pressure table."""
+        t = mdio.table_with(self.text("plan", "reader-ledger.md"), "id", "by chapter")
+        out = []
+        for r in (t.rows if t else []):
+            trail = [(int(m.group(1)), m.group(2).lower(), m.group(3).strip(" —-"))
+                     for m in PRESSURE_STEP.finditer(r.get("by chapter"))]
+            out.append((r.first().strip("* "), r.get("what the reader tracks"), trail))
         return out
 
     # ------------------------------------------------------------------ state

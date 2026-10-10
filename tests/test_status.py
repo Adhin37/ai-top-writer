@@ -17,6 +17,11 @@ PLAN = """# Chapters
 | 2 | The Bar | Nessa Vane | tense | threat | Nessa rows the boy out past the bar | ^T2 ~T3 |
 """
 
+# A ledger's Pressure rows; without them `debt` asks for them.
+PRESSURE = ("\n## Pressure\n| id | what the reader tracks | by chapter |\n|---|---|---|\n"
+            "| L1 | Nessa's lever | ch1 set — she reads the tally |\n"
+            "| C1 | the clock | ch1 set — the lowest ebb |\n")
+
 REPORT = """# Report
 
 ## Would I click next?
@@ -126,7 +131,7 @@ class DebtTest(unittest.TestCase):
                      "| id | fact, in plain words | due by ch | how it lands | status |\n"
                      "|---|---|---|---|---|\n"
                      "| P3 | the guild sells the plot | 1 | the chalked gatepost | "
-                     "moved to ch2 — the sale did not register |\n")
+                     "moved to ch2 — the sale did not register |\n" + PRESSURE)
             fx.chapter(1)
             fx.state()
             self.assertTrue(status.debt(fx.novel())[0].startswith("clean"), status.debt(fx.novel()))
@@ -137,7 +142,8 @@ class DebtTest(unittest.TestCase):
             fx.write("plan/chapters.md", PLAN)
             fx.write("plan/reader-ledger.md", "# Reader ledger\n\n## Facts\n"
                      "| id | fact, in plain words | due by ch | how it lands | status |\n"
-                     "|---|---|---|---|---|\n| F2 | the bar is dry | 2 | she walks it | owed |\n")
+                     "|---|---|---|---|---|\n| F2 | the bar is dry | 2 | she walks it | owed |\n"
+                     + PRESSURE)
             self.assertTrue(status.debt(fx.novel())[0].startswith("clean"))
 
 

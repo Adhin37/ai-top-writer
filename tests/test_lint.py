@@ -131,3 +131,26 @@ class ReportTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class SlopTest(unittest.TestCase):
+    """lib/slop.py: EQ-Bench's formula, (words + 2 bigrams + 8 trigrams) per 1,000 tokens."""
+
+    def test_the_formula_weights_each_list(self):
+        from lib import slop
+        index, tokens, hits = slop.score("She took deep breath. He nodded. Absently.")
+        # 7 tokens; nodded, absently (1 each); "took deep", "deep breath" (2 each); "took deep
+        # breath" (8)
+        self.assertEqual(tokens, 7)
+        self.assertEqual(hits["took deep breath"], 1)
+        self.assertAlmostEqual(index, (1 + 1 + 2 + 2 + 8) * 1000.0 / 7)
+
+    def test_the_lists_are_vendored_whole(self):
+        from lib import slop
+        self.assertEqual([len(s) for s in slop.lists()], [1000, 200, 200])
+
+    def test_the_report_carries_one_note(self):
+        lines = [d for lv, check, d in found("He nodded. She nodded again, absently.\n")
+                 if check == "slop"]
+        self.assertEqual(len(lines), 1)
+        self.assertIn("nodded 2", lines[0])

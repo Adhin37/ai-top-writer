@@ -112,7 +112,21 @@ reader's retell against the rows due this chapter; the clerk marks what landed.
 ## Promises
 | id | what the page promises | made in ch | paid by ch | status |
 |---|---|---|---|---|
+
+## Pressure
+| id | what the reader tracks | by chapter |
+|---|---|---|
+| L1 | the lead's lever: what she can do about the stake | ch1 set — <her move> · ch2 grew — <a bigger one> |
+| C1 | the clock: when the threat lands, who can move it | ch1 set — <the date> · ch2 nearer — <what moved it> |
 ```
+
+**Pressure** has two standing rows and no status: each accepted chapter appends one step to its
+trail (`grew`, `held`, `shrank` for the lever; `nearer`, `held`, `later` for the clock). The
+beat sheet's `pressure` line plans the step; the story editor grades it like any owed row; the
+clerk writes it. `status.py` flags a lever that shrank, a clock that went later, and either held
+two chapters running, and `room.py` hands those flags to the planner's next beats dispatch.
+The finding behind it: run #8's judges all ranked first a lead whose moves shrank over five
+chapters, and a clock pushed back in dialogue.
 
 **Status** is `owed`, `landed chN`, `partly chN` (with what is missing), or `moved to chN` (with the
 reason). Every premise fact is due by chapter 1 on webnovel platforms (the standing decision).
@@ -126,6 +140,7 @@ temp     <fast|tense|loud|warm|funny|bleak|procedural|quiet>    hook <reveal|arr
 learns   P1, P2 (+ how each lands, one line each)
 faces    <who is introduced, and the one stroke that places them>
 promises made: <…>   paid: <…>
+pressure L1 <grew|held|shrank> — <her move, and what it costs> · C1 <nearer|held|later> — <what moves the clock>
 cost     <what the protagonist loses or spends>
 keeps    <one thing in this chapter worth the price — small, unearned counts>
 voices   <speaker → bible/cast/…>

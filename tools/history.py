@@ -479,7 +479,8 @@ def gestures(chapters, setting):
             continue                        # "finger + glove" once, not again as "glove + finger"
         key = (len(set(chs)), len(chs))
         if key[0] >= GESTURE_NOTE[0] and key[1] >= GESTURE_NOTE[1]:
-            if body not in best or key[1] > best[body][3]:
+            # ties go to the first companion in alphabetical order: set order is per process
+            if body not in best or (-key[1], other) < (-best[body][3], best[body][1]):
                 best[body] = (body, other, sorted(set(chs)), len(chs))
     return sorted(best.values(), key=lambda g: (-g[3], g[0]))
 

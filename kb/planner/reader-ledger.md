@@ -18,6 +18,9 @@ Three kinds of row:
 - **Faces** — people the reader must meet in person: above all the antagonist, who must be a person
   on the page, not a letterhead, by the opening contract chapter.
 - **Promises** — what the page has promised the reader will happen or be answered, and by when.
+- **Pressure** — two standing rows the reader feels every chapter: `L1`, the lead's lever (what
+  she can do about the stake, by her own hand), and `C1`, the clock (when the threat lands, and
+  who can move it). Each chapter adds one step to the trail; the clerk writes it.
 
 The ledger is read by the planner, the story editor and the clerk, never by a reader of the book,
 so it is [wire](../shared/wire.md): one row per debt, the fact in one clause (about twenty words),
@@ -51,6 +54,19 @@ The world is invented.
 |---|---|---|---|---|
 | R1 | why Kell struck her grade | 1 | 6 | owed |
 | R2 | what happened to the last deep crew | 2 | 8 | owed |
+
+## Pressure
+| id | what the reader tracks | by chapter |
+|---|---|---|
+| L1 | Tovi's lever: what she can do about the thirty days, herself | ch1 set — she logs the fault in her own name |
+| C1 | the clock: day thirty-one, and only Kell can move it | ch1 set — the clerk reads the rule off the form |
+```
+
+Three chapters on, a trail that reads:
+
+```
+| L1 | … | ch1 set — logs the fault · ch2 grew — patches one seal off the books · ch3 grew — logs six under Kell's code |
+| C1 | … | ch1 set — thirty days · ch2 nearer — the meter bills double · ch3 held — the inspection is set for day twenty |
 ```
 
 **Status** is `owed`, `landed chN`, `partly chN — <what is missing>`, or `moved to chN — <why>`.
@@ -63,5 +79,7 @@ The world is invented.
   of them belong later.
 - **The antagonist has a face early.** An opposition that only ever acts through documents,
   orders and rumours reads as weather, not a threat.
+- **The lever grows and the clock comes nearer.** A trail of `held` and `shrank` is a lead who
+  watches; a clock moved `later` in dialogue is a threat the reader stops pricing.
 - **Promises get paid or deliberately moved** — never silently dropped. A scene the previous chapter
   promised is played, paid, or rescheduled with a reason.

@@ -40,8 +40,9 @@ search files with Read, Glob and Grep.
 5. **`state/timeline.md`:** one row for each in-world day the chapter covers.
 6. **`state/scenes.md`:** one row per scene (scenes are split by `* * *`).
 7. **`plan/reader-ledger.md`:** set the status of each fact and face row the notes file grades,
-   from its grade, and mark a promise `landed` only where this chapter pays it. A `beat` line has no
-   ledger row; skip it. Change nothing else in the ledger.
+   from its grade, and mark a promise `landed` only where this chapter pays it. Append the
+   chapter's step to each Pressure row's trail. A `beat` line has no ledger row; skip it. Change
+   nothing else in the ledger. Both per [../shared/state-format.md](../shared/state-format.md).
 8. **`work/chNNNN/fold.md`:** every fact the chapter establishes that the bible does not hold. Start
    from the facts file's `new` lines, and check each against the chapter as it now stands (the
    line editor may have changed it). Then add what else the chapter states as true: a name, a

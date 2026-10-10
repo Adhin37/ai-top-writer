@@ -97,6 +97,11 @@ That is for facts and faces. A **promise** is `landed chN` only in the chapter t
 grade of a promise the chapter makes says the reader holds it, and its row stays `owed` until the
 payoff. `moved to chN — <why>` is the planner's.
 
+A **Pressure** row (`L1` the lead's lever, `C1` the clock) has no status cell: append one step to
+its `by chapter` trail, ` · chN <step> — <what the page did, one clause>`. The step is the one the
+beat sheet's `pressure` line planned when the story editor graded the row *stated*, and `held`
+otherwise. Steps: `grew`, `held`, `shrank` for a lever; `nearer`, `held`, `later` for a clock.
+
 ## `work/chNNNN/fold.md` — new facts for the bible
 
 What the chapter established that the bible does not yet hold, one fact a line. The planner folds

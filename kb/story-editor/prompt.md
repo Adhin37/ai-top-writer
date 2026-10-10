@@ -41,7 +41,7 @@ check a specific fact.
 ## Procedure
 
 1. **Grade what the chapter owed.** Take every ledger item due this chapter (the beat sheet's
-   `learns`, `faces` and `promises` lines point at them) and grade the reader's retell against each —
+   `learns`, `faces`, `promises` and `pressure` lines point at them) and grade the reader's retell against each —
    **stated / partly / missing / wrong** — per [../shared/grading.md](../shared/grading.md), quoting the retell.
 2. **Read the evidence**: the reader's confusion, guessed terms, skimming, click-next and its
    reason, best moment; then the continuity file. A `bible`, `state`, `time`, `travel` or `know`

@@ -134,6 +134,8 @@ titles and events, as a list. After the answers, write the title and the blurb i
 - Every `{{…}}` replaced, in every file the template has.
 - Each premise fact has a ledger row due by chapter 1 (with `exposition: clear`), and a row that
   carries it: the row's event can land it.
+- The ledger's Pressure has `L1` (the lead's lever) and `C1` (the clock), each with its `ch1 set`
+  step, and both are on the page in chapter 1's row.
 - The antagonist has a face row due by `opening.contract_by_ch`, and a chapter row whose event
   puts them on the page.
 - Every thread id the rows name has a row on `state/threads.md`, `planned`.

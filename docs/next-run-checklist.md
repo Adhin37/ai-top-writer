@@ -96,6 +96,22 @@ From the [write-up's fixes](experiments/2026-10-09-run-8.md#fixes-2026-10-10-aft
 - [ ] the protagonist's move grows chapter to chapter in the plan rows, and the judges' agency
       score against run #8's.
 
+## Plan 08 (2026-10-10)
+
+From [08](roadmap/08-pressure-and-run-9.md):
+
+- [ ] `/plan` first: the planner adds `L1` and `C1` to `novels/ember-terraces`, one step for each
+      of ch 1–5 (`status.py --debt` asks for them), and `state_check` raises no `pressure` warn;
+- [ ] every beat sheet has a `pressure` line, every notes file grades `L1` and `C1`, and every
+      clerk appends one step to each trail; `room.py` put a `Pressure:` flag in a beats dispatch
+      only after a step back or two holds, and the next beat sheet answered it;
+- [ ] the trail across ch 6–12 against run #8's (backfilled), and the judges' agency complaint
+      against run #8's (all three ranked it first or second);
+- [ ] the slop note in every `lint-rK.txt`; the index per chapter against run #8's 6.2 mean, and
+      whether the line editor touched any of its hits (it is a reference, not a list to cut);
+- [ ] the every-10 re-read at chapter 10 (first time), `long-middle.md` opened (`reads.tsv`),
+      and click-next through chapters 7–9.
+
 ## The bench
 
 - [ ] the blind panel on two models (`bench.py panel`, `judge--fable`): scores per model, with the

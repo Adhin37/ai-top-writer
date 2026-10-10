@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Where a novel stands, from its files: chapters, the next plan row, the reader's latest
-click-next, ledger debt, open promises and threads, and the state check's verdict.
+click-next, ledger debt, the Pressure rows (the lead's lever, the clock), open promises and
+threads, and the state check's verdict.
 
 `--debt` prints only what the ledger owes against what the plan can deliver, for `/plan`: rows
 still owed past their chapter, and rows due beyond the last planned chapter. Whether the row due
@@ -114,8 +115,40 @@ def debt(nov):
             elif due is None:
                 out.append("beyond   %s due \"%s\", no chapter yet: %s" % (rid, clip(cell, 30),
                                                                          what))
+    if not nov.pressure():
+        out.append("pressure no L1 or C1 rows: add them, with a step for each accepted chapter")
     return out or ["clean: every owed row is due ahead of the last chapter and inside the plan "
                    "(ch %d)" % horizon]
+
+
+BACKWARD = {"shrank", "later"}
+
+
+def pressure(nov):
+    """Lines: each Pressure row's last steps, and a flag where the lead's lever shrank, the clock
+    went later, or either held two chapters running. Whether that is a planned cool chapter is the
+    planner's judgement, not this tool's."""
+    rows, last = nov.pressure(), nov.last_chapter
+    if not rows:
+        return ["none: the ledger has no Pressure rows (L1 the lead's lever, C1 the clock)"]
+    out = []
+    for rid, what, trail in rows:
+        steps = " · ".join("ch%d %s" % (n, step) for n, step, _ in trail[-3:]) or "no step yet"
+        flag = ""
+        if last and not any(n == last for n, _, _ in trail):
+            flag = "no step for ch %d" % last
+        elif trail and trail[-1][1] in BACKWARD:
+            flag = "%s at ch %d" % (trail[-1][1], trail[-1][0])
+        elif len(trail) > 1 and trail[-1][1] == trail[-2][1] == "held":
+            flag = "held two chapters running"
+        out.append("%s %s: %s%s" % (rid, clip(what, 40), steps,
+                                     "  <- " + flag if flag else ""))
+    return out
+
+
+def pressure_flags(nov):
+    """Only the flagged Pressure lines, for the planner's dispatch."""
+    return [l for l in pressure(nov) if "  <- " in l]
 
 
 def report(nov, reading_root):
@@ -172,6 +205,10 @@ def report(nov, reading_root):
             r.first().strip("* "), r.get("made in ch") or "?",
             "ch %d" % paid if paid else clip(r.get("paid by ch"), 30) or "?",
             clip(r.get("what the page promises"), 70), flag))
+
+    lines = pressure(nov)
+    out.append("pressure  " + lines[0])
+    out.extend("          " + l for l in lines[1:])
 
     threads = nov.threads()
     opened = [r for r in threads if r.get("status").strip().lower() == "open"]

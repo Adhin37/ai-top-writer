@@ -176,6 +176,10 @@ def check_ledger(nov, out):
     elif not any(d is not None and d <= contract for d in faces):
         out.add("defect", "ledger", "no face is due on the page by ch %d (opening.contract_by_ch)"
                 % contract)
+    kinds = {rid[:1].upper() for rid, _, _ in nov.pressure()}
+    for k, what in (("L", "the lead's lever"), ("C", "the clock")):
+        if k not in kinds:
+            out.add("warn", "ledger", "no Pressure row %s1 (%s)" % (k, what))
 
 
 def check_plan(nov, out):

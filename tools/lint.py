@@ -3,7 +3,8 @@
 
 Per-chapter checks only: the frontmatter, the four channels (thought marks, thought tags, meta
 blocks, markup, scene breaks), house-style sentence shapes and stock phrases, phrases the chapter
-repeats, number forms, and spellings against the lexicon. What recurs *across* chapters is the line
+repeats, number forms, spellings against the lexicon, and EQ-Bench's slop index as a reference
+figure (`lib/slop.py`). What recurs *across* chapters is the line
 editor's reading and, later, plan 06's detectors.
 
 Findings print as `level check: detail`, where level is `defect` (the file's format is broken, or
@@ -26,6 +27,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from lib import novel as novel_mod  # noqa: E402
+from lib import slop  # noqa: E402
 from lib.textstats import Chapter, DEFAULT_CHANNELS  # noqa: E402
 
 LEVELS = ("defect", "warn", "note")
@@ -256,6 +258,14 @@ def check_echo(ch, rep):
         rep.add("note", "echo", "\"%s\" %d times" % (phrase, n))
 
 
+def check_slop(ch, rep, top=8):
+    """EQ-Bench's slop index (`lib/slop.py`), with the most frequent hits: a reference figure."""
+    index, tokens, hits = slop.score(ch.body)
+    if tokens:
+        rep.add("note", "slop", "EQ-Bench slop index %.1f per 1,000 words: %s" % (
+            index, ", ".join("%s %d" % (g, n) for g, n in hits.most_common(top)) or "no hits"))
+
+
 def _unit(word):
     w = word.lower()
     return w[:-1] if len(w) > 3 and w.endswith("s") and not w.endswith("ss") else w
@@ -331,6 +341,7 @@ def lint(path, nov=None):
     check_channels(ch, rep, nov.get("narration.interiority", "") if nov else "")
     check_house_style(ch, rep)
     check_echo(ch, rep)
+    check_slop(ch, rep)
     check_numerals(ch, rep, nov.number_style() if nov else "")
     if nov:
         check_lexicon(ch, rep, nov.lexicon_variants(), nov.banned_words())

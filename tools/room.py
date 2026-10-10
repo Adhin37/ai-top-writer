@@ -157,6 +157,7 @@ def planner_beats(c, warm=True):
     prev = c.last_notes()
     if c.n > 1 and prev:
         text += " Editor's notes for the planner: %s." % prev
+    text += pressure_note(c.nov)
     if not warm:
         return dispatch("spawn", "planner", "Novel: %s. %s" % (c.novel, text),
                         "planner-ch%02d" % c.n)
@@ -251,7 +252,14 @@ def planner_ahead(c, k):
                     "accepted and not yet in state/: its text is %s. Reader's notes: %s/notes.md. "
                     "Editor's notes for the planner: %s." % (
                         c.novel, nxt, c.n, c.wfile("draft-r%d.md" % k), c.round_dir(k),
-                        c.wfile("notes-r%d.md" % k)), "planner-ch%02d" % nxt)
+                        c.wfile("notes-r%d.md" % k)) + pressure_note(c.nov),
+                    "planner-ch%02d" % nxt)
+
+
+def pressure_note(nov):
+    """The ledger's Pressure flags (`status.py`), verbatim, for a beats dispatch; else ''."""
+    flags = status.pressure_flags(nov)
+    return " Pressure: %s." % "; ".join(flags) if flags else ""
 
 
 def researcher_lookup(novel, gaps):

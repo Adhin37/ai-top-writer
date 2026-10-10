@@ -110,6 +110,12 @@ LEDGER = """# Reader ledger
 | id | what the page promises | made in ch | paid by ch | status |
 |---|---|---|---|---|
 | R1 | why Kell struck her grade | 1 | 8 | owed |
+
+## Pressure
+| id | what the reader tracks | by chapter |
+|---|---|---|
+| L1 | Tovi's lever: what she can do about the thirty days | ch1 set — she logs the fault in her own name |
+| C1 | the clock: day thirty-one, and only Kell can move it | ch1 set — the clerk reads the rule off the form |
 """
 
 ROW = "| %d | Chapter %d | Tovi Brand | %s | %s | a goal | an obstacle | a turn | Tovi does a thing %d | a cost | a keep | %s |"
@@ -285,6 +291,12 @@ class CheckTest(unittest.TestCase):
             fx.write("plan/reader-ledger.md", (LEDGER % fx.fields).replace(
                 "| P3 | premise | 1 | Kell strikes it in front of the crew | owed |\n", ""))
             self.assertTrue(has(fx.found(), "defect", "premise fact P3 has no row"))
+
+    def test_a_ledger_with_no_pressure_rows(self):
+        with Fixture() as fx:
+            fx.write("plan/reader-ledger.md", (LEDGER % fx.fields).split("## Pressure")[0])
+            self.assertTrue(has(fx.found(), "warn", "no Pressure row L1"))
+            self.assertTrue(has(fx.found(), "warn", "no Pressure row C1"))
 
     def test_the_antagonist_arrives_too_late(self):
         with Fixture(face=5) as fx:

@@ -25,6 +25,8 @@ learns   P1 — the leaking main: Tovi tells the new hire where all air comes fr
 faces    Kell — her supervisor, twenty years on the Stack; wipes his hands on a clean rag before he
          touches anyone's paperwork
 promises made: R1 (why Kell did it)
+pressure L1 set — she logs the fault in her own name, knowing whose shift it was · C1 set — the
+         clerk reads her thirty days off the form
 cost     her grade, and her brother's allowance with it
 keeps    the new hire, Ossie, stays after shift to help her carry her kit — nobody asked him to
 voices   Tovi → bible/cast/tovi-brand.md · Kell → bible/cast/_voices.md · Ossie → bible/cast/_extras.md
@@ -67,5 +69,10 @@ The slip on the table between them. The question: will she take the job nobody c
 - **Every scene turns**: something is different at its end. A scene that only delivers information
   is a bridge — make it a paragraph of summary, or give it a turn.
 - **`feel` is an experience**, not a theme: "the floor dropping", not "injustice is explored".
+- **`pressure` names the lead's move as a deed on the page**, and it is bigger or costs more than
+  her last step in the ledger's L1 trail. `held` is a cool chapter's, never two running. The
+  clock comes nearer or holds; a line that pushes it later spends the reader's patience, so it
+  needs a reason the reader is given. When the dispatch says `Pressure:`, that row is what this
+  chapter answers.
 - **`keeps` is small and real** — something a reader would not want taken away. A chapter that
   only takes is not tense; it is an instalment plan.

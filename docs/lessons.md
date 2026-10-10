@@ -201,5 +201,11 @@ as a rule.
     the diagnostics after an Edit, not after a Write. The extension did not honour
     `.markdownlintignore` for those files: run #8 injected 425 warnings (206k characters) into the
     planner, the clerk and the beta reader. A `.markdownlint.json` of `{"default": false}` in each
-    folder holds; probed, the same edit drew 9 warnings in `docs/` and 0 in `novels/`. A probe that
+    folder holds. Probed both ways: the same edit drew 9 warnings in `docs/` and 0 in `novels/`, and
+    with `novels/` in `.markdownlintignore` but its config moved aside, warnings again. A probe that
     writes but never edits proves nothing.
+40. **A tie broken by set order is a coin toss per process.** Python salts string hashes per run, so
+    `max` over a set, or "keep the first seen", picks differently from one run to the next.
+    `history.gestures()` kept the first companion that reached the top count; its test failed about
+    two runs in three, and passed whenever it was run alone and checked once. Break every tie on an
+    explicit key, and run a new test a dozen times before trusting a green.

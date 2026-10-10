@@ -69,7 +69,8 @@ price for three chapters.
 
 In the second, every move is hers and costs more than the last, and each is for the same thing,
 said in plain words by chapter 2: her brother off the deep crews. A row where the lead only
-endures or watches is a cool chapter, once an arc, not five in a row.
+endures or watches is a cool chapter, once an arc, not five in a row. The ledger's `L1` trail is
+this row by row, as the page delivered it ([reader-ledger.md](reader-ledger.md)).
 
 ### The skim test
 
