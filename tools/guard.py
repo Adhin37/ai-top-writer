@@ -22,7 +22,7 @@ file that changes only effort or model, `tools/bench.py`), is held to its role's
 Bash: the cold roles are given none, which is their real wall. A working role that has Bash (clerk,
 continuity editor) may run only the project's tools, `python3 tools/<name>.py ...`, optionally piped
 into `head` or `tail`; `cat reading/...` or `python3 -c` would walk around every rule above. A role
-whose spec has `bash` runs only the tools it names (the canon researcher: `canon_fetch.py`).
+whose spec has `bash` runs only the tools it names (the canon researcher: `canon_fetch.py`, `scaffold.py`).
 The main session may do anything, except write under novels/ while a `.test-run` file exists at
 the project root (a benchmark run measures the room, not the showrunner).
 
@@ -89,7 +89,7 @@ ROLES = {
     "canon-researcher": {
         "read_deny": COMMON_DENY + ["reading/**"] + CRITIC_KBS,
         "write": ["novels/*/bible/canon.md", "novels/*/work/canon/**"],
-        "bash": ["canon_fetch"],
+        "bash": ["canon_fetch", "scaffold"],
         "why": "the canon researcher records what the source work says, in bible/canon.md; the "
                "story is the planner's",
     },

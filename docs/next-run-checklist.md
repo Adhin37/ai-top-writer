@@ -73,6 +73,29 @@ From the [audit](experiments/2026-10-04-optimisation.md#post-07-audit-cheaper-an
 - [ ] the planner at `medium`: decided by the frozen-round arm, or left at `high` with the reason
       logged.
 
+## Run #8's fixes (2026-10-10)
+
+From the [write-up's fixes](experiments/2026-10-09-run-8.md#fixes-2026-10-10-after-the-run-no-agent-spawned):
+
+- [ ] the pre-run probe **edits** a file under `novels/` with the Edit tool (a Write shows nothing)
+      and no diagnostics come back; the trace's injected-context line has no `ide_diagnostics` for
+      any role;
+- [ ] no git status or git block in any spawn's context, judges included: read one judge's
+      disclosure. Start the run in a new session, since `includeGitInstructions` is read at start;
+- [ ] the warm story editor: its cost a chapter against run #8's $5.51 for 14 spawns, its notes
+      still quote-evidence-effect, and every round-1 and round-2 note file grading the last notes;
+      owed grades steady between rounds on similar evidence (F13);
+- [ ] `ahead.txt` written at every ACCEPT that offers the beats; no second planner at a fold; a
+      `--cold` fold only where the planner was never sent;
+- [ ] the line editors act on `gesture` and `tag` lines, the story editors on `recap` lines; the
+      judges' tic complaint against run #8's;
+- [ ] `lint-rK.txt` printed by every `room.py round` and read by the continuity editor, which runs
+      no lint itself;
+- [ ] the clerk's and the continuity editor's guard refusals against run #8's 41; the canon
+      researcher's `scaffold.py check` runs;
+- [ ] the protagonist's move grows chapter to chapter in the plan rows, and the judges' agency
+      score against run #8's.
+
 ## The bench
 
 - [ ] the blind panel on two models (`bench.py panel`, `judge--fable`): scores per model, with the

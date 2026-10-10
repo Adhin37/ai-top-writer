@@ -162,6 +162,8 @@ class GuardTest(unittest.TestCase):
         self.assertTrue(self.allowed(call(
             "Bash", role, command="python3 tools/canon_fetch.py page w.fandom.com Ilse_Maro_%28novel%29 "
             "--out novels/x/work/canon/src/w")))
+        self.assertTrue(self.allowed(call("Bash", role, command="python3 tools/scaffold.py check "
+                                          "novels/x")))
         for cmd in ("python3 tools/lint.py novels/x", "curl https://w.fandom.com/wiki/X"):
             self.assertFalse(self.allowed(call("Bash", role, command=cmd)), cmd)
 

@@ -102,6 +102,19 @@ class KbCheckTest(unittest.TestCase):
         self.assertEqual(len(details), 4, details)   # Tally mid-sentence, Nessa, Long Ebb, Merrow
         self.assertFalse(any("line 8 names 'Tally'" in d for d in details), details)
 
+    def test_a_common_word_split_off_a_name_is_a_term(self):
+        novel = os.path.join(self.tmp, "novels", "tide")
+        self.write("novels/tide/bible/lexicon.md", LEXICON.replace("Nessa Vane", "Nine Vane", 1))
+        self.write("novels/tide/bible/world.md", WORLD)
+        self.write("kb/writer/a.md", DOC + "\nDeck Nine was quiet. The vane turned, a Vane spun.\n")
+        names, terms = kb_check.novel_nouns(novel, kb_check.ordinary_words(
+            os.path.join(self.tmp, "kb")))
+        self.assertIn("Nine Vane", names)
+        self.assertNotIn("Nine", names)
+        self.assertIn("Vane", terms)         # the knowledge base writes "vane" in lower case
+        details = [d for lv, c, d in kb_check.run(self.tmp, [novel]) if c == "leak"]
+        self.assertEqual(len(details), 1, details)    # "a Vane": mid-sentence, a term's leak
+
     def test_a_near_name_is_a_warn_and_a_sentence_head_is_not(self):
         novel = os.path.join(self.tmp, "novels", "tide")
         self.write("novels/tide/bible/lexicon.md", LEXICON)

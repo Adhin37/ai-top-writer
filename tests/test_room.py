@@ -123,8 +123,10 @@ class RoomTest(unittest.TestCase):
                       '%s/. Report on chapter 2, pending/ch02.md.' % folder, out)
         self.assertIn('@ spawn continuity-editor as "continuity-ch02"\nNovel: '
                       'novels/long-ebb. Chapter 2, round 0. Draft: '
-                      'novels/long-ebb/work/ch0002/draft-r0.md. Write '
+                      'novels/long-ebb/work/ch0002/draft-r0.md. Lint: '
+                      'novels/long-ebb/work/ch0002/lint-r0.txt. Write '
                       'novels/long-ebb/work/ch0002/continuity-r0.md.', out)
+        self.assertTrue(os.path.isfile(self.fx.path("work", "ch0002", "lint-r0.txt")))
         self.assertNotIn("history", out)            # before chapter 3
         self.assertIn("room.py judge novels/long-ebb 2 0 <beta-reader agent id>", out)
 
@@ -166,9 +168,10 @@ class RoomTest(unittest.TestCase):
         self.assertEqual(code, 0, out)
         report = os.path.join(self.root, "reading", "%s/ch02-r0" % self.id, "report.md")
         self.assertTrue(read(report).startswith("# Report — chapter 2"))
-        self.assertIn('@ spawn story-editor as "story-editor ch02 r0"', out)
+        self.assertIn('@ spawn story-editor as "story-editor-ch02"', out)
         self.assertIn("Reader's memory before this chapter: reading/%s/shelf/notes.md." % self.id, out)
-        self.assertNotIn("Writer's facts", out)       # round 0
+        self.assertIn("Writer's facts: novels/long-ebb/work/ch0002/facts-r0.md.", out)
+        self.assertIn("(draft-r1.md beside it is the unrevised copy", out)
         self.assertIn("REVISE  -> @ continue writer-ch02", out)
         self.assertIn("ACCEPT -> @ spawn line-editor as \"line-editor ch02\"", out)
         self.assertIn("into novels/long-ebb/chapters/0002-the-bar.md", out)
@@ -183,7 +186,7 @@ class RoomTest(unittest.TestCase):
         text = read(os.path.join(self.root, log))
         self.assertIn("Some preamble the reader wrote.", text)       # whole, not the report only
         self.assertLess(text.index("`c0`"), text.index("`b0`"))
-        self.assertIn('spawn story-editor as "story-editor ch02 r0"', text)
+        self.assertIn('spawn story-editor as "story-editor-ch02"', text)
         self.assertNotIn("continue writer-ch02", text)               # a branch, not yet sent
 
     def test_judge_at_the_last_round_only_polishes(self):
@@ -193,6 +196,18 @@ class RoomTest(unittest.TestCase):
         self.assertIn("Writer's facts: novels/long-ebb/work/ch0002/facts-r2.md.", out)
         self.assertNotIn("REVISE", out)
         self.assertIn("either -> @ spawn line-editor", out)
+
+    def test_judge_continues_the_story_editor_warm_after_round_0(self):
+        self.judge_ready(1)
+        code, out = self.run_room("judge", self.novel, "2", "1", "b1")
+        self.assertEqual(code, 0, out)
+        self.assertIn("@ continue story-editor-ch02\nChapter 2, round 1. Draft: "
+                      "novels/long-ebb/work/ch0002/draft-r1.md. Writer's facts: "
+                      "novels/long-ebb/work/ch0002/facts-r1.md.", out)
+        self.assertIn("Your last notes: novels/long-ebb/work/ch0002/notes-r0.md.", out)
+        self.assertNotIn("Reader's memory before", out)          # it read that at round 0
+        d = room.story_editor(room.Chapter(self.novel, 2, self.root), 1, warm=False)
+        self.assertEqual(d[0], '@ spawn story-editor as "story-editor-ch02"')
 
     def test_judge_stops_when_the_reader_handed_back_nothing(self):
         self.fx.write("work/ch0002/draft-r0.md", DRAFT)
@@ -284,7 +299,8 @@ class RoomTest(unittest.TestCase):
         code, out = self.run_room("round", self.novel, "2", "1")
         self.assertEqual(code, 0, out)
         self.assertIn("@ continue continuity-ch02\nChapter 2, round 1. Draft: "
-                      "novels/long-ebb/work/ch0002/draft-r1.md. Write "
+                      "novels/long-ebb/work/ch0002/draft-r1.md. Lint: "
+                      "novels/long-ebb/work/ch0002/lint-r1.txt. Write "
                       "novels/long-ebb/work/ch0002/continuity-r1.md. Your last file: "
                       "novels/long-ebb/work/ch0002/continuity-r0.md.", out)
         self.assertIn('@ spawn beta-reader as "beta-reader ch02 r1"', out)    # the reader stays cold
@@ -375,6 +391,30 @@ class RoomTest(unittest.TestCase):
         code, out = self.run_room("fold", self.novel, "1")
         self.assertNotIn("@ continue planner", out)
         self.assertIn("with the beat sheet approved, send the writer:", out)
+
+    def test_fold_waits_for_a_planner_still_on_the_next_beats(self):
+        self.fx.write("work/ch0001/notes-r0.md", "# Notes\nverdict ACCEPT | owed 1/1\n")
+        self.fx.write("work/ch0001/fold.md", '# Fold — chapter 1\nnew    the boathouse has two '
+                      'doors | bible/world.md | "two doors"\n')
+        self.fx.write("work/ch0001/" + room.AHEAD, "planner-ch02 offered\n")    # judge, at ACCEPT
+        code, out = self.run_room("fold", self.novel, "1")
+        self.assertEqual(code, 0, out)
+        self.assertNotIn("@ spawn planner", out)
+        self.assertIn("@ continue planner-ch02\nTask: fold chapter 1.", out)
+        self.assertIn("send the fold on its PLANNER DONE beats", out)
+        self.assertIn("room.py fold novels/long-ebb 1 --cold", out)
+        code, out = self.run_room("fold", self.novel, "1", "--cold")
+        self.assertIn('@ spawn planner as "planner-ch02"\nNovel: novels/long-ebb. Task: fold '
+                      'chapter 1.', out)
+
+    def test_judge_marks_the_next_beats_as_offered(self):
+        self.fx.write("work/ch0001/draft-r0.md", DRAFT.replace("number: 2", "number: 1"))
+        self.run_room("round", self.novel, "1", "0")
+        self.fx.write("work/ch0001/continuity-r0.md",
+                      "# Continuity — chapter 1, round 0\nlint     x\nchecked  y\nnone\n")
+        self.agent("b1", REPORT.replace("chapter 2", "chapter 1"), "beta-reader ch01 r0")
+        self.run_room("judge", self.novel, "1", "0", "b1")
+        self.assertIn("planner-ch02", read(self.fx.path("work", "ch0001", room.AHEAD)))
 
     # ------------------------------------------------------------ where
 

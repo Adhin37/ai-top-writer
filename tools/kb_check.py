@@ -144,21 +144,32 @@ def _table_nouns(text, first_headers):
     return terms, words
 
 
-def novel_nouns(novel):
+NUMBER_WORDS = {w.capitalize() for w in (
+    "zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen "
+    "sixteen seventeen eighteen nineteen twenty thirty forty fifty sixty seventy eighty ninety "
+    "hundred thousand first second third fourth fifth sixth seventh eighth ninth tenth").split()}
+
+
+def novel_nouns(novel, ordinary=frozenset()):
     """(names, terms): the proper nouns a novel declares. Names are its people and places, matched
     anywhere; terms are its capitalised coinages, whole multi-word terms anywhere and single words
-    only mid-sentence, so an ordinary word at the start of a sentence is not a leak."""
+    only mid-sentence, so an ordinary word at the start of a sentence is not a leak. A word split
+    off a longer name that is in `ordinary` ("Nine" of "Nine Steps") is a term too."""
     lexicon = mdio.read_text(os.path.join(novel, "bible", "lexicon.md"))
     world = mdio.read_text(os.path.join(novel, "bible", "world.md"))
     names = set()
     name_terms, name_words = _table_nouns(lexicon, ("canonical", "name"))
+    split = set()
     for full in name_terms | name_words:
         names.add(full)
-        names.update(w for w in full.split() if len(w) >= 4)
+        split.update(w for w in full.split() if len(w) >= 4 and w != full)
     place_terms, place_words = _table_nouns(world, ("place", "location", "name"))
     names |= place_terms | {w for w in place_words if len(w) >= 4}
+    split -= NUMBER_WORDS                   # "Nine" of "Nine Steps" is any deck's, any day's
+    common = {w for w in split if w.lower() in ordinary}
+    names |= split - common
     terms, words = _table_nouns(lexicon, ("term",))
-    return sorted(names), sorted(terms | words)
+    return sorted(names), sorted((terms | words | common) - names)
 
 
 def file_nouns(path, ordinary=frozenset()):
@@ -255,12 +266,12 @@ def run(root=ROOT, novels=(), noun_files=()):
     check_indexes(kb, out)
     check_agents(os.path.join(root, ".claude", "agents"), root, out)
     check_dated(kb, out)
+    ordinary = ordinary_words(kb) if novels or noun_files else set()
     for novel in novels:
-        names, terms = novel_nouns(novel)
+        names, terms = novel_nouns(novel, ordinary)
         source = os.path.basename(os.path.normpath(novel))
         check_leaks(kb, names, terms, source, out)
         check_near_names(kb, names, source, out)
-    ordinary = ordinary_words(kb) if noun_files else set()
     for path in noun_files:
         names, terms = file_nouns(path, ordinary)
         check_leaks(kb, names, terms, path, out)

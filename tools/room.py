@@ -66,9 +66,13 @@ TOOLS = os.path.dirname(os.path.abspath(__file__))
 USAGE = os.path.join(ROOT, "docs", "sessions", "usage.json")
 HISTORY_FROM = 3
 MAX_ROUND = 2
+AHEAD = "ahead.txt"     # judge: the next chapter's planner was offered at ACCEPT (fold continues it)
 # Rounds 1 and 2 continue the round-0 continuity editor, which already holds the bible and the state,
 # instead of a fresh one. False spawns a fresh one every round.
 WARM_CONTINUITY = True
+# Rounds 1 and 2 continue the round-0 story editor, which holds the beat sheet, the ledger and its
+# own notes, so it grades the revision against what it asked for. False spawns a fresh one.
+WARM_STORY_EDITOR = True
 
 
 class Stop(Exception):
@@ -180,8 +184,9 @@ def readers(c, k):
 
 
 def continuity(c, k, warm=None):
-    text = "Chapter %d, round %d. Draft: %s. Write %s." % (c.n, k, c.wfile("draft-r%d.md" % k),
-                                                          c.wfile("continuity-r%d.md" % k))
+    text = "Chapter %d, round %d. Draft: %s. Lint: %s. Write %s." % (
+        c.n, k, c.wfile("draft-r%d.md" % k), c.wfile("lint-r%d.txt" % k),
+        c.wfile("continuity-r%d.md" % k))
     if k > 0 and (WARM_CONTINUITY if warm is None else warm):
         return dispatch("continue", "continuity-ch%02d" % c.n, text + " Your last file: %s."
                         % c.wfile("continuity-r%d.md" % (k - 1)))
@@ -189,18 +194,19 @@ def continuity(c, k, warm=None):
                     "continuity-ch%02d" % c.n)
 
 
-def story_editor(c, k):
-    text = ("Novel: %s. Chapter %d, round %d. Draft: %s. Reader's report: %s/report.md. "
-            "Continuity: %s. Write %s." % (c.novel, c.n, k, c.wfile("draft-r%d.md" % k),
-                                           c.round_dir(k), c.wfile("continuity-r%d.md" % k),
-                                           c.wfile("notes-r%d.md" % k)))
+def story_editor(c, k, warm=None):
+    files = ("Draft: %s. Writer's facts: %s. Reader's report: %s/report.md. Continuity: %s. "
+             "Write %s." % (c.wfile("draft-r%d.md" % k), c.wfile("facts-r%d.md" % k),
+                            c.round_dir(k), c.wfile("continuity-r%d.md" % k),
+                            c.wfile("notes-r%d.md" % k)))
+    hist = " History: %s." % c.wfile("history-r%d.txt" % k) if c.n >= HISTORY_FROM else ""
+    if k > 0 and (WARM_STORY_EDITOR if warm is None else warm):
+        return dispatch("continue", "story-editor-ch%02d" % c.n, "Chapter %d, round %d. %s%s Your "
+                        "last notes: %s." % (c.n, k, files, hist, c.wfile("notes-r%d.md" % (k - 1))))
+    text = "Novel: %s. Chapter %d, round %d. %s" % (c.novel, c.n, k, files)
     if c.n > 1:
         text += " Reader's memory before this chapter: reading/%s/shelf/notes.md." % c.id
-    if c.n >= HISTORY_FROM:
-        text += " History: %s." % c.wfile("history-r%d.txt" % k)
-    if k > 0:
-        text += " Writer's facts: %s." % c.wfile("facts-r%d.md" % k)
-    return dispatch("spawn", "story-editor", text, "story-editor ch%02d r%d" % (c.n, k))
+    return dispatch("spawn", "story-editor", text + hist, "story-editor-ch%02d" % c.n)
 
 
 def line_editor(c, k):
@@ -410,6 +416,11 @@ def step_round(c, k, force=False):
              "reading %s/ (%s)" % (c.rel(folder), ", ".join(sorted(
                  os.path.relpath(os.path.join(d, f), folder)
                  for d, _s, fs in os.walk(folder) for f in fs)))]
+    lint = c.wfile("lint-r%d.txt" % k)
+    code, text = run_tool([os.path.join(TOOLS, "lint.py"), draft, "--novel", c.novel, "--out",
+                           lint], c.root)
+    lines.append(("lint %s" % lint) if os.path.isfile(c.abs(lint))
+                 else "warn lint: %s" % text.strip()[-300:])
     if c.n >= HISTORY_FROM:
         hist = c.wfile("history-r%d.txt" % k)
         code, text = run_tool([os.path.join(TOOLS, "history.py"), c.novel, "--draft", draft,
@@ -439,6 +450,8 @@ def step_judge(c, k, reader_id, transcripts=None):
                      "              and on DRAFT READY: python3 tools/room.py round %s %d %d"
                      % (c.novel, c.n, k + 1)]
     head, text = line_editor(c, k)
+    if k < MAX_ROUND:
+        text += " (draft-r%d.md beside it is the unrevised copy for a REVISE; leave it.)" % (k + 1)
     branches += ["  %s -> %s" % ("ACCEPT" if k < MAX_ROUND else "either", head), "  " + text]
     blocked = ahead_blocked(c)
     if blocked:
@@ -446,6 +459,8 @@ def step_judge(c, k, reader_id, transcripts=None):
                         % (c.n + 1, blocked))
     else:
         head, text = planner_ahead(c, k)
+        with open(c.abs(c.wfile(AHEAD)), "w", encoding="utf-8") as fh:
+            fh.write("%s offered at round %d for chapter %d's beats\n" % (head[2:], k, c.n + 1))
         branches += ["           in the same message, if chapter %d is in this run: %s"
                      % (c.n + 1, head), "  " + text,
                      "              and on PLANNER DONE beats: read %s and approve it (loop.md "
@@ -477,7 +492,7 @@ def step_clerk(c, k):
                                   % (c.novel, c.n)), came
 
 
-def step_fold(c):
+def step_fold(c, cold=False):
     lines = ["ch %d · step 6 fold" % c.n]
     code, text = run_tool([os.path.join(TOOLS, "state_check.py"), c.novel], c.root)
     found = [l for l in text.splitlines() if l.startswith(("defect", "warn"))]
@@ -513,10 +528,17 @@ def step_fold(c):
     pause = usage_pause()
     if pause:
         lines.append(pause)
-    if os.path.isfile(nxt.abs(nxt.wfile("beats.md"))):
-        # The beats ran at ACCEPT (room.py judge): fold into that planner, then the writer.
+    have_beats = os.path.isfile(nxt.abs(nxt.wfile("beats.md")))
+    if have_beats or (not cold and os.path.isfile(c.abs(c.wfile(AHEAD)))):
+        # The beats ran at ACCEPT (room.py judge): fold into that planner, then the writer. Its
+        # beat sheet may still be in progress: the fold waits for its PLANNER DONE beats.
         if count:
             dispatches.append(planner_fold(c, warm=True))
+            if not have_beats:
+                lines.append("planner-ch%02d is still on chapter %d's beats: send the fold on its "
+                             "PLANNER DONE beats. If it was never sent (chapter %d is not in the "
+                             "run): python3 tools/room.py fold %s %d --cold"
+                             % (nxt.n, nxt.n, nxt.n, c.novel, c.n))
         head = ("on PLANNER DONE fold, with the beat sheet approved" if count
                 else "with the beat sheet approved")
         then = "\n".join(([then] if then else []) + [
@@ -655,6 +677,8 @@ def main(argv=None):
                     "goes into --log (repeatable)")
     ap.add_argument("--force", action="store_true", help="round: rebuild a reading folder the "
                     "reader has already worked in (its work is lost)")
+    ap.add_argument("--cold", action="store_true", help="fold: chapter N+1's planner was not "
+                    "sent at ACCEPT; spawn a fresh one for the fold")
     ap.add_argument("--transcripts", help="directory holding the transcripts (tests)")
     ap.add_argument("--root", default=ROOT, help=argparse.SUPPRESS)
     args = ap.parse_args(argv)
@@ -689,7 +713,7 @@ def main(argv=None):
         elif args.step == "clerk":
             lines, sends, then, came = step_clerk(c, k)
         elif args.step == "fold":
-            lines, sends, then, came = step_fold(c)
+            lines, sends, then, came = step_fold(c, args.cold)
         else:
             lines, sends, then, came = step_adopt(c, args.rest[1], args.transcripts)
         agents = list(args.agent)

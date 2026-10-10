@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """The book across chapters: what no check of one chapter can see, as findings for a critic.
 
-Four detectors, ported from skilled-writer's `cmd_history.py` and tuned on runs #5 to #7, where
-readers and judges named each pattern:
+Seven detectors, the first four ported from skilled-writer's `cmd_history.py` and tuned on runs
+#5 to #7, where readers and judges named each pattern:
 
   * **motif** - a phrase or image that recurs whole across chapters: "Old ones hold their shape"
     four times in five chapters, all three of run #7's judges named it. Every use is counted, so a
@@ -15,6 +15,14 @@ readers and judges named each pattern:
     and the longest run of them in a row. Owner: the story editor.
   * **tempo** - from `state/scenes.md`: runs of one tempo across scenes, chapters, openings and
     endings; and from `plan/chapters.md`, runs of one planned `temp`. Owner: the story editor.
+  * **gesture** - a body part or a worn thing that comes back with the same companion word across
+    chapters: a captain who smooths "the first finger of her glove" in every scene (run #8, all
+    three judges). Phrases vary, so it counts sentences, not strings. Owner: the line editor.
+  * **tag** - tag questions ("…, is it not?", "…, yes?") per speaker: run #8's captain asked
+    one in every exchange, and the judges counted them. Owner: the line editor.
+  * **recap** - a narration sentence in the newest chapter that re-tells one from an earlier
+    chapter, most of its content words the same: the ban, the price, the rule explained again
+    (run #8's ch 5). A callback can be one; the critic weighs it. Owner: the story editor.
 
 Findings print as `level check: detail` under the role that owns them. `warn` is a run past the
 shape a reader named; `note` is a count to read. Nothing here gates: the exit status is 0 whatever
@@ -52,10 +60,15 @@ MOTIF_GAP = 12              # words between two pieces of one use: a clause put 
 MOTIF_USES = 3              # a motif is used this often, in two chapters or more
 MOTIF_WARN = (3, 4)         # chapters and uses at which a motif is a warn: both of run #7's judged
                             # refrains sat at 3 chapters and 4 uses
+GESTURE_NOTE = (3, 5)        # chapters and sentences at which a gesture is a note
+GESTURE_WARN = (4, 10)       # and a warn: run #8's glove, 14 sentences in five chapters
+TAG_WARN = (3, 8)            # chapters and tag questions from one speaker that make a warn
+RECAP_SHARE = 0.7            # of a sentence's content words found in one earlier sentence
+RECAP_MIN = 5                # content words a sentence needs before it can be a recap
 SHOWN = 8                   # notes of one check shown before "+n more"
 LEVELS = ("warn", "note")
-OWNERS = (("line editor", ("motif", "signature")),
-          ("story editor", ("two-hander", "tempo", "temp")))
+OWNERS = (("line editor", ("motif", "signature", "gesture", "tag")),
+          ("story editor", ("two-hander", "tempo", "temp", "recap")))
 
 # Words too common to make a phrase anybody's. A phrase needs content words to be a signature.
 COMMON = frozenset(
@@ -72,6 +85,17 @@ MOTIF_STOP = frozenset(
     "where here now once ever never more most some any all each both way turned looked look made "
     "make knew know thought two three first last long time day days year years thing things "
     "nothing something anything left right hand hands".split())
+# The body and what is worn on it: where a character's gesture lives.
+BODY = frozenset(
+    "hand finger thumb palm fist knuckle wrist nail arm elbow shoulder neck throat chin jaw cheek "
+    "lip mouth tooth teeth tongue nose brow forehead eye lash ear hair head temple foot heel toe "
+    "knee hip back spine chest breath glove sleeve cuff collar hem button belt strap hood cap hat "
+    "scarf ring bracelet pipe cane fan".split())
+TAG = re.compile(r",\s*(?:(?:is|isn't|are|aren't|was|wasn't|do|don't|does|doesn't|did|didn't|can|"
+                 r"can't|will|won't|would|wouldn't|have|haven't|has|hasn't|should|shouldn't|"
+                 r"could|couldn't|shall|must)(?:\s+[\w']+){0,2}|yes|no|eh|hm+|right|surely|then)"
+                 r"\s*\?", re.I)
+BREAK_MARK = re.compile(r"^(?:\*\s*){3}")
 SENTENCE_END = set(".!?\"'“”‘’—:\n")
 WORD = re.compile(r"[A-Za-z][A-Za-z']*")
 
@@ -407,6 +431,163 @@ def check_two_handers(chapters, rep, names):
     return talk
 
 
+# ----------------------------------------------------------------- gesture
+
+
+def stem(word):
+    """A crude stem, enough to fold "smoothed", "smoothing" and "smooths" into one word."""
+    for suf in ("ing", "ed", "es", "s"):
+        if word.endswith(suf) and len(word) - len(suf) >= 3:
+            word = word[:-len(suf)]
+            break
+    if len(word) > 4 and word[-1] == word[-2]:
+        word = word[:-1]
+    return word.rstrip("e") if len(word) > 4 else word
+
+
+BODY_STEMS = frozenset(stem(w) for w in BODY)
+
+
+def content_stems(text, setting=frozenset(), names=False):
+    """The stems of a sentence's words of four letters or more that are neither common nor
+    setting; lower-case words only, unless `names`."""
+    out = set()
+    for m in WORD.finditer(text.replace("’", "'")):
+        w = m.group(0)
+        if not names and not w[:1].islower():
+            continue
+        w = w.lower()
+        if len(w) < 4 or w in COMMON or w in MOTIF_STOP or w in setting:
+            continue
+        out.add(stem(w))
+    return out
+
+
+def gestures(chapters, setting):
+    """[(body stem, companion stem, chapters, sentences)]: a body part or worn thing and a word
+    that keep meeting in narration sentences, the strongest pair per body stem."""
+    pairs = {}
+    for ch in chapters:
+        for _off, sentence in ch.narration_sentences():
+            words = content_stems(sentence, setting)
+            for body in words & BODY_STEMS:
+                for other in words - {body}:
+                    pairs.setdefault((body, other), []).append(ch.number)
+    best = {}
+    for (body, other), chs in pairs.items():
+        if other in BODY_STEMS and other < body:
+            continue                        # "finger + glove" once, not again as "glove + finger"
+        key = (len(set(chs)), len(chs))
+        if key[0] >= GESTURE_NOTE[0] and key[1] >= GESTURE_NOTE[1]:
+            if body not in best or key[1] > best[body][3]:
+                best[body] = (body, other, sorted(set(chs)), len(chs))
+    return sorted(best.values(), key=lambda g: (-g[3], g[0]))
+
+
+def check_gestures(chapters, rep, setting):
+    found = gestures(chapters, setting)
+    for body, other, chs, n in found[:SHOWN]:
+        level = "warn" if len(chs) >= GESTURE_WARN[0] and n >= GESTURE_WARN[1] else "note"
+        rep.add(level, "gesture", "%s + %s in %d sentences, ch %s" % (body, other, n, runs(chs)))
+    if len(found) > SHOWN:
+        rep.add("note", "gesture", "+%d more, rarer" % (len(found) - SHOWN))
+    return found
+
+
+# --------------------------------------------------------------------- tag
+
+
+def name_tokens(names):
+    """{full name: [capitalised tokens no other name shares]}, as scene_speakers reads them."""
+    shared = {}
+    for name in names:
+        for t in set(re.split(r"[^\w']+", name)):
+            if len(t) >= 3:
+                shared[t] = shared.get(t, 0) + 1
+    out = {n: [t for t in re.split(r"[^\w']+", n)
+               if len(t) >= 3 and t[:1].isupper() and shared.get(t) == 1] for n in names}
+    return {n: ts for n, ts in out.items() if ts}
+
+
+def tags(chapters, names):
+    """{speaker or "": [chapter per tag question]}; "" is a turn no single name tags."""
+    tokens_ = name_tokens(names)
+    out = {}
+    for ch in chapters:
+        for _start, _end, spans, around in ch.speech_paragraphs():
+            n = sum(len(TAG.findall(ch.body[s:e])) for s, e in spans)
+            if not n:
+                continue
+            hits = [who for who, ts in tokens_.items()     # "the captain" tags Captain Shuren
+                    if any(re.search(r"\b%s\b" % re.escape(t), around, re.I) for t in ts)]
+            out.setdefault(hits[0] if len(hits) == 1 else "", []).extend([ch.number] * n)
+    return out
+
+
+def check_tags(chapters, rep, names):
+    found = tags(chapters, names)
+    total = sum(len(v) for v in found.values())
+    if not total:
+        return found
+    for who, chs in sorted(found.items(), key=lambda kv: (-len(kv[1]), kv[0])):
+        if not who:
+            continue
+        level = "warn" if len(set(chs)) >= TAG_WARN[0] and len(chs) >= TAG_WARN[1] else "note"
+        rep.add(level, "tag", "%s asks %d tag question(s), %s" % (who, len(chs), where(chs)))
+    if found.get(""):
+        rep.add("note", "tag", "%d more in turns no single name tags, %s"
+                % (len(found[""]), where(found[""])))
+    return found
+
+
+# ------------------------------------------------------------------- recap
+
+
+def recaps(chapters, setting):
+    """[(line, sentence, earlier chapter, earlier line, share)]: narration sentences of the newest
+    chapter whose content words are mostly one earlier sentence's."""
+    if len(chapters) < 2:
+        return []
+    last, index, earlier = chapters[-1], {}, []
+    for ch in chapters[:-1]:
+        for off, sentence in ch.narration_sentences():
+            words = content_stems(sentence, names=True)
+            if len(words) >= RECAP_MIN - 1:
+                for w in words:
+                    index.setdefault(w, set()).add(len(earlier))
+                earlier.append((ch.number, ch.line_of(off)))
+    out = []
+    for off, sentence in last.narration_sentences():
+        sentence = BREAK_MARK.sub("", sentence).strip()
+        words = content_stems(sentence, names=True)
+        if len(words) < RECAP_MIN:
+            continue
+        hits = {}
+        for w in words:
+            for i in index.get(w, ()):
+                hits[i] = hits.get(i, 0) + 1
+        if not hits:
+            continue
+        i, n = max(hits.items(), key=lambda kv: (kv[1], -kv[0]))
+        share = n / float(len(words))
+        if share >= RECAP_SHARE:
+            out.append((last.line_of(off), " ".join(sentence.split()), earlier[i][0],
+                        earlier[i][1], share))
+    return out
+
+
+def check_recaps(chapters, rep, setting):
+    found = recaps(chapters, setting)
+    last = chapters[-1].number if chapters else 0
+    for line, sentence, ch, at, share in found[:SHOWN]:
+        rep.add("note", "recap", "ch %d line %d \"%s\" re-tells ch %d line %d (%d%% of its words)"
+                % (last, line, sentence if len(sentence) <= 90 else sentence[:87] + "...", ch, at,
+                   round(share * 100)))
+    if len(found) > SHOWN:
+        rep.add("note", "recap", "+%d more" % (len(found) - SHOWN))
+    return found
+
+
 # ------------------------------------------------------------------- tempo
 
 
@@ -475,6 +656,12 @@ def history(nov, draft=None, number=None, upto=None):
     sigs = check_signatures(chapters, rep, setting, covered)
     data["signatures"] = [{"phrase": p, "chapters": c, "uses": n, "spoken": s}
                           for p, c, n, s in sigs]
+    found = check_gestures(chapters, rep, setting)
+    data["gestures"] = [{"body": b, "with": o, "chapters": c, "sentences": n}
+                        for b, o, c, n in found]
+    data["tags"] = check_tags(chapters, rep, nov.speakers())
+    data["recaps"] = [{"line": l, "chapter": c, "at": a} for l, _s, c, a, _sh in
+                      check_recaps(chapters, rep, setting)]
     talk = check_two_handers(chapters, rep, nov.speakers())
     data["conversations"] = [{"ch": c, "scene": s, "speakers": sorted(w)} for c, s, w in talk]
     data["tempo"] = check_tempo(nov, chapters, rep)

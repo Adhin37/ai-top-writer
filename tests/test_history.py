@@ -128,6 +128,50 @@ class HistoryTest(unittest.TestCase):
         self.assertIn(("note", "temp", "ch 2 was planned quiet and played tense, tense"), tempo)
         self.assertFalse(any(c == "temp" and lv == "warn" for lv, c, _d in tempo), tempo)
 
+    def test_a_gesture_is_counted_by_sentence_not_by_string(self):
+        glove = ("She smoothed the first finger of her glove.", "The captain smoothed a glove, "
+                 "finger by finger.", "Her glove came smooth under her other hand.")
+        with NovelFixture() as fx:
+            fx.write("bible/lexicon.md", LEXICON)
+            for n in (1, 2, 3, 4):
+                fx.chapter(n, "%s She waited.\n\n%s\n\nNessa rowed out.\n\n%s"
+                           % (glove[0], glove[n % 3], glove[(n + 1) % 3]))
+            items, data = findings(fx)
+        gest = [(lv, d) for lv, c, d in items if c == "gesture"]
+        self.assertTrue(any(d.startswith("glov + smooth in 12 sentences, ch 1-4") for _lv, d in gest),
+                        gest)
+        self.assertEqual(data["gestures"][0]["body"], "glov")
+        self.assertTrue(all(lv == "warn" for lv, d in gest if "smooth" in d), gest)
+
+    def test_tag_questions_are_counted_per_speaker(self):
+        with NovelFixture() as fx:
+            fx.write("bible/lexicon.md", LEXICON)
+            line = ('"The tally is short, is it not?" Quell said.\n\n"It is," Nessa said.\n\n'
+                    '"And you counted it, yes?" the harbourmaster said.')
+            for n in (1, 2, 3, 4):
+                fx.chapter(n, line)
+            items, data = findings(fx)
+        tag = [(lv, d) for lv, c, d in items if c == "tag"]
+        self.assertIn(("warn", "Harbourmaster Quell asks 8 tag question(s), ch 1 (2), 2 (2), 3 (2), "
+                       "4 (2)"), tag)
+        self.assertNotIn("Nessa Vane", data["tags"])
+
+    def test_a_sentence_the_newest_chapter_re_tells_is_a_recap(self):
+        rule = "Rowing past the bar after dark was forbidden in Merrow, by the harbour office's order."
+        with NovelFixture() as fx:
+            fx.write("bible/lexicon.md", LEXICON)
+            fx.chapter(1, rule + " Nessa rowed anyway.")
+            fx.chapter(2, "Tam mended the nets in the boathouse until the light went.")
+            fx.chapter(3, "* * *\n\nRowing past the bar after dark was forbidden in Merrow. She "
+                          "knew the tide by the smell of the weed.")
+            items, data = findings(fx)
+        recap = [d for _lv, c, d in items if c == "recap"]
+        self.assertEqual(len(recap), 1, recap)
+        self.assertIn('ch 3 line', recap[0])
+        self.assertIn('"Rowing past the bar after dark was forbidden in Merrow." re-tells ch 1',
+                      recap[0])
+        self.assertEqual(data["recaps"][0]["chapter"], 1)
+
     def test_a_draft_stands_in_for_the_next_chapter(self):
         with NovelFixture() as fx:
             self.book(fx, chapters=2)

@@ -128,13 +128,15 @@ check with no impression at all.)
 - **Grading:** each judge's answer to questions 1–2 is graded against `premise.md` by a further fresh
   judge (mode 3), in its own blind folder. Strip the read's header line first if it names its
   folder (plan 01's graders saw `…/blind/<id>/`), and log that you did.
-- **Judge from a clean working tree.** Every agent's context carries the harness's git status, so a
-  file modified under `kb/` (a leak-sweep rename, a fix) tells the judge, by name, that a writing
-  system's craft docs are in play (run #7: all three judges inferred machine authorship from it).
-  Commit first, with the user's go-ahead, or judge before any `kb/` edit.
+- **Keep git out of the judges' context.** `.claude/settings.json` sets `includeGitInstructions:
+  false`, which drops the harness's git status (commit subjects, modified and untracked files) from
+  every agent's prompt; run #7's judges inferred a writing system from two modified `kb/writer/`
+  docs in it, run #8's from a commit subject. Check the setting is still there before the panel.
+  The working directory's name and the blind folder's path still reach the judge: log them as a
+  contaminant.
 - **After the verdict, in a separate turn**, ask each judge what it was handed: every file it
   opened and every instruction it received. Record the answer as a **contaminant**. Known and
-  unfixable: the harness's git-status snapshot, and the spawn prompt naming the folder.
+  unfixable: the working directory's name, and the spawn prompt naming the folder.
 
 ## 8. Reconcile and route
 

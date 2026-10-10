@@ -52,7 +52,8 @@ the answers in chat. Then continue `planner-init`:
 ## 2b. The canon — canon researcher (fan fiction only)
 
 In fan fiction, after round 1's answers the planner ends on `PLANNER DONE canon-scope | …`. Spawn
-**canon-researcher**, described `canon-init`: *"Novel: novels/{slug}. Task: init."* It ends on
+**canon-researcher**, described `canon-init`: *"Novel: novels/{slug}. Task: init."*, followed by the
+hand-back's `gap canon` lines, verbatim, if it has any: the dossier answers them. It ends on
 `CANON DONE novels/{slug}/bible/canon.md | …`, then its `unsure` and `blocked` lines. Continue
 `planner-init` with the lines, verbatim: *"Canon: novels/{slug}/bible/canon.md. Ask round 2.
 <the unsure lines>"*. The `blocked` lines go to the user with round 2's questions, as an offer, not

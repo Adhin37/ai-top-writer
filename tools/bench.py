@@ -264,7 +264,7 @@ def role_dispatch(c, k, role, agent=None):
     elif role == "planner":
         d = room.planner_beats(c, warm=False)
     elif role == "story-editor":
-        d = room.story_editor(c, k)
+        d = room.story_editor(c, k, warm=False)     # a frozen round replays fresh
     elif role == "line-editor":
         d = room.line_editor(c, k)
     else:

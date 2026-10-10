@@ -53,6 +53,24 @@ reveal, arrival, decision, question, threat, reversal, cliff (rare, about once i
 The second makes chapter 5's signature cost something, because the reader has been gathering the
 price for three chapters.
 
+### The lead's move, row by row
+
+**Shrinking** (each row's goal is smaller than the last):
+
+> Ch 2: Tovi patches one seal off the books. Ch 3: she tells Ossie which seals are bad. Ch 4: she
+> says nothing at the inspection. Ch 5: Ossie offers her a way out and she turns it down.
+
+**Growing:**
+
+> Ch 2: Tovi patches one seal off the books, to keep her brother's shift out of the bad section.
+> Ch 3: she patches six and logs them under Kell's code. Ch 4: the inspector traces the code, and
+> she has to choose whose name goes on it. Ch 5: she signs the deep-crew contract to buy the log
+> back.
+
+In the second, every move is hers and costs more than the last, and each is for the same thing,
+said in plain words by chapter 2: her brother off the deep crews. A row where the lead only
+endures or watches is a cool chapter, once an arc, not five in a row.
+
 ### The skim test
 
 For every row, name the one thing a reader would lose by skipping the chapter. If you cannot,

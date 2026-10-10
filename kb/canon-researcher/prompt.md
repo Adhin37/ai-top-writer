@@ -17,7 +17,9 @@ Read [index.md](index.md) now. The showrunner's message names the novel and your
 ## Task: init
 
 1. Read the novel's `novel.md`: `canon:` (the source, the scope, where the story starts, who must
-   appear), `genre`, `mc`, `opening.promise`, and `work/init/round-1.md` with its answers.
+   appear), `genre`, `mc`, `opening.promise`, and `work/init/round-1.md` with its answers. The
+   message may carry the planner's `gap canon` lines: the dossier answers each, or lists it under
+   `## Unsure`.
 2. If `work/canon/inbox/` holds files (pages the user saved, their own notes), read them first: they
    are sources, cited by path.
 3. Find the sources per [sources.md](sources.md), and fetch the wiki pages you need into

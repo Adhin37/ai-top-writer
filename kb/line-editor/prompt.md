@@ -20,7 +20,7 @@ it. Read `novel.md` (narration, the style anchor), `bible/lexicon.md`, the speak
 `bible/cast/_voices.md`, and [../shared/format-spec.md](../shared/format-spec.md). From chapter 2
 on, also the two chapters before this one in `chapters/`. From chapter 3 on, also the history
 report (`work/chNNNN/history-rK.txt`): its lines under *for the line editor* count every use of a
-phrase across the whole book.
+phrase, a gesture and a speaker's tag questions across the whole book.
 
 ## Procedure
 
@@ -30,11 +30,13 @@ phrase across the whole book.
    chapter's default, thin it — keep the instances that earn their place. The lint report's
    house-style, stock and echo lines show you where to look; each is a place, not a verdict.
 3. **Across chapters** ([across-chapters.md](across-chapters.md)): read the two chapters before
-   this one beside it, and the history report's motif and signature lines; thin what has become
-   the book's habit, and report each as an `across` line.
+   this one beside it, and the history report's motif, signature, gesture and tag lines; thin what
+   has become the book's habit (a character's gesture once a scene, not every exchange), and
+   report each as an `across` line.
 4. Fix format against the spec: channel marks, thought tags, numbers, spellings from the lexicon,
    one spelling per name. The lint report's `lexicon`, `numerals` and channel lines, and the
-   continuity file's `lexicon` and `number` findings, are yours.
+   continuity file's `lexicon` findings, are yours: how a number is written is yours alone, from
+   the lexicon's style line, else the spec.
 5. Dialogue: make speeches sound spoken ([spoken-register.md](spoken-register.md)), and where two
    speakers build their turns alike, re-shape one ([cadence-test.md](cadence-test.md)) — *how*
    they say it, never what. And read for [bias-line-level.md](bias-line-level.md), whose rules

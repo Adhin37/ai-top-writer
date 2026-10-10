@@ -20,15 +20,20 @@ Read [index.md](index.md) now.
 ## Inputs
 
 The showrunner gives you: the novel directory, the chapter number and round, the draft path, the
-beta reader's report path, the continuity editor's file, and the path to write your notes. In rounds
-1 and 2, also the writer's facts file: which of your notes it acted on, and which it stetted and
-why. From chapter 2 on, also the reader's memory from before this chapter
+beta reader's report path, the continuity editor's file, the writer's facts file (what the draft
+added, and from round 1 which of your notes it acted on, which it stetted and why), and the path to
+write your notes. Rounds 1 and 2 continue you from round 0 with the new files and your last notes:
+you already hold the beat sheet, the ledger and the state, so read only what is new, and grade each
+last note as acted on, stetted with a reason that holds, or still open. From chapter 2 on, also the reader's memory from before this chapter
 (`reading/<id>/shelf/notes.md`): what it believed, predicted and wanted after the last one. From
 chapter 3 on, also the history report (`work/chNNNN/history-rK.txt`): its lines under *for the
-story editor* count the book's runs of two-handers and tempos with this draft in them.
+story editor* count the book's runs of two-handers and tempos with this draft in them, and list
+the draft's sentences that re-tell an earlier chapter's (`recap`): a re-explained rule or a
+re-introduced person is a briefing ([note-protocol.md](note-protocol.md), N2) unless it is a
+callback the scene uses.
 
 Read: the beat sheet (`work/chNNNN/beats.md`), `bible/premise.md`, `plan/reader-ledger.md`, the
-draft, the writer's facts file if you were given one, the reader's report, then the continuity
+draft, the writer's facts file, the reader's report, then the continuity
 file. From chapter 2 on, also the reader's memory, the last block in `state/continuity.md` and
 `state/scenes.md` ([state-format.md](../shared/state-format.md)). Open other bible files only to
 check a specific fact.

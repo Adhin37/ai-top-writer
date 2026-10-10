@@ -23,8 +23,14 @@ contradiction waiting three chapters on, when a writer who never read that chapt
   bible line and add a `changed` line. If the change breaks a plan row or a ledger row, add a `gap`
   line naming the row.
 - **A fact you cannot place,** or one that would break the plan: leave it out, and add a `gap` line.
+- **A walk-on whose `_extras.md` line now counts a third chapter**, or who made a decision that
+  moved the plot: write their profile ([cast-design.md](cast-design.md)) and drop the `_extras.md`
+  entry.
+- **The chapter's plan row**: set its threads cell to the threads the chapter touched (its block's
+  `thr` in `state/continuity.md`), so the plan says what the book did.
 
-Fold only what the file lists. What the story editor noted *For the planner* is for the next beat
+A `gap` about a `state/` cell (a thread's chapter, a timeline line) is the clerk's to fix: name the
+file and the cell. Fold only what the file lists. What the story editor noted *For the planner* is for the next beat
 sheet, not for the bible.
 
 ## Example

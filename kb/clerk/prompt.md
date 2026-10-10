@@ -17,7 +17,11 @@ Read [index.md](index.md) now. Every format is in [state-format.md](../shared/st
 
 The showrunner gives you: the novel directory; the chapter number N; the accepted chapter
 (`chapters/NNNN-*.md`); the story editor's last notes file and the writer's last facts file for it;
-the beat sheet; and the reading folder of the accepted round (`reading/<id>/chNN-rK/`).
+the beat sheet; the reading folder of the accepted round (`reading/<id>/chNN-rK/`); and sometimes
+`Fold gap:` lines, a `state/` cell the last fold found out of date, which you fix with the rest.
+
+Your shell runs `python3 tools/<name>.py` and nothing else, one command a call: open, list and
+search files with Read, Glob and Grep.
 
 ## Procedure
 

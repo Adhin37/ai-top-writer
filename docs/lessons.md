@@ -124,8 +124,11 @@ as a rule.
     `CLAUDE.md` and the memory index, not the harness's git-status block. In run #7 it showed the
     leak sweep's two renamed `kb/writer/` docs as modified, and all three blind judges inferred "an
     AI writing system… against craft guidance in `kb/writer/`" before reading a word. Untracked
-    files can be hidden with `.git/info/exclude`; modified tracked files cannot. Judge from a
-    committed tree.
+    files can be hidden with `.git/info/exclude`; modified tracked files cannot. Run #8's judges
+    read commit subjects ("feat: canon-researcher") and the untracked run log in it. Since Claude
+    Code 2.1.78, `includeGitInstructions: false` drops the git block and the status snapshot from
+    every prompt, subagents' included, and the project settings set it. What stays is the working
+    directory's name and the blind folder's path, which no setting hides.
 28. **A per-chapter window cannot see a refrain's fourth use.** The line editor reads two chapters
     back and was right each time it kept "Old ones hold their shape" as a callback (ch 3, ch 5);
     the judges counted four uses across five chapters and all three named it. A habit check has to
@@ -192,4 +195,11 @@ as a rule.
     costs 2× input, a 5-minute one 1.25×. Run #7's subagents wrote $19.2 of cache and lost $3.5 to
     expiries: the hour would cost ~$11.5 more to save $3.5. Shorten the wait instead: the writer's
     expiries came from rounds of 5.5–6.4 min against a 5-minute cache, and the continuity editor
-    set that pace ([audit](experiments/2026-10-04-optimisation.md#post-07-audit-cheaper-and-faster-chapters-2026-10-06)).
+    set that pace. Run #8 agreed: $2.69 of agent expiries against ~$11 for the hour ([audit](experiments/2026-10-04-optimisation.md#post-07-audit-cheaper-and-faster-chapters-2026-10-06)).
+39. **An editor's linter reaches agents through their edits, and its ignore file may not hold.** The
+    VS Code extension runs markdownlint on files open in the editor, and Claude Code hands an agent
+    the diagnostics after an Edit, not after a Write. The extension did not honour
+    `.markdownlintignore` for those files: run #8 injected 425 warnings (206k characters) into the
+    planner, the clerk and the beta reader. A `.markdownlint.json` of `{"default": false}` in each
+    folder holds; probed, the same edit drew 9 warnings in `docs/` and 0 in `novels/`. A probe that
+    writes but never edits proves nothing.

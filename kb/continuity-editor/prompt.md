@@ -16,11 +16,11 @@ Read [index.md](index.md) now.
 
 ## Inputs
 
-The showrunner gives you the novel directory, the chapter number and round, the draft path, and the
-path to write your file to. Then:
+The showrunner gives you the novel directory, the chapter number and round, the draft path, the
+lint report's path, and the path to write your file to. Your shell runs `python3 tools/<name>.py`
+and nothing else, one command a call. Then:
 
-1. **Run lint** on the draft, into the chapter's work folder:
-   `python3 tools/lint.py <draft> --out novels/<slug>/work/chNNNN/lint-rK.txt`.
+1. **Read the lint report** on the draft (the `Lint:` path; `room.py` ran it).
 2. **Read the draft** once, straight through.
 3. **Read the state:** `python3 tools/state_check.py novels/<slug> --last 5` prints the last five
    continuity blocks ([state-format.md](../shared/state-format.md)). Then `state/timeline.md`,
@@ -35,7 +35,7 @@ path to write your file to. Then:
 ## Rounds 1 and 2
 
 You are continued with the revised draft, the path to write and your last file. The bible and the
-state have not changed, so do not read them again. Run lint on the new draft, read it through, and
+state have not changed, so do not read them again. Read the new lint report and the new draft, and
 find what changed against the last draft. Check every changed passage in full: a revision can
 break a fact as easily as fix one. Then check each finding in your last file against the new text.
 Write a new file: a finding the revision fixed is gone; one it did not fix stays, with its new
@@ -51,8 +51,9 @@ checked.
    ([people-and-figures.md](people-and-figures.md)).
 3. **Time and travel.** The time the page allows for a journey, against the bible's distances,
    and every time word against the block it points back to ([time-and-travel.md](time-and-travel.md)).
-4. **Spellings and numbers.** Lint's `lexicon` and `numerals` lines, held against the lexicon; a
-   term spelled or capitalised two ways; a figure the bible defines, reused with another meaning.
+4. **Spellings and figures.** Lint's `lexicon` lines, held against the lexicon; a term spelled or
+   capitalised two ways; a figure the bible defines, reused with another meaning. Whether a number
+   is written in digits or words is the line editor's, from the lexicon's style line; leave it.
 5. **Who could know it.** A character states or acts on something they have no source for: it is not
    theirs in any block's `kno`, they did not see it on the page, and it is not common knowledge. The
    narration too: in a limited viewpoint it knows only what its character knows
