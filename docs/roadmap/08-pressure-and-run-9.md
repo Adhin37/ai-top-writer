@@ -28,8 +28,35 @@ window.
    (`planner--medium`), pending since 06c.
 4. **Run #9:** `novels/ember-terraces`, chapters 6–12, the full loop under `.test-run`, starting
    with `/plan` (the Pressure rows, backfilled for ch 1–5 by the planner). It reaches the every-10
-   re-read and `long-middle.md`, and crosses the chapter 7–9 window. About $80; it may be split at a
-   chapter boundary. Report on [next-run-checklist.md](../next-run-checklist.md).
+   re-read and `long-middle.md`, and crosses the chapter 7–9 window. About $70 (run #8: $8.2 a chapter, plus
+   the `/plan`, the ch 10 re-read and the panel); it may be split at a chapter boundary. Report on [next-run-checklist.md](../next-run-checklist.md).
+
+## Next session: start here (run #9)
+
+A fresh session, after the weekly reset. Everything it needs is on disk; nothing is in flight.
+
+1. **Open it from the terminal CLI** in this repository (`claude`), not the VS Code panel
+   ([test-run-protocol.md](../test-run-protocol.md) § before: the status line and the pause at
+   chapter boundaries only run there). No agent file has been edited since step 3.
+2. Read [test-run-protocol.md](../test-run-protocol.md) in full, then the run's three checklist
+   sections in [next-run-checklist.md](../next-run-checklist.md) (*The showrunner*, *Run #8's
+   fixes*, *Plan 08*). Run the pre-run probes the protocol names. Open a working log,
+   `docs/experiments/<date>-run-9.md`, with the user's request verbatim.
+3. `touch .test-run`. The toolkit is frozen from here until the write-up.
+4. **`/plan ember-terraces` first**, before any beats. `status.py --debt` asks for the Pressure
+   rows (`pressure no L1 or C1 rows`); R2, R6 and R7 are due in arc 3 and are not debt. Check its
+   final message for `changed` lines that rewrite the passive rows ahead (rows 8 and 11 at least);
+   none is a finding, not something to fix by hand. Then `state_check.py` raises no `pressure` warn.
+5. **`/write 7 ember-terraces`**: chapters 6–12. `python3 tools/room.py where
+   novels/ember-terraces` says the step (now: ch 6, step 1, no beat sheet). Expect the every-10
+   re-read at ch 10. A usage-limit stop is resumed with the `handoff` skill, at a chapter boundary
+   if possible.
+6. The blind panel (`bench.py panel`, `judge` + `judge--fable`) on ch 6–12, and `trace.py` for the
+   costs. Write up against run #8 ([write-up](../experiments/2026-10-09-run-8.md)): tick every
+   checklist item, update the *Features* table, then delete `.test-run`.
+
+Budget: about $70 at API rates ($57 for seven chapters at run #8's $8.2, $3 `/plan`, $2 the
+re-read, $6 the panel). It may be split after any accepted chapter.
 
 ## Session log
 
