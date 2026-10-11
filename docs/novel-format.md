@@ -19,7 +19,7 @@ novels/<slug>/
     society.md            labour, money, law, belief — the central rule reaching ordinary life
     lexicon.md            spellings, terms, forms of address, number style
     canon.md              fan fiction only: the canon researcher's sourced dossier of the source
-                          work (kb/canon-researcher/canon-format.md)
+                          work (kb/shared/canon-format.md)
     cast/_voices.md       one row per speaker: intel, eq, articulacy, wit, heat, cadence
     cast/<name>.md        profiles for major characters
     cast/_extras.md       one line per walk-on

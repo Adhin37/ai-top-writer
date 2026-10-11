@@ -19,7 +19,7 @@ toggle: genre (fanfic)
 
 Fan fiction readers know the source better than you do: they forgive an invented city, never a
 character who would not say that, or who is two years too old. Canon comes to you researched: the
-canon researcher's `bible/canon.md` ([its format](../canon-researcher/canon-format.md)) holds the
+canon researcher's `bible/canon.md` ([its format](../shared/canon-format.md)) holds the
 scope, the cast with their ages and status at the story's start, the timeline, the terms and what
 fans expect, each fact sourced. Design from it, not from memory. A canon fact you need that it
 lacks is a lookup: end your message with `gap canon <the question>`, and the showrunner sends it

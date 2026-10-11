@@ -30,7 +30,7 @@ in `docs/sessions/`, and the `handoff` skill resumes it (the same session, or a 
 | 09 | [Session 10: the canon researcher reads sections, not pages](09-canon-reading.md) | **built** 2026-10-11: `canon_fetch.py` `toc`, `grep`, `restyle` and scene headings for transcripts; the canon researcher finds, then reads the part (one rule replacing one); the live check rides on the next fan-fiction init or lookup. Haiku 5.5 test closed ([write-up](../experiments/2026-10-11-haiku-5-5.md)): clerk and canon researcher both lost; `trace.py` prices Haiku 5.5's 5× tier. No agent spawned | 08 |
 | 10 | [Session 11: prompts a smaller model can follow, then Haiku 5.5 again](10-prompts-for-smaller-models.md) | **done** 2026-10-11: each Haiku miss traced to a `kb/` line it followed (the clerk's "from its grade", a one-clause `ev`, "the work itself" without transcripts, ages without ranks); those lines replaced, one `ev` example, and `state_check` warns on a ledger row the clerk moved after an earlier chapter set it. Retest ([write-up](../experiments/2026-10-11-haiku-5-5-retest.md)): every targeted miss fixed, but both roles **stay on Sonnet** (the clerk thinner on `kno` and the fold; the canon researcher half the sources) | 09 |
 | 11 | [Session 12: bounded reads, no context that grows with the book](11-bounded-reads.md) | **built** 2026-10-11: `continuity.md` read by line range (clerk, planner, story editor); `room.py approve` (the showrunner reads the beat sheet's header, not the sheet); `room.py`'s lists capped; `history.py` lists only what the newest chapter uses; the fresh re-read budgeted at ~100k tokens; `canon_fetch` `toc`/`grep`/`category` capped; the handoff keeps 2 + 8 user messages. The reader's report stays a hand-back (Claude Code refuses a report file). No agent spawned | 10 |
-| 12 | [The instruction files against Anthropic's guidance](12-instruction-files.md) | **P1 built** 2026-10-11: Contents in the 12 long kb docs, the bible section map in dispatches, CLAUDE.md −28%; P2–P3 in the refactor | 11 |
+| 12 | [The instruction files against Anthropic's guidance](12-instruction-files.md) | **P1 built** 2026-10-11: Contents in the 12 long kb docs, the bible section map in dispatches, CLAUDE.md −28%; **P2 built** the same day: `kb_check` warns on a doc two hops deep, one term per concept, the fold files a place under its own heading; P3 waits for a run that needs it | 11 |
 
 After 08, run #9's routed fixes are built (2026-10-11, [the write-up's fixes](../experiments/2026-10-10-run-9.md#fixes-2026-10-11-after-the-run-no-agent-spawned)):
 recap examples for the story editor and the writer, the pressure grade's warn, the motif union, the clock
@@ -38,7 +38,7 @@ and the antagonist as planner examples. A run confirms them ([checklist](../next
 What remains is that run and the first human read of a chapter 1, once the
 user lifts the standing decision that they read nothing ([07 § After the rebuild](07-retire-skilled-writer.md#after-the-rebuild)).
 
-Next: no plan is written past 12; 12's P2–P3 wait for the refactor. What remains is the next full run, which checks the open items in the [checklist](../next-run-checklist.md) (plans 08–10 among them).
+Next: no plan is written past 12; 12's P3 waits for a run that needs it. What remains is the next full run, which checks the open items in the [checklist](../next-run-checklist.md) (plans 08–10 among them).
 
 ## Why this order
 

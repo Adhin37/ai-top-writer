@@ -10,6 +10,8 @@ Checks (OKF, and this repo's wiring):
     it Opus at `medium` is cheaper for the same score; docs/experiments/2026-10-04-model-effort.md);
   * a doc over CONTENTS_OVER lines opens with a `## Contents` list naming each of its `##`
     sections (warn): an agent sees the whole doc's scope before it reads, and can Read one part;
+  * a doc links only docs its own bundle's `index.md` or `prompt.md` lists (warn): a doc reached
+    only through another doc is one level too deep, and may be read in part or not at all;
   * no doc carries dated text (a date, a run, plan, session or lesson number; warn): an agent
     reading why a rule exists spends attention on the past, and the history lives in `docs/`;
   * with --novel, no doc names the novel's own proper nouns (its lexicon's Names table, and its
@@ -115,6 +117,29 @@ def check_agents(agents, root, out):
             out.append(("warn", "effort", "%s runs %s at effort %s: Sonnet runs at %s; a role that "
                         "needs more moves to Opus at medium" % (name, model, effort or "(default)",
                                                                 SONNET_EFFORT)))
+
+
+def check_depth(kb, out):
+    for bundle in sorted(os.listdir(kb)):
+        bdir = os.path.join(kb, bundle)
+        if not os.path.isdir(bdir):
+            continue
+        entries = [os.path.join(bdir, n) for n in ("index.md", "prompt.md")
+                   if os.path.isfile(os.path.join(bdir, n))]
+        listed = set(os.path.normpath(e) for e in entries)
+        for e in entries:
+            listed |= {os.path.normpath(os.path.join(bdir, t)) for t in LINK.findall(
+                mdio.read_text(e)) if "://" not in t}
+        for name in sorted(os.listdir(bdir)):
+            path = os.path.join(bdir, name)
+            if not name.endswith(".md") or path in entries:
+                continue
+            for target in LINK.findall(mdio.read_text(path)):
+                full = os.path.normpath(os.path.join(bdir, target))
+                if "://" not in target and os.path.exists(full) and full not in listed:
+                    out.append(("warn", "depth", "kb/%s/%s links %s, which kb/%s's index does not "
+                                "list" % (bundle, name, os.path.relpath(full, os.path.dirname(kb)),
+                                          bundle)))
 
 
 def check_contents(kb, out):
@@ -290,6 +315,7 @@ def run(root=ROOT, novels=(), noun_files=()):
     check_types(kb, out)
     check_indexes(kb, out)
     check_agents(os.path.join(root, ".claude", "agents"), root, out)
+    check_depth(kb, out)
     check_contents(kb, out)
     check_dated(kb, out)
     ordinary = ordinary_words(kb) if novels or noun_files else set()

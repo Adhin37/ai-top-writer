@@ -98,6 +98,16 @@ class RoomTest(unittest.TestCase):
         self.assertIn("§The central rule 3-4 · §Places 6-", row)
         self.assertNotIn("not a section", row)
 
+    def test_a_long_section_lists_its_places(self):
+        self.fx.write("work/ch0001/beats.md", "# Ch 1\nevent    x\n")
+        quay = "".join("The quay's lamp %d hangs low.\n" % i for i in range(room.MAP_OVER // 25))
+        self.fx.write("bible/world.md", "# World\n\n## The central rule\nThe sea gives back.\n\n"
+                      "## Places\n### The quay\n" + quay + "### The chapel\nOn the cliff.\n")
+        code, out = self.run_room("approve", self.novel, "1")
+        row = next(l for l in out.splitlines() if l.startswith("bible/world.md "))
+        self.assertRegex(row, r"§Places 6-\d+ [\d.]+k \(The quay 7-\d+, The chapel \d+-\d+\)")
+        self.assertNotIn("(The sea", row)
+
     def test_beats_stops_without_a_plan_row_or_threads(self):
         code, out = self.run_room("beats", self.novel, "3")
         self.assertEqual(code, 2)

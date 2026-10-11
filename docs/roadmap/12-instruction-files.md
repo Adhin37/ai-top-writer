@@ -38,18 +38,31 @@ Checklist: [next-run-checklist.md](../next-run-checklist.md#best-practice-pass-2
 
 ## P2 — in the refactor (measure with the guard's `*.reads.tsv` before and after)
 
-1. **One hop.** Fold each role's `index.md` table into its `prompt.md`, so the prompt is the table
-   of contents and every doc sits one level below it. In run #9's log, `index.md` opened 13 times
-   for 17 `prompt.md` opens. Expected gain: about one turn a spawn, the size 06d judged not worth
-   inlining the always-read docs for, so do it when the refactor touches the prompts anyway.
-   Touches `kb_check` (`RESERVED`, `check_indexes`), `tests/test_wiring.py`, `docs/architecture.md`.
-2. **Flatten doc-to-doc links.** 12 docs link to other docs; `kb/planner/init.md` links 11. Route
-   each through the role's table, or inline the one line needed. Links into `kb/shared/` stay.
-3. **One term per concept.** A short glossary check in `kb_check` (e.g. *beat sheet* / *beats*,
-   *hand-back* / *report*).
-4. **The bible's §Places.** On ember-terraces, `world.md` §Places and distances is 28.5k of 35.7k:
-   the folds file every new fact there. A rule in `kb/planner/fold.md` that places facts by kind
-   (or a section per region), so the map has sections worth reading by.
+1. **One hop — dropped 2026-10-11.** Folding each role's `index.md` into its `prompt.md` was built
+   and reverted the same day: the index is the knowledge base's structure (OKF), and the user keeps
+   it. A role reads its prompt, then its index, then the docs the index names; the extra Read is
+   about one turn a spawn.
+2. **Doc-to-doc links — done 2026-10-11.** Of the 26 links between kb docs, 24 point at a doc the
+   role's own index lists: one level from the index, and the link says when to open it (init's
+   round 3 → `cast-design.md`), so they stay. Two were one level too deep: the planner reached the
+   canon researcher's `canon-format.md` only through `toggle-fanfic.md` (moved to `kb/shared/`, in
+   both indexes), and the showrunner's `init.md` linked the planner's procedure it never runs (now
+   a plain path). `kb_check` warns (`depth`) on a doc linking one its bundle's index does not list.
+3. **One term per concept — done 2026-10-11, no check.** Counted the variants across `kb/`. One
+   real clash: *the lead* is the protagonist in the ledger (`L1` the lead's lever, in the template,
+   `scaffold.py` and `status.py`) and the love interest in `toggle-romance.md`; the toggle now says
+   *love interest*. The index rows said *final line* where `wire.md` says *status line* (the one line
+   that ends the *final message*): now *status line*. *Main session* only defines the showrunner;
+   *beat sheet* is the term (*beat-sheet.md* is a file name). No glossary check in `kb_check`: a
+   phrase list misfires on literal uses (the clerk's "the block's final line") and would be the
+   pile of rules the toolkit avoids; the next count is a grep.
+4. **The bible's §Places — done 2026-10-11.** On ember-terraces, `world.md` §Places and distances is
+   28.5k of 35.7k: prices, rumours and dated events filed as bullets under one heading. The fold's
+   `new` rule (`kb/planner/fold.md`) now places a place's facts under its own `### <place>` heading,
+   and keeps dated events out of the bible (the timeline is the clerk's). The bible map lists a
+   long section's `###` parts with their ranges (`§Places 38-371 28.5k (The quay 40-90, …)`).
+   Existing novels keep their shape until a fold touches them; the next run checks that a fold adds
+   headings and that agents Read a part by range.
 
 ## P3 — later, if a run shows the need
 
@@ -62,3 +75,5 @@ Checklist: [next-run-checklist.md](../next-run-checklist.md#best-practice-pass-2
 
 **2026-10-11.** P1 built; no agent spawned. 386 tests; `kb_check` clean on the repo and with
 `--novel novels/ember-terraces`.
+
+**2026-10-11, later.** P2.2–P2.4 built; no agent spawned. 388 tests; `kb_check` clean.

@@ -212,6 +212,8 @@ editor (7) and clerk (7):
       writer contradiction the continuity editor catches);
 - [ ] the showrunner's injected context at session start (`trace.py`) against run #9's: CLAUDE.md
       went from 9.6k to 7.0k characters.
+- [ ] a fold that adds a place files it under a `### <place>` heading in `world.md` §Places, and
+      keeps dated events out of the bible (plan 12 P2.4); the map then lists the parts.
 
 ## The bench
 

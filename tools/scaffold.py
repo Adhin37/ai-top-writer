@@ -273,7 +273,7 @@ def is_fanfic(nov):
 
 def check_canon(nov, out):
     """Fan fiction: a dossier with a scope, and every canon character, event and term sourced
-    (kb/canon-researcher/canon-format.md)."""
+    (kb/shared/canon-format.md)."""
     if not is_fanfic(nov):
         return
     if not str(nov.get("canon.source") or "").strip():

@@ -98,6 +98,16 @@ class KbCheckTest(unittest.TestCase):
                    "```\n")
         self.assertNotIn(("warn", "contents"), self.found())
 
+    def test_a_doc_linking_a_doc_its_index_does_not_list(self):
+        self.write("kb/shared/index.md", "# Shared\n\n| [s.md](s.md) | x |\n")
+        self.write("kb/shared/s.md", DOC)
+        self.write("kb/writer/a.md", DOC + "\nSee [the format](../shared/s.md).\n")
+        self.assertIn(("warn", "depth"), self.found())
+        self.write("kb/writer/index.md", "# Writer\n\n| doc | when |\n|---|---|\n"
+                   "| [prompt.md](prompt.md) | always |\n| [a.md](a.md) | always |\n"
+                   "| [../shared/s.md](../shared/s.md) | always |\n")
+        self.assertNotIn(("warn", "depth"), self.found())
+
     def test_dated_text(self):
         self.write("kb/writer/a.md", DOC + "\nAs run #7 showed on 2026-10-03.\n")
         self.assertIn(("warn", "dated"), self.found())

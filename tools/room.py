@@ -317,11 +317,21 @@ def bible_map(c):
             secs = [h for h in mdio.headings(lines) if h[1] == 2]
             if chars <= MAP_OVER or len(secs) < 2:
                 continue
+            subs = [h for h in mdio.headings(lines) if h[1] == 3]
             out.append("%s %s: %s" % (
                 os.path.relpath(path, os.path.dirname(base)), mdio.size(chars),
-                " · ".join("§%s %d-%d%s" % (t, a, b, " " + mdio.size(n) if n >= 1000 else "")
-                           for a, _lv, t, b, n in secs)))
+                " · ".join(_mapped(sec, subs) for sec in secs)))
     return out
+
+
+def _mapped(sec, subs):
+    """'§Places 38-371 28.0k' and, for a section over MAP_OVER, its `###` parts in brackets."""
+    a, _lv, title, b, n = sec
+    row = "§%s %d-%d%s" % (title, a, b, " " + mdio.size(n) if n >= 1000 else "")
+    inner = [s for s in subs if a < s[0] <= b]
+    if n > MAP_OVER and inner:
+        row += " (%s)" % ", ".join("%s %d-%d" % (s[2], s[0], s[3]) for s in inner)
+    return row
 
 
 def bible_map_note(c):

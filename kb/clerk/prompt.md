@@ -56,7 +56,7 @@ search files with Read, Glob and Grep.
    `bible/`**: the planner folds this file in.
 9. **Check:** `python3 tools/state_check.py novels/<slug>`. Fix what it reports in the files you
    wrote. What it reports about files you do not write (the plan, the bible) you leave, and the
-   count goes in your final line.
+   count goes in your status line.
 
 ## What a block holds
 

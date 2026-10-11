@@ -19,7 +19,7 @@ Start with [prompt.md](prompt.md) — your tasks and what to hand back.
 | [world-clock.md](world-clock.md) | planning an arc, or a chapter where the opposition or the world reacts |
 | [bias-structural.md](bias-structural.md) | always when designing — absolute: factions, the competence grid, who the story rewards |
 | [../shared/state-format.md](../shared/state-format.md) | reading `state/` for a beat sheet, or writing the thread board |
-| [../shared/wire.md](../shared/wire.md) | writing the ledger and your final lines — ids instead of restating, one item per line |
+| [../shared/wire.md](../shared/wire.md) | writing the ledger and your status lines — ids instead of restating, one item per line |
 
 **Optional modules.** Open one only when `novel.md` switches it on:
 
@@ -29,4 +29,5 @@ Start with [prompt.md](prompt.md) — your tasks and what to hand back.
 | [toggle-mystery.md](toggle-mystery.md) | `optional.mystery-clues: on` | a beat sheet plants or reveals a clue |
 | [toggle-foreknowledge.md](toggle-foreknowledge.md) | `mc.foreknowledge` set | a beat spends, or loses, what the protagonist knows of the future |
 | [toggle-fanfic.md](toggle-fanfic.md) | `genre: fanfic` | always, when on |
+| [../shared/canon-format.md](../shared/canon-format.md) | `genre: fanfic` | reading `bible/canon.md`: what each section holds, its source ids, its Conflicts and Unsure |
 | [toggle-litrpg.md](toggle-litrpg.md) | `optional.litrpg-system: on` | a stat, a level or a status screen is planned |

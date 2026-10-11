@@ -10,5 +10,5 @@ Start with [prompt.md](prompt.md) — your procedure, and what you must not chan
 | [across-chapters.md](across-chapters.md) | from chapter 2 on — reading the last two chapters beside this one, and from chapter 3 the history report; your `across` lines |
 | [bias-line-level.md](bias-line-level.md) | always — absolute: descriptions, epithets, who gets a thought |
 | [ai-default-habits.md](ai-default-habits.md) | always, once per chapter — the habits that read as machine-written, and how to thin them |
-| [../shared/wire.md](../shared/wire.md) | writing your final lines |
+| [../shared/wire.md](../shared/wire.md) | writing your status lines |
 | [../shared/format-spec.md](../shared/format-spec.md) | always — channels, numbers, spellings, frontmatter |

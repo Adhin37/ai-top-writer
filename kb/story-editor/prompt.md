@@ -137,7 +137,7 @@ file, one line each: the note that carries it, or `dismissed` and why; `none` wh
 finding you pass to the line editor or the planner is not answered.
 
 Grade every ledger row the retell now carries, not only those due this chapter: the clerk sets the
-ledger's status from these lines and from nothing else. A beat-sheet item with no ledger id is a
+ledger's status from these lines and from nothing else. An item of the beat sheet with no ledger id is a
 `beat` line and does not count toward `owed`.
 
 The header says: the verdict; how many owed items the retell *stated* out of those due this

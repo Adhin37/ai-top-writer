@@ -132,7 +132,7 @@ are thin procedures over [kb/showrunner/](../kb/showrunner/index.md) and `tools/
 
 Each role has an OKF bundle in `kb/<role>/`: an `index.md` the role reads first, a `prompt.md` with
 its procedure, and typed documents it opens when they apply. One level of disclosure: index, then
-doc. Shared documents (the format spec, retell grading, the wire format, the state format) sit in
+doc. Shared documents (the format spec, retell grading, the wire format, the state format, the canon dossier's format) sit in
 `kb/shared/` and are linked from each index that uses them.
 
 Plan 03 distilled skilled-writer's 44 skills and 119 cards (~160k words) into 51 docs (~26k

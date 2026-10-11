@@ -8,10 +8,10 @@ toggle: content.romance (subplot or central) · optional.romance-arc · optional
 # A romantic line
 
 A romance is a plot: two people want something, are obstructed, and change. It is not a reward
-schedule attached to the main story. The lead is designed **after** the protagonist, as a
+schedule attached to the main story. The love interest is designed **after** the protagonist, as a
 counterweight to that specific person, with a goal of their own that costs them something to pursue
-alongside the relationship. "Decide later" is often the best configuration: a lead chosen at the
-first arc boundary from people who already exist is usually better than one designed in advance.
+alongside the relationship. "Decide later" is often the best configuration: a love interest chosen
+at the first arc boundary from people who already exist is usually better than one designed in advance.
 With `optional.no-harem: on` there is one active romantic line at a time, attraction is motivated
 and reciprocal or it is a story about rejection, and a rejection holds.
 
@@ -44,8 +44,8 @@ solve.
 
 ### The agency test
 
-What does the lead want that is not the protagonist? If the only answer is the protagonist, the
-lead is a reward and not a person. Rewrite the lead's goal before planning a single beat.
+What does the love interest want that is not the protagonist? If the only answer is the
+protagonist, the love interest is a reward and not a person. Rewrite their goal before planning a single beat.
 
 ## When to break it
 

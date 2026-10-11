@@ -14,10 +14,13 @@ contradiction waiting three chapters on, when a writer who never read that chapt
 ## For each line
 
 - **`new`**: find where someone looking it up would look. A person's detail goes in their cast file
-  (a walk-on's in their `_extras.md` line), a place or distance in `world.md`, a price, law or custom
-  in `society.md`, a term or spelling in `lexicon.md`. Write it in that file's own form: a table
-  row, a roster stroke, a sentence in the right section. It needs no citation; the chapter is its
-  source.
+  (a walk-on's in their `_extras.md` line), a price, law or custom in `society.md`, a term or
+  spelling in `lexicon.md`, a place in `world.md` under that place's own `### <place>` heading in
+  *Places and distances* (add the heading the first time; a distance is a row of its table). Write
+  it in that file's own form: a table row, a roster stroke, a sentence in the right section. It
+  needs no citation; the chapter is its source. The bible holds what is true, not what happened when:
+  a dated event (a rumour on day 2, a price on day 1) is the timeline's, which the clerk keeps; the
+  bible keeps the standing fact it left (the price now).
 - **`stale`**: correct the bible line to what the chapter set.
 - **A `new` fact that contradicts the bible:** the page wins, because the reader has it. Change the
   bible line and add a `changed` line. If the change breaks a plan row or a ledger row, add a `gap`

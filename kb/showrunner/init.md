@@ -16,7 +16,7 @@ roles: [showrunner]
 - 4. Finish and check: after round 7: the checks to run
 - 5. Report to the user: what to tell the user at the end
 
-The planner runs the interview ([its procedure](../planner/init.md)); you carry it. Each round it
+The planner runs the interview (its procedure is `kb/planner/init.md`); you carry it. Each round it
 writes its questions to a file and stops on `PLANNER ASKS`. You show the user the questions, and
 continue the planner with the answers, **verbatim**. You never answer for the user, and you never
 fill a file yourself.

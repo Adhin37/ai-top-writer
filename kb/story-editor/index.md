@@ -5,7 +5,7 @@ Start with [prompt.md](prompt.md) — your procedure and the notes file's shape.
 | doc | open it when |
 |---|---|
 | [../shared/grading.md](../shared/grading.md) | grading the reader's retell against each owed fact |
-| [../shared/wire.md](../shared/wire.md) | writing the notes file and your final line — ids instead of restating, quotes that only locate |
+| [../shared/wire.md](../shared/wire.md) | writing the notes file and your status line — ids instead of restating, quotes that only locate |
 | [delivery-test.md](delivery-test.md) | always — want, friction, change, cost, next; the event played, not reported |
 | [cost-and-keep.md](cost-and-keep.md) | always — the cost in one concrete sentence, the thing worth keeping, earlier costs still paid |
 | [never-stupid.md](never-stupid.md) | the protagonist fails, deduces or misreads someone; or the opposition loses |
