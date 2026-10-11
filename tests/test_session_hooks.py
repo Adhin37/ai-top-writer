@@ -16,6 +16,7 @@ import checkpoint  # noqa: E402
 import session_hooks  # noqa: E402
 import statusline  # noqa: E402
 
+session_hooks.LIVE = lambda root, now: None     # no test reaches the usage endpoint
 FUTURE = int(time.time()) + 3600
 
 
@@ -192,6 +193,17 @@ class UsageTest(unittest.TestCase):
         with open(self.usage, "w") as fh:
             json.dump(data, fh)
         self.assertIsNone(self.tool())
+
+    def test_without_a_status_line_the_live_reading_warns(self):
+        live = {"updated": time.time(), "source": "live", "rate_limits": {
+            "five_hour": {"used_percentage": 96, "resets_at": FUTURE}}}
+        with mock.patch.object(session_hooks, "LIVE", lambda root, now: live):
+            text = self.tool()
+        self.assertIn("5-hour limit is at 96% (resets ", text)
+        self.assertNotIn("estimate", text)
+        self.reading(70)                                    # a fresh status line wins
+        with mock.patch.object(session_hooks, "LIVE", lambda root, now: live):
+            self.assertIsNone(self.tool())
 
     def test_no_reading_no_warning(self):
         self.assertIsNone(self.tool())

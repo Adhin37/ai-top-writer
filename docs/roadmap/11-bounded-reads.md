@@ -10,6 +10,7 @@ Depends on 09 (the pattern), 10 (done).
 ## Evidence
 
 The usual advice on long contexts agrees with 09:
+
 - quality falls as the context fills, before the limit (Chroma's *context rot*);
 - every kept token is re-read on each later turn, and a compaction rewrites the cache;
 - so load by path and range when it is needed, cap tool output with a count past the cap, and keep
@@ -57,6 +58,7 @@ Run #9's trace (`trace.py f5286e1a-99b7-4ef6-a834-8004a2e0c0d9 --since 2026-10-1
 
 `room.py block_lines()` names a block as `<novel>/state/continuity.md lines A-B`. It uses
 `Block.last_line`, added to `lib/novel.py`. Each dispatch that needs the block carries it:
+
 - the planner's beats (fresh, warm and ahead);
 - the fresh story editor;
 - the clerk;
@@ -129,7 +131,10 @@ Per the standing decision (*test by parts*), no paid replay: the next run's `tra
   - 1.2 built. On ember-terraces ch 12, `approve` prints 575 bytes, and the header it points at is
     2.7–5.9 KB on ch 6–12, against 10–17 KB for the whole sheet.
   - 1.3 built.
-- **Step 2, built.** Ch 12's block is lines 104–111 of 111 (5.5 KB of 46 KB).
+- **Step 2, built.** Ch 12's block is lines 104–111 of 111 (5.5 KB of 46 KB). Checked in the
+  scratchpad: Edit accepts a file Read only by offset and limit, so the clerk appends after the
+  last block's final line without reading the file whole. If that line is not unique in the file,
+  the Edit fails and the clerk has to give it more context.
 - **Step 3, built.** The ch 12 report on the same input: 7.5 KB → 5.5 KB, with 41 → 19 warn motifs
   listed and 22 counted.
 - **Step 4, built.**

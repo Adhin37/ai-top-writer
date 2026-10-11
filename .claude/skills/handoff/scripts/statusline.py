@@ -7,7 +7,7 @@ prints them and saves them to docs/sessions/usage.json, where session_hooks.py, 
 warn the session before the limit.
 
 The terminal CLI runs the status line; the VS Code panel does not, and then usage.json is never
-written: the hooks fall back on usage.py's estimate from the transcripts.
+written: the hooks read the usage-detection skill's live reading instead.
 """
 import datetime as dt
 import json

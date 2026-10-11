@@ -566,7 +566,7 @@ class RoomTest(unittest.TestCase):
         self.assertIn("STOP: agent p2 handed back no `gap canon` line", out)
 
     def test_the_pause_reads_a_fresh_five_hour_reading(self):
-        exact, guess = (os.path.join(self.root, f) for f in ("usage.json", "usage-estimate.json"))
+        exact, guess = (os.path.join(self.root, f) for f in ("usage.json", "usage-live.json"))
         paths = (exact, guess)
 
         def reading(pct, age=0, path=exact):
@@ -581,7 +581,7 @@ class RoomTest(unittest.TestCase):
         self.assertIn("PAUSE: the 5-hour window is at 81% (resets ", room.usage_pause(paths))
         reading(90, age=600 + 1)
         self.assertIsNone(room.usage_pause(paths))
-        reading(85, path=guess)                              # no status line: the estimate
+        reading(85, path=guess)                              # no status line: the live reading
         self.assertIn("at 85%", room.usage_pause(paths))
         reading(70)                                          # a fresh status line wins
         self.assertIsNone(room.usage_pause(paths))

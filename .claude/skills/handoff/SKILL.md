@@ -16,16 +16,17 @@ Two things only you can add: the **note**, and **closing** the handoff once its 
 
 A hook warns once per window when the 5-hour or 7-day limit reaches 95% (and the 5-hour one at 80%:
 finish the step, start no new chapter). Its reading is the status line's where one runs (terminal);
-in the VS Code panel it is `scripts/usage.py`'s estimate from the transcripts, calibrated on past
-rejections and taken low, so it errs early. `python3 .claude/skills/handoff/scripts/usage.py` prints it, with the caps it
-rests on, whenever you want to check before a long step.
+in the VS Code panel it is the live one, the numbers `/usage` shows, from the `usage-detection`
+skill. Without either there is no warning, never a guess. `python3
+.claude/skills/usage-detection/scripts/live.py` prints it whenever you want to check before a long
+step.
 
 When a hook says usage has reached the threshold:
 
 1. **Spawn no new agent.** One started now dies half-way. Agents already running carry on.
-2. **Write the note** in your own handoff, between `<!-- note -->` and `<!-- /note -->`. Keep it to
-   ten lines at most: the plan and step you are on, the exact next action, and anything decided in
-   this conversation that is on no file yet. Rebuilds keep the note.
+2. **Write the note** in your own handoff, between `<!-- note -->` and `<!-- /note -->`: the plan
+   and step you are on, the exact next action, and anything decided in this conversation that is on
+   no file yet — only what the next session cannot recover from disk. Rebuilds keep the note.
 3. Run `python3 .claude/skills/handoff/scripts/checkpoint.py` and tell the user, in one line, where the handoff is and when
    the limit resets.
 
@@ -50,7 +51,7 @@ When a hook points you at a handoff, or the user asks you to continue after a li
 3. Carry on from the note's next action, or from where the last messages leave off. In a writing
    run, `python3 tools/room.py where novels/<slug>` says the chapter and step from the files.
 4. Close it: `python3 .claude/skills/handoff/scripts/checkpoint.py --close <session-id>`, so the hooks stop pointing at it.
-5. Tell the user in three lines or fewer what you resumed, what you re-spawned and what comes next.
+5. Tell the user, briefly, what you resumed, what you re-spawned and what comes next.
 
 If the user would rather do something else first, do that and leave the handoff open.
 

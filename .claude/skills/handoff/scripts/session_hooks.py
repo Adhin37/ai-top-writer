@@ -19,7 +19,8 @@ switched off.
       start no new chapter (kb/showrunner/loop.md, "Pause at a chapter boundary"); when the 5-hour
       or 7-day window reaches THRESHOLD, once per window, to hand off. The reading comes from
       statusline.py, which only the terminal CLI runs; without a fresh one (the VS Code
-      panel), from usage.py's estimate, built from the transcripts and the past rejections.
+      panel), from the usage-detection skill's live.py, the numbers /usage shows. Without
+      either, no warning: a guessed number paused runs at 96% that were at 73%.
 """
 import glob
 import json
@@ -27,14 +28,17 @@ import os
 import sys
 import time
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, HERE)
+sys.path.insert(0, os.path.join(HERE, os.pardir, os.pardir, "usage-detection", "scripts"))
 import checkpoint  # noqa: E402
-import usage  # noqa: E402
+import live  # noqa: E402
 
 REBUILD = {"Stop", "SubagentStop", "StopFailure", "SessionEnd", "PreCompact"}
 THRESHOLD = 95
 PAUSE_AT = 80           # the 5-hour window: finish the step, start no new chapter
 FRESH_S = 600
+LIVE = live.reading     # the live reading's source; tests replace it
 WINDOWS = {"five_hour": "5-hour", "seven_day": "7-day"}
 SPAN_S = {"five_hour": 5 * 3600, "seven_day": 7 * 86400}
 
@@ -127,27 +131,23 @@ def own_pointer(root, session_id):
                           os.path.join(checkpoint.SESSIONS, session_id + ".md")))
 
 
-def reading(root, now, projects=None):
-    """A fresh status-line reading; else, given the transcripts' folder, the estimate."""
+def reading(root, now):
+    """A fresh status-line reading; else the live one; else None."""
     exact = _load(os.path.join(sessions_dir(root), "usage.json"), {})
     if fresh(exact, now):
         return exact
-    if projects:
-        guess = usage.estimate(root, projects, now)
-        if fresh(guess, now):
-            return guess
-    return None
+    found = LIVE(root, now)
+    return found if fresh(found, now) else None
 
 
-def usage_warning(root, now=None, projects=None):
+def usage_warning(root, now=None):
     """Once per window and level: usage has reached PAUSE_AT or THRESHOLD, per a fresh
-    status-line reading or, with `projects`, the transcripts' estimate."""
+    status-line or live reading."""
     now = now or time.time()
-    found = reading(root, now, projects)
+    found = reading(root, now)
     if not found:
         return None
     limits = found.get("rate_limits") if isinstance(found.get("rate_limits"), dict) else {}
-    guessed = " (estimated from the transcripts)" if found.get("source") == "estimate" else ""
     warned_path = os.path.join(sessions_dir(root), "warned.json")
     warned = _load(warned_path, {})
     warned = warned if isinstance(warned, dict) else {}
@@ -171,11 +171,11 @@ def usage_warning(root, now=None, projects=None):
             json.dump(warned, fh)
         when = " (resets %s)" % checkpoint.hm(resets) if resets else ""
         if at == PAUSE_AT:
-            return ("Usage: the 5-hour window is at %d%%%s%s. Finish the step in hand and start "
+            return ("Usage: the 5-hour window is at %d%%%s. Finish the step in hand and start "
                     "no new chapter: kb/showrunner/loop.md, \"Pause at a chapter boundary\"."
-                    % (pct, guessed, when))
-        return ("Usage: the %s limit is at %d%%%s%s. Use the handoff skill now: spawn no new "
-                "agent, and write the handoff note." % (WINDOWS[key], pct, guessed, when))
+                    % (pct, when))
+        return ("Usage: the %s limit is at %d%%%s. Use the handoff skill now: spawn no new "
+                "agent, and write the handoff note." % (WINDOWS[key], pct, when))
     return None
 
 
@@ -196,14 +196,6 @@ def rebuild(payload, root):
                          failure=failure)
 
 
-def _projects(payload):
-    """~/.claude/projects, from the transcript path the payload names; None without one."""
-    transcript = payload.get("transcript_path")
-    if not isinstance(transcript, str) or not transcript:
-        return None
-    return os.path.dirname(os.path.dirname(transcript))
-
-
 def handle(payload, root=checkpoint.ROOT):
     """The context to give the model, or None."""
     event = payload.get("hook_event_name")
@@ -219,12 +211,11 @@ def handle(payload, root=checkpoint.ROOT):
         if payload.get("transcript_path"):
             refresh_stale(root, os.path.dirname(payload["transcript_path"]))
         return pointer(root, session_id)
-    projects = _projects(payload)
     if event == "UserPromptSubmit":
-        parts = [own_pointer(root, session_id), usage_warning(root, projects=projects)]
+        parts = [own_pointer(root, session_id), usage_warning(root)]
         return " ".join(p for p in parts if p) or None
     if event == "PostToolUse":
-        return usage_warning(root, projects=projects)
+        return usage_warning(root)
     return None
 
 

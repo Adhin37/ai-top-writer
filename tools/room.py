@@ -67,10 +67,10 @@ from lib.novel import PRESSURE_WORDS, Novel  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TOOLS = os.path.dirname(os.path.abspath(__file__))
-# the usage readings the handoff skill's scripts write: the status line's, else the transcripts'
-# estimate (the VS Code panel runs no status line)
+# the usage readings the skills' scripts write: the status line's, else the live one the hooks
+# fetch (usage-detection; the VS Code panel runs no status line). No reading, no pause
 READINGS = tuple(os.path.join(ROOT, "docs", "sessions", f)
-                 for f in ("usage.json", "usage-estimate.json"))
+                 for f in ("usage.json", "usage-live.json"))
 PAUSE_AT = 80
 FRESH_S = 600
 HISTORY_FROM = 3
