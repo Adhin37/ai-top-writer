@@ -13,6 +13,8 @@ from novel_fixture import NovelFixture  # noqa: E402
 import export_prose  # noqa: E402
 import room  # noqa: E402
 
+room.READINGS = ()     # the session's own usage files never reach a test
+
 REPORT = """Some preamble the reader wrote.
 
 # Report — chapter 2
@@ -74,12 +76,27 @@ class RoomTest(unittest.TestCase):
         self.assertEqual(code, 0, out)
         self.assertIn('@ spawn planner as "planner-ch01"\nNovel: novels/long-ebb. Task: beats '
                       'for chapter 1.', out)
-        before, after = out.split("then, on PLANNER DONE beats: python3 tools/room.py approve "
-                                  "novels/long-ebb 1")
-        self.assertNotIn("writer", before)
-        self.assertIn('@ spawn writer as "writer-ch01"\nNovel: novels/long-ebb. Chapter 1. Beat '
-                      'sheet: novels/long-ebb/work/ch0001/beats.md. Write '
-                      'novels/long-ebb/work/ch0001/draft-r0.md.', after)
+        self.assertIn("then, on PLANNER DONE beats: python3 tools/room.py approve "
+                      "novels/long-ebb 1 (it prints the writer)", out)
+        self.assertNotIn("@ spawn writer", out)          # approve prints it
+        self.fx.write("work/ch0001/beats.md", "# Ch 1\nevent    x\n")
+        code, out = self.run_room("approve", self.novel, "1")
+        self.assertIn('Approved, send the writer:\n\n@ spawn writer as "writer-ch01"\nNovel: '
+                      'novels/long-ebb. Chapter 1. Beat sheet: novels/long-ebb/work/ch0001/'
+                      'beats.md. Write novels/long-ebb/work/ch0001/draft-r0.md.', out)
+
+    def test_a_long_bible_file_is_mapped_by_section_in_the_writer_dispatch(self):
+        self.fx.write("work/ch0001/beats.md", "# Ch 1\nevent    x\n")
+        code, out = self.run_room("approve", self.novel, "1")
+        self.assertNotIn("Long bible files", out)
+        places = "".join("| quay %d | a day's walk |\n" % i for i in range(room.MAP_OVER // 20))
+        self.fx.write("bible/world.md", "# World\n\n## The central rule\nThe sea gives back.\n\n"
+                      "## Places\n" + places + "\n```\n## not a section\n```\n")
+        code, out = self.run_room("approve", self.novel, "1")
+        self.assertIn("Long bible files, by section", out)
+        row = next(l for l in out.splitlines() if l.startswith("bible/world.md "))
+        self.assertIn("§The central rule 3-4 · §Places 6-", row)
+        self.assertNotIn("not a section", row)
 
     def test_beats_stops_without_a_plan_row_or_threads(self):
         code, out = self.run_room("beats", self.novel, "3")
@@ -109,7 +126,8 @@ class RoomTest(unittest.TestCase):
         self.assertIn("plan event: Nessa rows the boy out past the bar", out)
         self.assertIn("read novels/long-ebb/work/ch0002/beats.md lines 1-5 only", out)
         self.assertIn("ledger due ch 2: F2 - not in the header: F2", out)
-        self.assertNotIn("@ ", out)                 # no dispatch: the last step printed the writer
+        self.assertIn("(a sheet started at chapter 1's ACCEPT: after room.py fold "
+                      "novels/long-ebb 1):\n\n@ spawn writer as \"writer-ch02\"", out)
         self.fx.write("work/ch0002/beats.md", sheet % "F2 the bar is dry: sc 1, she walks it")
         code, out = self.run_room("approve", self.novel, "2")
         self.assertIn("ledger due ch 2: F2\n", out)
@@ -258,6 +276,20 @@ class RoomTest(unittest.TestCase):
         self.assertIn("warn: notes-r0.md grades no C1 from the beat sheet's pressure line", out)
         self.assertIn("Your last notes graded no C1: grade each pressure id in Owed.", out)
 
+    def test_judge_asks_the_warm_story_editor_for_an_unanswered_fact_finding(self):
+        self.fx.write("work/ch0002/continuity-r0.md", '# Continuity\nlint x\nchecked y\n'
+                      'F1 bible   "two doors" | world.md: "one door" | the boathouse\n'
+                      'F2 lexicon "harbor" | lexicon.md: "harbour" | spelling\n'
+                      'F3 know    "she knew" | C0001 kno: "no one" | nobody told her\n')
+        self.fx.write("work/ch0002/notes-r0.md", "verdict REVISE\n\n## Owed\n\n## Notes\n\n"
+                      "## Continuity\nF1 N2\n\n## Keep\n")
+        self.judge_ready(1)
+        code, out = self.run_room("judge", self.novel, "2", "1", "b1")
+        self.assertEqual(code, 0, out)
+        self.assertIn("warn: notes-r0.md answers no continuity F3\n", out)
+        self.assertIn("Your last notes answered no continuity F3: answer each fact finding in "
+                      "Continuity.", out)
+
     def test_judge_stops_when_the_reader_handed_back_nothing(self):
         self.fx.write("work/ch0002/draft-r0.md", DRAFT)
         self.run_room("round", self.novel, "2", "0")
@@ -308,6 +340,18 @@ class RoomTest(unittest.TestCase):
         code, out = self.run_room("clerk", self.novel, "2", "1")
         self.assertNotIn("grades no", out)
 
+    def test_clerk_warns_when_the_accepted_notes_answer_no_fact_finding(self):
+        self.clerk_ready(700)
+        self.fx.write("work/ch0002/continuity-r1.md", '# Continuity\nlint x\nchecked y\n'
+                      'F1 state   "her left palm" | C0001 has: "both palms" | bound\n')
+        self.fx.write("work/ch0002/notes-r1.md", "verdict ACCEPT\n\n## Owed\n\n## Notes\n")
+        code, out = self.run_room("clerk", self.novel, "2", "1")
+        self.assertIn("warn: notes-r1.md answers no continuity F1", out)
+        self.fx.write("work/ch0002/notes-r1.md", "verdict ACCEPT\n\n## Continuity\nF1 dismissed "
+                      "— the left rag came off at the quay\n")
+        code, out = self.run_room("clerk", self.novel, "2", "1")
+        self.assertNotIn("answers no continuity", out)
+
     def test_clerk_asks_the_reader_to_compress_first_over_the_cap(self):
         self.clerk_ready(812)
         code, out = self.run_room("clerk", self.novel, "2", "1")
@@ -336,6 +380,8 @@ class RoomTest(unittest.TestCase):
                       "reading/%s/shelf/notes.md. Editor's notes for "
                       "the planner: novels/long-ebb/work/ch0001/notes-r0.md." % self.id, out)
         self.assertTrue(out.splitlines()[1].startswith("state_check "))
+        self.assertIn("and on PLANNER DONE beats: python3 tools/room.py approve novels/long-ebb 2 "
+                      "(it prints the writer)", out)
 
     def test_a_ledger_row_past_due_sends_the_run_to_plan_first(self):
         self.fx.chapter(2, title="The Bar", slug="the-bar")      # F2, due by ch 2, still owed

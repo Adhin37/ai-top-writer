@@ -176,16 +176,42 @@ From [10](roadmap/10-prompts-for-smaller-models.md), on the next run's clerk (So
 
 ## Plan 11 (2026-10-11)
 
-From [11](roadmap/11-bounded-reads.md), on the next full run (baseline: run #9's trace):
+From [11](roadmap/11-bounded-reads.md), on the next full run (baseline: run #9's trace). Run #10 (ch 13–14, [write-up](experiments/2026-10-11-run-10.md#write-up)) ticked four; the budget waits for ch 20:
 
-- [ ] the showrunner runs `room.py approve` and Reads `beats.md` with a limit (the header), not
+- [x] the showrunner runs `room.py approve` and Reads `beats.md` with a limit (the header), not
       whole; its compactions (run #9: 3 at 217k) and its context mean (129k);
-- [ ] clerk, planner and story editor Read `state/continuity.md` with an offset, never whole (the
+- [x] clerk, planner and story editor Read `state/continuity.md` with an offset, never whole (the
       guard's `*.reads.tsv` and the transcripts); their cache writes a spawn against run #9;
-- [ ] the clerk's block still appended in place, after the last one (`state_check` clean), and no
+- [x] the clerk's block still appended in place, after the last one (`state_check` clean), and no
       continuity or story-editor finding traced to a fact only an earlier block held;
-- [ ] the line editor still acts on the history report's motifs in its chapter;
+- [x] the line editor still acts on the history report's motifs in its chapter;
 - [ ] at ch 15+ or a lost memory past the budget: the fresh reader's notes say what it skipped.
+
+## Run #10's fixes (2026-10-11)
+
+From [run #10](experiments/2026-10-11-run-10.md) F2 and F3:
+
+- [ ] the writer's dispatch comes from `room.py approve` (and, for a sheet started at ACCEPT, from
+      `fold`); none sent by hand;
+- [ ] every notes file's *Continuity* answers each `bible`/`state`/`time`/`travel`/`know` finding,
+      and no accepted chapter reaches the clerk with one unanswered (`clerk`'s warn); the round
+      count against run #10's (2 a chapter): more notes per round, not more rounds.
+
+## Best-practice pass (2026-10-11)
+
+From Anthropic's skill-authoring and CLAUDE.md guidance (a Contents list in each reference doc over
+100 lines; pointers that say when to read, never `@` imports; CLAUDE.md lean). Baseline: run #9's
+`*.reads.tsv`, where `bible/world.md` was opened whole by the planner (9), writer (7), continuity
+editor (7) and clerk (7):
+
+- [ ] planner, writer, continuity editor and clerk Read the long bible files (`world.md`,
+      `canon.md`) by the section the dispatch's map names, or Grep them, and not whole (the
+      transcripts' Read offsets; the guard log only counts opens); their cache writes a spawn
+      against run #9's;
+- [ ] no finding traced to a bible fact outside the section a role read (a continuity miss, a
+      writer contradiction the continuity editor catches);
+- [ ] the showrunner's injected context at session start (`trace.py`) against run #9's: CLAUDE.md
+      went from 9.6k to 7.0k characters.
 
 ## The bench
 

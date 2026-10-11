@@ -45,6 +45,10 @@ import urllib.request
 import urllib.robotparser
 from html.parser import HTMLParser
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+from lib import mdio  # noqa: E402
+
 USER_AGENT = ("ai-top-writer-canon/0.1 (fan-fiction research; MediaWiki API only; "
               "python-urllib)")
 PAUSE = 1.0             # seconds between requests to the same wiki
@@ -373,35 +377,10 @@ def scene_heading(n, scene):
 
 # ------------------------------------------------------------------------------- reading
 
-HEADING = re.compile(r"^(#{1,6}) (.*)")
-
-
-def headings(lines):
-    """[(line number, level, title, last line, characters)] for each heading; a section runs to
-    the next heading of its level or above."""
-    found = [(i, len(m.group(1)), m.group(2).strip())
-             for i, line in enumerate(lines) for m in [HEADING.match(line)] if m]
-    out = []
-    for k, (i, level, title) in enumerate(found):
-        j = next((f[0] for f in found[k + 1:] if f[1] <= level), len(lines))
-        while j > i + 1 and not lines[j - 1].strip():
-            j -= 1
-        out.append((i + 1, level, title, j, sum(len(l) + 1 for l in lines[i:j])))
-    return out
-
-
-def size(chars):
-    return "%.1fk" % (chars / 1000.0) if chars >= 1000 else "%d" % chars
-
-
-def toc(path):
-    with open(path, encoding="utf-8") as fh:
-        lines = fh.read().split("\n")
-    rows = ["%s (%d lines, %s chars)" % (path, len(lines), size(sum(len(l) + 1 for l in lines)))]
-    for first, level, title, last, chars in headings(lines):
-        rows.append("%5d-%-5d %6s  %s%s %s" % (first, last, size(chars), "  " * (level - 1),
-                                               "#" * level, title))
-    return rows
+HEADING = mdio.HEADING
+headings = mdio.headings
+size = mdio.size
+toc = mdio.toc
 
 
 def md_files(path):

@@ -53,7 +53,8 @@ class LiveTest(unittest.TestCase):
         found = self.read(opener)
         self.assertEqual(found["source"], "live")
         self.assertEqual(found["rate_limits"]["five_hour"]["used_percentage"], 92.0)
-        self.assertEqual(found["rate_limits"]["seven_day"]["resets_at"], 1791511200.0)
+        self.assertEqual(found["rate_limits"]["seven_day"]["resets_at"], live._epoch(
+            "2026-10-16T02:00:00+00:00"))
         req = opener.requests[0]
         self.assertEqual(req.full_url, live.URL)
         self.assertEqual(req.get_header("Authorization"), "Bearer tok-1")

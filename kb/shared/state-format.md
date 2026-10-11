@@ -6,6 +6,15 @@ roles: [clerk, continuity-editor, story-editor, planner]
 ---
 # State format
 
+## Contents
+
+- `state/continuity.md` — one block per chapter
+- `state/threads.md` — the thread board
+- `state/timeline.md` — the in-world calendar
+- `state/scenes.md` — the scene log
+- The reader ledger's status: the `status` cell and the grades behind it
+- `work/chNNNN/fold.md` — new facts for the bible
+
 `state/` is what is true *now*, chapter by chapter, and who knows it. The bible says what the world
 is; state says where everyone stands after the last accepted chapter. The clerk writes it; the
 continuity editor checks drafts against it; the story editor and the planner read what the last

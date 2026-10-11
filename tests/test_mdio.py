@@ -97,5 +97,16 @@ class TablesTest(unittest.TestCase):
         self.assertEqual(mdio.section(self.TEXT, "missing"), "")
 
 
+
+class HeadingsTest(unittest.TestCase):
+    def test_ranges_sizes_and_fences(self):
+        lines = ["# Doc", "", "## A", "a", "", "```", "## not a heading", "```", "## B", "b"]
+        heads = mdio.headings(lines)
+        self.assertEqual([(f, lv, t, last) for f, lv, t, last, _c in heads],
+                         [(1, 1, "Doc", 10), (3, 2, "A", 8), (9, 2, "B", 10)])
+        self.assertEqual(mdio.size(999), "999")
+        self.assertEqual(mdio.size(1500), "1.5k")
+
+
 if __name__ == "__main__":
     unittest.main()

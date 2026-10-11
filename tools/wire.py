@@ -51,6 +51,8 @@ MAX_NOTES = 5
 MAX_CHOICES = 3
 FINDING = re.compile(r"^F(\d+)\s+(\S+)\s+(.*)$")
 FINDING_KINDS = ("bible", "state", "time", "travel", "lexicon", "number", "know")
+FACT_KINDS = ("bible", "state", "time", "travel", "know")     # the story editor answers these
+ANSWER = re.compile(r"^(F\d+)\s+(?:N\d+\b|dismissed\b\s*\S)")
 FOLD_KEYS = ("new", "stale")
 
 
@@ -192,6 +194,10 @@ def check_notes(text):
         found.append(finding("defect", "notes", "%d notes; at most %d" % (len(notes), MAX_NOTES)))
     if verdict == "REVISE" and not notes:
         found.append(finding("warn", "notes", "REVISE with no notes"))
+    for line in secs.get("Continuity", []):
+        if line.strip() != "none" and not ANSWER.match(line.strip()):
+            found.append(finding("warn", "continuity", "not `F<n> N<n>` or `F<n> dismissed — "
+                                 "<why>`: %r" % line.strip()[:60]))
     if not secs.get("Keep"):
         found.append(finding("warn", "keep", "*Keep* is empty"))
     for name, lines in secs.items():
@@ -220,6 +226,18 @@ def check_facts(text):
     found.append(finding("note", "words", "new facts: %d, words: %d"
                          % (counts.get("new", 0), words(text.splitlines()))))
     return found
+
+
+def fact_findings(text):
+    """The ids of a continuity file's findings the story editor answers, in order."""
+    return ["F" + m.group(1) for m in map(FINDING.match, (l.strip() for l in text.splitlines()))
+            if m and m.group(2) in FACT_KINDS]
+
+
+def answered(text):
+    """The finding ids a notes file's *Continuity* section answers."""
+    return {m.group(1) for m in map(ANSWER.match, (l.strip() for l in
+                                                     sections(text).get("Continuity", []))) if m}
 
 
 def check_continuity(text):

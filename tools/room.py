@@ -76,6 +76,7 @@ FRESH_S = 600
 HISTORY_FROM = 3
 MAX_ROUND = 2
 SHOWN = 8               # findings printed before "+n more"
+MAP_OVER = 8000         # characters (~2k tokens): a bible file past this gets its sections mapped
 AHEAD = "ahead.txt"     # judge: the next chapter's planner was offered at ACCEPT (fold continues it)
 # Rounds 1 and 2 continue the round-0 continuity editor, which already holds the bible and the state,
 # instead of a fresh one. False spawns a fresh one every round.
@@ -169,7 +170,7 @@ def planner_beats(c, warm=True):
         text += " Editor's notes for the planner: %s." % prev
     if c.n > 1:
         text += last_block_note(c)
-    text += pressure_note(c.nov)
+    text += pressure_note(c.nov) + bible_map_note(c)
     if not warm:
         return dispatch("spawn", "planner", "Novel: %s. %s" % (c.novel, text),
                         "planner-ch%02d" % c.n)
@@ -178,7 +179,8 @@ def planner_beats(c, warm=True):
 
 def writer(c):
     return dispatch("spawn", "writer", "Novel: %s. Chapter %d. Beat sheet: %s. Write %s."
-                    % (c.novel, c.n, c.wfile("beats.md"), c.wfile("draft-r0.md")),
+                    % (c.novel, c.n, c.wfile("beats.md"), c.wfile("draft-r0.md"))
+                    + bible_map_note(c),
                     "writer-ch%02d" % c.n)
 
 
@@ -203,7 +205,8 @@ def continuity(c, k, warm=None):
     if k > 0 and (WARM_CONTINUITY if warm is None else warm):
         return dispatch("continue", "continuity-ch%02d" % c.n, text + " Your last file: %s."
                         % c.wfile("continuity-r%d.md" % (k - 1)))
-    return dispatch("spawn", "continuity-editor", "Novel: %s. %s" % (c.novel, text),
+    return dispatch("spawn", "continuity-editor", "Novel: %s. %s" % (c.novel, text)
+                    + bible_map_note(c),
                     "continuity-ch%02d" % c.n)
 
 
@@ -244,7 +247,8 @@ def clerk(c, k):
                     "Accepted round: %s/." % (c.novel, c.n, c.chapter_file,
                                               c.wfile("notes-r%d.md" % k),
                                               c.wfile("facts-r%d.md" % k), c.wfile("beats.md"),
-                                              c.round_dir(k)) + last_block_note(c),
+                                              c.round_dir(k)) + last_block_note(c)
+                    + bible_map_note(c),
                     "clerk ch%02d" % c.n)
 
 
@@ -257,7 +261,7 @@ def planner_fold(c, warm=False):
     if warm:
         return dispatch("continue", "planner-ch%02d" % (c.n + 1), text + " Then check your beat "
                         "sheet for chapter %d against what you folded." % (c.n + 1))
-    return dispatch("spawn", "planner", "Novel: %s. %s" % (c.novel, text),
+    return dispatch("spawn", "planner", "Novel: %s. %s" % (c.novel, text) + bible_map_note(c),
                     "planner-ch%02d" % (c.n + 1))
 
 
@@ -269,7 +273,7 @@ def planner_ahead(c, k):
                     "Editor's notes for the planner: %s." % (
                         c.novel, nxt, c.n, c.wfile("draft-r%d.md" % k), c.round_dir(k),
                         c.wfile("notes-r%d.md" % k)) + last_block_note(c)
-                    + pressure_note(c.nov),
+                    + pressure_note(c.nov) + bible_map_note(c),
                     "planner-ch%02d" % nxt)
 
 
@@ -296,6 +300,36 @@ def block_lines(c, number=None):
         return ""
     b = blocks[-1] if number is None else c.nov.block(number)
     return "%s/state/continuity.md lines %d-%d" % (c.novel, b.line_no, b.last_line) if b else ""
+
+
+def bible_map(c):
+    """['bible/world.md 35.7k: §In one paragraph 7-16 · §Places and distances 38-371 28.0k · …']
+    for each bible file over MAP_OVER characters with two or more `##` sections."""
+    base = c.nov.path("bible")
+    out = []
+    for dirpath, _dirs, files in sorted(os.walk(base)):
+        for name in sorted(files):
+            if not name.endswith(".md"):
+                continue
+            path = os.path.join(dirpath, name)
+            lines = mdio.read_text(path).split("\n")
+            chars = sum(len(l) + 1 for l in lines)
+            secs = [h for h in mdio.headings(lines) if h[1] == 2]
+            if chars <= MAP_OVER or len(secs) < 2:
+                continue
+            out.append("%s %s: %s" % (
+                os.path.relpath(path, os.path.dirname(base)), mdio.size(chars),
+                " · ".join("§%s %d-%d%s" % (t, a, b, " " + mdio.size(n) if n >= 1000 else "")
+                           for a, _lv, t, b, n in secs)))
+    return out
+
+
+def bible_map_note(c):
+    rows = bible_map(c)
+    if not rows:
+        return ""
+    return ("\nLong bible files, by section (Read the section you need by offset and limit, or Grep "
+            "a name; a whole file only when the task needs all of it):\n" + "\n".join(rows))
 
 
 def last_block_note(c):
@@ -377,9 +411,9 @@ def _fresh_reading(paths, now):
     return None
 
 
-def usage_pause(paths=READINGS, now=None):
+def usage_pause(paths=None, now=None):
     """A line when the 5-hour window is past PAUSE_AT by a fresh reading, else None."""
-    usage = _fresh_reading(paths, now or time.time())
+    usage = _fresh_reading(READINGS if paths is None else paths, now or time.time())
     if not usage:
         return None
     limits = usage.get("rate_limits")
@@ -409,6 +443,15 @@ def ungraded_pressure(c, k):
     ids = PRESSURE_ID.findall(" ".join(block.group(0).split())) if block else []
     owed = {l.split()[0] for l in wire.sections(mdio.read_text(notes)).get("Owed", []) if l.split()}
     return [i for i in dict.fromkeys(ids) if i not in owed]
+
+
+def unanswered(c, k):
+    """The fact findings of continuity-rK that notes-rK's *Continuity* section does not answer."""
+    cont, notes = c.abs(c.wfile("continuity-r%d.md" % k)), c.abs(c.wfile("notes-r%d.md" % k))
+    if not (os.path.isfile(cont) and os.path.isfile(notes)):
+        return []
+    done = wire.answered(mdio.read_text(notes))
+    return [f for f in wire.fact_findings(mdio.read_text(cont)) if f not in done]
 
 
 def wire_defects(path):
@@ -475,9 +518,9 @@ def step_beats(c):
         return lines, [fresh_reader(prev, folder)], (
             "then, with its report back: python3 tools/room.py adopt %s %d <agent id>, then "
             "python3 tools/room.py beats %s %d again" % (c.novel, prev.n, c.novel, c.n)), []
-    then = ("then, on PLANNER DONE beats: python3 tools/room.py approve %s %d, approve the beat "
-            "sheet (loop.md step 1), then send the writer:" % (c.novel, c.n))
-    return lines, [planner_beats(c, warm=False)], then, [writer(c)]
+    then = ("then, on PLANNER DONE beats: python3 tools/room.py approve %s %d (it prints the "
+            "writer)" % (c.novel, c.n))
+    return lines, [planner_beats(c, warm=False)], then, []
 
 
 def due_rows(nov, n):
@@ -514,9 +557,11 @@ def step_approve(c):
     unstepped = [pid for pid, _w, _t in c.nov.pressure() if pid not in stepped]
     if unstepped:
         out.append("pressure line steps no %s" % ", ".join(unstepped))
-    return out, [], ("then: approve it as written, or send the planner back saying which test it "
-                     "fails (loop.md step 1); the writer's dispatch is the one the last step "
-                     "printed"), []
+    then = ("then: approve it as written, or send the planner back saying which test it fails "
+            "(loop.md step 1). Approved, send the writer%s:" % (
+                " (a sheet started at chapter %d's ACCEPT: after room.py fold %s %d)"
+                % (c.n - 1, c.novel, c.n - 1) if c.n > 1 else ""))
+    return out, [], render([then], [writer(c)]), []
 
 
 def step_round(c, k, force=False):
@@ -593,6 +638,11 @@ def step_judge(c, k, reader_id, transcripts=None):
                      % (k - 1, ", ".join(missed)))
         editor = (editor[0], editor[1] + " Your last notes graded no %s: grade each pressure id "
                   "in Owed." % ", ".join(missed))
+    loose = unanswered(c, k - 1) if k > 0 else []
+    if loose:
+        lines.append("warn: notes-r%d.md answers no continuity %s" % (k - 1, ", ".join(loose)))
+        editor = (editor[0], editor[1] + " Your last notes answered no continuity %s: answer each "
+                  "fact finding in Continuity." % ", ".join(loose))
     return lines, [editor], "\n".join(branches[1:]), []
 
 
@@ -608,6 +658,10 @@ def step_clerk(c, k):
     if missed:
         lines.append("warn: notes-r%d.md grades no %s from the beat sheet's pressure line; the "
                      "clerk has no grade to step from" % (k, ", ".join(missed)))
+    loose = unanswered(c, k)
+    if loose:
+        lines.append("warn: notes-r%d.md answers no continuity %s: the chapter went to the clerk "
+                     "with those facts unchecked" % (k, ", ".join(loose)))
     notes = c.round_dir(k) + "/notes.md"
     if not os.path.isfile(c.abs(notes)):
         lines.append("warn: %s is missing; the reader's memory will not change" % notes)
@@ -694,7 +748,9 @@ def step_fold(c, cold=False):
     blocked = len(beats) > 2
     if count and not blocked:
         warm = [planner_beats(nxt)]
-        beats += ["  %s" % warm[0][0], "  " + warm[0][1]]
+        beats += ["  %s" % warm[0][0], "  " + warm[0][1],
+                  "  and on PLANNER DONE beats: python3 tools/room.py approve %s %d (it prints "
+                  "the writer)" % (c.novel, nxt.n)]
     elif not blocked:
         beats.append("  python3 tools/room.py beats %s %d (no fold: the planner is spawned "
                      "fresh)" % (c.novel, nxt.n))

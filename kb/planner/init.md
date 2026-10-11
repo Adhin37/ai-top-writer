@@ -6,6 +6,12 @@ roles: [planner]
 ---
 # Init — the new-novel interview
 
+## Contents
+
+- The round file: the format of each round's questions
+- The rounds: what each of the seven rounds asks and writes
+- Before you finish: the checks before `PLANNER DONE init`
+
 The showrunner has copied `novels/_template/` to `novels/<slug>/` and given you the user's seed. You
 turn it into a bible, a cast, a premise, a reader ledger and an arc plan, by asking the user in
 **seven rounds**. Each round you write its questions to a file and **stop**. The showrunner shows

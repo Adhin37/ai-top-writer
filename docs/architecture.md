@@ -199,6 +199,35 @@ the repository's, and none prints a rubric.
 a cold reader), and they do not spawn in non-interactive runs. Named subagents plus `SendMessage`
 give warm continuation without any of that.
 
+## Tools, skills and hooks
+
+The showrunner runs one `tools/room.py` call per loop step; the roles run the tools their prompts
+name. `python3 tools/<name>.py --help` prints each one's usage.
+
+| path | what |
+|---|---|
+| `tools/room.py` | the loop's deterministic steps, one call each, printing the next dispatches (with the last continuity block's line range, and a section map of each long bible file) |
+| `tools/scaffold.py` | a new novel from `novels/_template/`, and the check that init filled it |
+| `tools/status.py` | where a novel stands; the ledger's debt against the plan |
+| `tools/export_prose.py` | prose-only exports |
+| `tools/reading.py` | the reader's shelf and each round's view of it |
+| `tools/lint.py` | the per-chapter prose report |
+| `tools/canon_fetch.py` | fan wikis through their MediaWiki API, for the canon researcher |
+| `tools/history.py` | the book across chapters: motifs, signature phrases, two-handers, tempo runs; the editors' report from ch 3 |
+| `tools/state_check.py` | state against chapters and plan |
+| `tools/kb_check.py` | the knowledge bases' shape (frontmatter, indexes, a Contents list in each doc over 100 lines, no dated text), and a leak sweep for a novel's proper nouns |
+| `tools/clean.py` | what each novel left in `reading/` and `bench/`; removes a novel with all of it |
+| `tools/lib/` | the markdown (`mdio`: frontmatter, tables, sections, headings with line ranges), novel and prose readers |
+| `tools/guard.py` | the path hook; logs every allowed Read to `docs/sessions/<session>.reads.tsv` |
+| `tools/handback.py` | files a hand-back from a transcript, or appends it to a log |
+| `tools/wire.py` | parses status lines, notes, facts, continuity and fold files |
+| `tools/trace.py` | a session's cost per role and per chapter, from its transcripts: time, effort, cache expiries, injected context, docs opened, and a cross-check against Claude Code's own count |
+| `tools/study.py` | a genre study's steps: intake of saved chapters, the next dispatch ([genre-study.md](genre-study.md)) |
+| `tools/bench.py` | experiments on frozen rounds: a round frozen for one role, an effort or model arm, blind pairs, agreement between two notes or continuity files, the judge panel |
+| `.claude/skills/handoff/` | handing a session over across a usage-limit reset, and resuming; `scripts/`: `checkpoint.py` (the handoff file, from the transcripts), `session_hooks.py` (the hooks), `statusline.py` (the status line, and the usage reading it saves) |
+| `.claude/skills/usage-detection/` | the live usage of the 5-hour and 7-day windows, as `/usage` shows them (`scripts/live.py`); the hooks read it where no status line runs |
+| `docs/sessions/` | each session's handoff, rebuilt by hooks every turn and at a usage limit (gitignored) |
+
 ## Files outside the novel
 
 | path | what | git |

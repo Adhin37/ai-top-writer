@@ -6,6 +6,18 @@ roles: [planner]
 ---
 # Arcs and chapter rows
 
+## Contents
+
+- Examples
+  - A row that decides: writing a chapter row
+  - Temperatures across a stretch: a run of rows
+  - Built up, then spent: a big moment
+  - The lead's move, row by row: the protagonist's goal across rows
+  - The skim test: every row
+  - The rate the opening promises: chapters 1–3, and later rows against them
+  - Replanning: the page has moved off its row
+- When to break it: a climax at one temperature
+
 A chapter row in `plan/chapters.md` is a set of decisions made **before** drafting: the event, the
 temperature, the kind of ending, the cost. An arc rises, turns at a midpoint, cools, and rises again
 to a climax that has somewhere to rise from, and the cool stretch is not optional. A big moment is

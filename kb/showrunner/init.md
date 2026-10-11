@@ -6,6 +6,16 @@ roles: [showrunner]
 ---
 # New novel
 
+## Contents
+
+- In a test run: the answer sheet first: during the rebuild, before step 1
+- 1. Scaffold: the slug and the copy of the template
+- 2. The rounds — planner: relaying the seven interview rounds
+- 2b. The canon — canon researcher (fan fiction only): fan fiction, after round 1
+- 3. The style — writer: after round 4: the style samples
+- 4. Finish and check: after round 7: the checks to run
+- 5. Report to the user: what to tell the user at the end
+
 The planner runs the interview ([its procedure](../planner/init.md)); you carry it. Each round it
 writes its questions to a file and stops on `PLANNER ASKS`. You show the user the questions, and
 continue the planner with the answers, **verbatim**. You never answer for the user, and you never

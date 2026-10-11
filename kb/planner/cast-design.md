@@ -6,6 +6,20 @@ roles: [planner]
 ---
 # Designing the cast
 
+## Contents
+
+- Examples
+  - A gift and its cost: a power or talent
+  - Edges, not a generalist: the protagonist's domains
+  - Two gifts that are not the same gift: intelligence against reading people
+  - A voice row that differs from the protagonist's: the `_voices.md` row
+  - A profile: a cast file
+  - A walk-on is one line: `_extras.md`
+  - A mind that is not a person: a beast, a construct or a god
+  - A name the world gives: naming anyone
+  - How a character moves: a belief that changes over the arc
+- When to break it: a character who is only a wall
+
 A character generates scenes through their **edges**: what they want and cannot get, what they are
 good at and where it stops, what they misread. The protagonist has a want (concrete, on the page), a
 need (what they must learn, usually against the want), two blind spots, and at most three domains of

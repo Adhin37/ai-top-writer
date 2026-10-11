@@ -6,6 +6,16 @@ roles: [writer]
 ---
 # Orienting the reader
 
+## Contents
+
+- Examples: four moves, each with a failing and a working version
+  - 1. The rule, stated at the moment it bites: a rule the reader needs now
+  - 2. Someone who needs to know asks: a rule explained in dialogue
+  - 3. The rules as somebody's problem: a briefing the reader would skim
+  - 4. A name arrives with what it is: a proper noun on its first appearance
+- Check your draft as a stranger: when the draft is done
+- When to break it: a mystery's withheld answer
+
 Your reader has read nothing but your pages. You know the world; they do not, and you cannot feel
 the difference from the inside. So by the end of chapter 1 a reader must be able to say, in plain
 words: **what is different about this world and how it works**, **who this person is and what

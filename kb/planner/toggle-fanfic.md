@@ -7,6 +7,16 @@ toggle: genre (fanfic)
 ---
 # A story in someone else's world
 
+## Contents
+
+- Examples
+  - A canon fact the dossier lacks: a `gap canon` lookup
+  - One divergence: the point where the story leaves canon
+  - The departure is a premise fact: the premise and chapter 1
+  - Characters out of character: a canon character acting against canon
+  - The world track as canon: `plan/timeline.md`
+- When to break it: an alternate universe
+
 Fan fiction readers know the source better than you do: they forgive an invented city, never a
 character who would not say that, or who is two years too old. Canon comes to you researched: the
 canon researcher's `bible/canon.md` ([its format](../canon-researcher/canon-format.md)) holds the

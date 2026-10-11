@@ -8,6 +8,8 @@ Checks (OKF, and this repo's wiring):
   * every `.claude/agents/*.md` names a `kb/<role>/prompt.md` that exists, and an agent on a
     Sonnet model runs at effort `high` (warn: below it Sonnet 5.5 loses more than it saves, above
     it Opus at `medium` is cheaper for the same score; docs/experiments/2026-10-04-model-effort.md);
+  * a doc over CONTENTS_OVER lines opens with a `## Contents` list naming each of its `##`
+    sections (warn): an agent sees the whole doc's scope before it reads, and can Read one part;
   * no doc carries dated text (a date, a run, plan, session or lesson number; warn): an agent
     reading why a rule exists spends attention on the past, and the history lives in `docs/`;
   * with --novel, no doc names the novel's own proper nouns (its lexicon's Names table, and its
@@ -44,6 +46,7 @@ RESERVED = ("index.md",)
 DATED = re.compile(r"\b20\d\d-[01]\d\b|\brun #\d|\bplan 0?\d{1,2}[a-z]?\b|\bsession \d+\b|"
                    r"\blesson \d+", re.I)
 SONNET_EFFORT = "high"
+CONTENTS_OVER = 100     # lines; the skill-authoring guide's threshold for a contents list
 
 
 def docs(kb):
@@ -112,6 +115,28 @@ def check_agents(agents, root, out):
             out.append(("warn", "effort", "%s runs %s at effort %s: Sonnet runs at %s; a role that "
                         "needs more moves to Opus at medium" % (name, model, effort or "(default)",
                                                                 SONNET_EFFORT)))
+
+
+def check_contents(kb, out):
+    for path in docs(kb):
+        if os.path.basename(path) in RESERVED:
+            continue
+        lines = mdio.read_text(path).split("\n")
+        if len(lines) <= CONTENTS_OVER:
+            continue
+        rel = os.path.relpath(path, os.path.dirname(kb))
+        heads = mdio.headings(lines)
+        box = next((h for h in heads if h[1] == 2 and h[2].lower() == "contents"), None)
+        if box is None:
+            out.append(("warn", "contents", "%s is %d lines and has no `## Contents`"
+                        % (rel, len(lines))))
+            continue
+        listed = "\n".join(lines[box[0]:box[3]]).lower()
+        missing = [h[2] for h in heads if h[1] == 2 and h is not box
+                   and h[2].lower() not in listed]
+        if missing:
+            out.append(("warn", "contents", "%s: `## Contents` does not name %s"
+                        % (rel, ", ".join(repr(m) for m in missing))))
 
 
 def check_dated(kb, out):
@@ -265,6 +290,7 @@ def run(root=ROOT, novels=(), noun_files=()):
     check_types(kb, out)
     check_indexes(kb, out)
     check_agents(os.path.join(root, ".claude", "agents"), root, out)
+    check_contents(kb, out)
     check_dated(kb, out)
     ordinary = ordinary_words(kb) if novels or noun_files else set()
     for novel in novels:

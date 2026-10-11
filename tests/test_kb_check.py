@@ -83,6 +83,21 @@ class KbCheckTest(unittest.TestCase):
                    "effort: high\n---\nRead `kb/writer/prompt.md`.\n")
         self.assertNotIn(("warn", "effort"), self.found())
 
+    def test_a_long_doc_needs_contents_naming_its_sections(self):
+        body = "".join("line %d\n" % i for i in range(kb_check.CONTENTS_OVER))
+        self.write("kb/writer/a.md", DOC + "\n## Inputs\n\n" + body + "## Your final message\n\n"
+                   "```\n## Not a section\n```\n")
+        self.assertIn(("warn", "contents"), self.found())
+        self.write("kb/writer/a.md", DOC + "\n## Contents\n\n- Inputs\n\n## Inputs\n\n" + body
+                   + "## Your final message\n")
+        details = [d for lv, c, d in kb_check.run(self.tmp) if c == "contents"]
+        self.assertEqual(len(details), 1)
+        self.assertIn("'Your final message'", details[0])
+        self.write("kb/writer/a.md", DOC + "\n## Contents\n\n- Inputs\n- Your final message\n\n"
+                   "## Inputs\n\n" + body + "## Your final message\n\n```\n## Not a section\n"
+                   "```\n")
+        self.assertNotIn(("warn", "contents"), self.found())
+
     def test_dated_text(self):
         self.write("kb/writer/a.md", DOC + "\nAs run #7 showed on 2026-10-03.\n")
         self.assertIn(("warn", "dated"), self.found())

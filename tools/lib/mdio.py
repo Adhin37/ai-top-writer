@@ -271,6 +271,47 @@ def table_with(text, *names):
     return None
 
 
+HEADING = re.compile(r"^(#{1,6}) (.*)")
+FENCE = re.compile(r"^\s*(```|~~~)")
+
+
+def headings(lines):
+    """[(line number, level, title, last line, characters)] for each heading outside a fenced
+    block; a section runs to the next heading of its level or above."""
+    found, fenced = [], False
+    for i, line in enumerate(lines):
+        if FENCE.match(line):
+            fenced = not fenced
+            continue
+        m = None if fenced else HEADING.match(line)
+        if m:
+            found.append((i, len(m.group(1)), m.group(2).strip()))
+    out = []
+    for k, (i, level, title) in enumerate(found):
+        j = next((f[0] for f in found[k + 1:] if f[1] <= level), len(lines))
+        while j > i + 1 and not lines[j - 1].strip():
+            j -= 1
+        out.append((i + 1, level, title, j, sum(len(l) + 1 for l in lines[i:j])))
+    return out
+
+
+def size(chars):
+    return "%.1fk" % (chars / 1000.0) if chars >= 1000 else "%d" % chars
+
+
+def toc(path, label=None):
+    """A file's headings, one a line, with their line ranges and sizes: what to Read by offset
+    and limit instead of the whole file."""
+    with open(path, encoding="utf-8") as fh:
+        lines = fh.read().split("\n")
+    rows = ["%s (%d lines, %s chars)" % (label or path, len(lines),
+                                         size(sum(len(l) + 1 for l in lines)))]
+    for first, level, title, last, chars in headings(lines):
+        rows.append("%5d-%-5d %6s  %s%s %s" % (first, last, size(chars), "  " * (level - 1),
+                                               "#" * level, title))
+    return rows
+
+
 def section(text, heading_substr, level=None):
     """The first section whose heading contains `heading_substr`, heading line included, up to the
     next heading of the same or a shallower level. '' if there is none."""

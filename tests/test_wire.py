@@ -137,6 +137,16 @@ class NotesTest(unittest.TestCase):
         text = (NOTES[:start] + "## Notes\nnone\n\n" + NOTES[end:]).replace("REVISE", "ACCEPT")
         self.assertEqual([f for f in wire.check_notes(text) if f[0] != "note"], [])
 
+    def test_continuity_answers_each_fact_finding(self):
+        text = NOTES.replace("## Keep", "## Continuity\nF1 N1\nF3 dismissed — the tide turned "
+                             "at noon\nF4 the line editor's\n\n## Keep")
+        found = wire.check_notes(text)
+        self.assertEqual([f[1] for f in found if f[0] == "warn"], ["continuity"])
+        self.assertEqual(wire.answered(text), {"F1", "F3"})
+        cont = ('lint x\nchecked y\nF1 bible "a" | b: "c" | d\nF2 number "a" | b: "c" | d\n'
+                'F3 time "a" | b: "c" | d\n')
+        self.assertEqual(wire.fact_findings(cont), ["F1", "F3"])
+
     def test_a_note_needs_where_ev_and_eff(self):
         found = wire.check_notes(NOTES.replace("eff   the reader didn't", "the reader didn't"))
         self.assertIn(("defect", "note", "N1 has no `eff`"), found)

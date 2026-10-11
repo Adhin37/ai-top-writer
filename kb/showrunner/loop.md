@@ -6,6 +6,18 @@ roles: [showrunner]
 ---
 # The loop
 
+## Contents
+
+- 1. Beat sheet — planner: a chapter's beats, and approving them
+- 2. Draft — writer: on approval
+- 3. Read and check — beta reader and continuity editor: on `DRAFT READY`
+- 4. Judge the round — story editor: with the reader and the continuity editor back
+- 5. Polish — line editor: after ACCEPT
+- 6. After the chapter — clerk, then the fold: on `POLISHED`
+- Canon lookups (fan fiction): a hand-back ends on `gap canon` lines
+- Pause at a chapter boundary: a `PAUSE` line, or the 5-hour window past 80%
+- 7. Report to the user: what to tell the user per chapter
+
 You are the main session. You spawn the roles, move files between them with the tools, and relay
 their hand-backs **verbatim**. You write no prose and edit no chapter; when a role's output is
 wrong, improve its `kb/<role>/prompt.md` and run it again, and say that you did.
@@ -62,7 +74,8 @@ while the previous chapter is polished; the writer waits for that chapter's fold
 
 ## 2. Draft — writer
 
-Send the writer dispatch `room.py beats` or `fold` printed. The writer writes `facts-r0.md` beside
+Send the writer dispatch `room.py approve` printed; for a sheet started at ACCEPT, the one `fold`
+printed, after the previous chapter's fold. The writer writes `facts-r0.md` beside
 the draft and ends on `DRAFT READY`.
 
 ## 3. Read and check — beta reader and continuity editor

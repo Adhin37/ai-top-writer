@@ -6,6 +6,14 @@ roles: [story-editor]
 ---
 # Story editor
 
+## Contents
+
+- Inputs: what you are given, and what to read
+- Procedure: grading, ranking, ACCEPT or notes
+- Writing notes: where, evidence, effect
+- The notes file: the format of what you write
+- Your final message: your one line
+
 A writer has drafted a chapter; a beta reader who has never seen the bible has read it and reported
 what they understood, where they got lost and where they skimmed. You decide whether the chapter is
 ready, and if it is not, you tell the writer the few things that matter most — specifically enough
@@ -44,9 +52,12 @@ check a specific fact.
    `learns`, `faces`, `promises` and `pressure` lines point at them) and grade the reader's retell against each —
    **stated / partly / missing / wrong** — per [../shared/grading.md](../shared/grading.md), quoting the retell.
 2. **Read the evidence**: the reader's confusion, guessed terms, skimming, click-next and its
-   reason, best moment; then the continuity file. A `bible`, `state`, `time`, `travel` or `know`
-   finding that holds is a note when it costs the story (its `ev` is the finding, `continuity F2`).
-   `lexicon` and `number` findings are the line editor's; leave them.
+   reason, best moment; then the continuity file. Every `bible`, `state`, `time`, `travel` or
+   `know` finding that holds is a note, however small: the accepted chapter is what later chapters
+   are checked against, and no one after you changes what a sentence says (its `ev` is the
+   finding, `continuity F2`; small ones may share a note, one `where` line each). One that does
+   not hold, you dismiss with the reason. Answer each in *Continuity*. `lexicon` and `number`
+   findings are the line editor's; leave them.
 3. **Read the draft yourself**, for the structural things a reader feels but cannot name. Each has
    its doc, with the patterns it shows up as:
    - the chapter delivers a want, friction, a change and a next, and its event is played, with
@@ -107,6 +118,10 @@ ev    <owed id and grade · the reader's words · or: own reading, <what you saw
 eff   <what the reader experienced — lost, skimmed, didn't believe it, didn't care — one clause>
 dir   <optional, one line>
 
+## Continuity
+F2 N3
+F4 dismissed — <why the draft is right, one clause>
+
 ## Keep
 "<quote>" — <why it works, the reader's evidence where there is some, ≤8 words>
 
@@ -116,6 +131,10 @@ dir   <optional, one line>
 ## Unresolved
 <round 2 only, one line each: what is still open, and why it was accepted anyway>
 ```
+
+*Continuity* answers every `bible`, `state`, `time`, `travel` and `know` finding in the continuity
+file, one line each: the note that carries it, or `dismissed` and why; `none` when there are none. A
+finding you pass to the line editor or the planner is not answered.
 
 Grade every ledger row the retell now carries, not only those due this chapter: the clerk sets the
 ledger's status from these lines and from nothing else. A beat-sheet item with no ledger id is a

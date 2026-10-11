@@ -141,3 +141,14 @@ Per the standing decision (*test by parts*), no paid replay: the next run's `tra
 - **Step 5, built.** `toc` over the 50 cached pages: 68 KB → 6.1 KB.
 - **Step 6, built.**
 - 372 → 383 tests, all pass; `kb_check` clean.
+
+2026-10-11, the live check: run #10 on ember-terraces ch 13–14 ([write-up](../experiments/2026-10-11-run-10.md#write-up)).
+
+- Every planned read bounded: the showrunner approved from the header (limit 19 and 45); 7 of 7
+  reads of `continuity.md` by range; the clerk's blocks appended in place, `state_check` clean.
+- No showrunner compaction in two chapters; hand-backs 9% of its cache reads (59% in run #9).
+- The history report fell to 5.3 KB at ch 14, and the line editor still cut from it.
+- Per-spawn cost of the clerk, planner and story editor did not fall: what else they read grew
+  more than the range saved. $1.75 per 1,000 words (run #9 $1.86 without judges).
+- The fresh read's budget is unchecked until ch 20.
+
