@@ -83,9 +83,13 @@ def owned(novel, root=ROOT):
     slug = os.path.basename(os.path.normpath(novel))
     mine = [n for n in novels(root) if n == slug or n.startswith(slug + "--")]
     paths, shared = [], []
+    ids = novels(root)
     for name in mine:
         paths.append("novels/%s" % name)
-        rid = export_prose.novel_id(os.path.join(root, "novels", name))
+        rid = ids[name]
+        # a copy made by hand keeps its source's `slug`, and with it the source's reading folder
+        if "--" in name and rid == ids.get(name.split("--")[0]):
+            continue
         if os.path.isdir(os.path.join(root, "reading", rid)):
             paths.append("reading/%s" % rid)
     for path, owners in survey(root):

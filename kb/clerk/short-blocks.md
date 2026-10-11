@@ -1,7 +1,7 @@
 ---
 type: example
 title: A short block
-description: How to keep a continuity block readable five at a time (a `kno` line of what changed, with its sources), shown as a long block and its short version.
+description: How to keep a continuity block readable five at a time (a `kno` line of what changed, with its sources), shown as a long block and its short version; and why `ev` stays whole.
 roles: [clerk]
 ---
 # A short block
@@ -39,6 +39,18 @@ why; Kell could be written as knowing about the chit.
 
 Would a later chapter contradict it if it were missing? Keep it. Was it already in an earlier block?
 Cut it. Is it a question rather than knowledge? It belongs to the reader, not to state.
+
+### Short is for `kno`, not for `ev`
+
+`ev` is the one line a later reader of the blocks has instead of the chapter, so it keeps every
+action, in order, a clause each:
+
+```
+ev    Tovi takes a fitting on a deep-crew tender      (too short: a summary of the chapter)
+ev    Tovi signs the deep-crew contract for her brother's air; the recruiter lets slip she is "the second one"; she pockets Kell's clamp chit from the fitting log; Ossie walks her to the ladder and she tells him she is going down-well
+```
+
+The first is true and useless: the next chapter cannot tell from it that she holds the chit.
 
 ## When to break it
 

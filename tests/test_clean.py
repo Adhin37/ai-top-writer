@@ -71,6 +71,14 @@ class CleanTest(unittest.TestCase):
         for kept in (("novels", "ash"), ("bench", "both"), ("reading", "r000000")):
             self.assertTrue(os.path.exists(self.p(*kept)), kept)
 
+    def test_a_copy_that_kept_its_sources_slug_never_owns_the_sources_reading(self):
+        self.write("novels/tide/novel.md", "---\nslug: tide\n---\n")
+        self.write("novels/tide--cp/novel.md", "---\nslug: tide\n---\n")
+        paths, _ = clean.owned("tide--cp", self.root)
+        self.assertEqual(paths, ["novels/tide--cp"])
+        paths, _ = clean.owned("tide", self.root)
+        self.assertIn("reading/%s" % self.tide, paths)
+
 
 if __name__ == "__main__":
     unittest.main()

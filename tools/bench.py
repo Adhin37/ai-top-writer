@@ -38,7 +38,9 @@ on are cut, and ledger rows the clerk marked from chapter N on are `owed` again;
 memory is the one the previous chapter accepted. **The bible keeps the folds of chapter N and
 later**, which may hide a contradiction a fold settled: every arm, the
 baseline replay included, reads the same copy, so compare arms with each other, and with the run's
-own file only as a second reference. Copies live under novels/ (gitignored) because the roles may
+own file only as a second reference. Nor does it cut a thread's `last` set by a later chapter.
+**A model arm prefers a round with no later chapter** (a novel's last accepted one): a smaller
+model is thrown more by state the copy holds from after its round. Copies live under novels/ (gitignored) because the roles may
 write only there; delete them when the experiment is written up.
 
 Reports and never gates: exit 0, or 1 on a bad call.

@@ -136,9 +136,10 @@ class Novel(object):
                 return row
         return None
 
-    def ledger(self):
-        """{"facts": rows, "faces": rows, "promises": rows} from plan/reader-ledger.md."""
-        text = self.text("plan", "reader-ledger.md")
+    def ledger(self, text=None):
+        """{"facts": rows, "faces": rows, "promises": rows} from plan/reader-ledger.md, or from
+        TEXT, a saved copy of it."""
+        text = self.text("plan", "reader-ledger.md") if text is None else text
         out = {}
         for kind, cols in (("facts", ("id", "due by ch", "status")),
                            ("faces", ("id", "who", "status")),
@@ -147,10 +148,12 @@ class Novel(object):
             out[kind] = t.rows if t else []
         return out
 
-    def pressure(self):
+    def pressure(self, text=None):
         """The ledger's Pressure rows: [(id, what, [(chapter, step, clause)])], from the trail
-        `ch1 set — <clause> · ch2 grew — <clause>`. Empty when the ledger has no Pressure table."""
-        t = mdio.table_with(self.text("plan", "reader-ledger.md"), "id", "by chapter")
+        `ch1 set — <clause> · ch2 grew — <clause>`, in plan/reader-ledger.md or TEXT. Empty when
+        the ledger has no Pressure table."""
+        text = self.text("plan", "reader-ledger.md") if text is None else text
+        t = mdio.table_with(text, "id", "by chapter")
         out = []
         for r in (t.rows if t else []):
             trail = [(int(m.group(1)), m.group(2).lower(), m.group(3).strip(" —-"))

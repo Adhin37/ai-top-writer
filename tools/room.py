@@ -535,6 +535,12 @@ def step_clerk(c, k):
     if words > reading.NOTES_CAP:
         return lines, [compress(c, k, words)], ("then: python3 tools/room.py clerk %s %d %d again "
                                                 "(it counts afresh)" % (c.novel, c.n, k)), came
+    before = c.wfile("ledger-before.md")
+    if not os.path.isfile(c.abs(before)):
+        os.makedirs(c.abs(c.work), exist_ok=True)
+        with open(c.abs(before), "w", encoding="utf-8") as f:
+            f.write(mdio.read_text(c.nov.path("plan", "reader-ledger.md")))
+        lines.append("saved %s, for state_check's ledger moves" % before)
     return lines, [clerk(c, k)], ("then, on CLERK DONE: python3 tools/room.py fold %s %d"
                                   % (c.novel, c.n)), came
 

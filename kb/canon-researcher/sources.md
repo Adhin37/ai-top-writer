@@ -8,8 +8,10 @@ roles: [canon-researcher]
 
 ## What outranks what
 
-1. **The work itself**, in the edition the scope names: a chapter the user saved into
-   `work/canon/inbox/`, or a chapter summary that cites its chapter.
+1. **The work itself**, in the edition the scope names: for a book or a manga, its text (a
+   chapter the user saved into `work/canon/inbox/`); for a show or a film, its transcripts, which
+   most fan wikis host (`Transcript:<episode>`); failing those, a summary that cites its chapter or
+   episode. An episode summary that cites nothing is the wiki's, not the work's.
 2. **The author and the publisher**: the author's notes, an official guide or databook, the
    author's answers in interviews or on their own pages.
 3. **The fan wiki**, for most facts. Good wikis cite chapter and episode; prefer a line that does.

@@ -21,7 +21,7 @@ Appended, in chapter order, never rewritten. A header, then one line per key.
 
 ```
 =C0003= day 12, dusk to night | words 2410
-ev    Ysolde rows the Calder boy out past the bar alone, against the harbourmaster's order
+ev    Ysolde finds the Calder tally dated two days before the boy drowned; Quell refuses her the crossing at the harbour office; she rows the boy out past the bar alone, against his order, and loses her grip on the oar coming back
 at    Ysolde: the boathouse · Quell: the harbour office · Orrin: the quay steps
 kno   Ysolde+ the tally was signed before the boy drowned (the date on it) · Quell? suspects she has seen it · Orrin- does not know she went out
 has   Ysolde: the Calder tally, folded in her boot · Orrin: the boathouse key
@@ -33,8 +33,8 @@ hook  Quell's lamp is lit in the office window when she comes back in
 | key | what it holds | who reads it for what |
 |---|---|---|
 | header | `day` (the in-world day and time the chapter covers) · `words` (the chapter's measured length) | the continuity editor: time between chapters |
-| `ev` | the event as it played on the page, one clause | everyone: what happened |
-| `at` | where each person on the page is at the end | travel and presence in the next chapter |
+| `ev` | what the chapter did, action by action as it played, a clause each | everyone: what happened |
+| `at` | where each person on the page is at the end; nobody who is only in the beat sheet | travel and presence in the next chapter |
 | `kno` | who learned what, and how: `Name+` knows · `Name?` suspects · `Name-` does not know. The *how* matters: it is what lets a character say it later | knowledge provenance: a character may state only what they have a source for |
 | `has` | who holds the objects that matter | an object in two hands at once |
 | `cost` | what was spent, hurt or lost, and for how long | an injury healed too fast |
@@ -98,7 +98,9 @@ grade of a promise the chapter makes says the reader holds it, and its row stays
 payoff. `moved to chN — <why>` is the planner's.
 
 A **Pressure** row (`L1` the lead's lever, `C1` the clock) has no status cell: append one step to
-its `by chapter` trail, ` · chN <step> — <what the page did, one clause>`. The step is the one the
+its `by chapter` trail, ` · chN <step> — <what the page did, one clause>`. The clause keeps the
+day, count or price the page gives, and for a lever what the move cost the lead: `· ch7 nearer — the
+ebb is set for day 40, nine days off`, not `the ebb is close`. The step is the one the
 beat sheet's `pressure` line planned when the story editor graded the row *stated*, and `held`
 otherwise. Steps: `grew`, `held`, `shrank` for a lever; `nearer`, `held`, `later` for a clock.
 

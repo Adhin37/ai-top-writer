@@ -126,6 +126,26 @@ class ScenesLedgerTest(unittest.TestCase):
             self.assertTrue(has(got, "warn", "P1 status `done`"))
             self.assertTrue(has(got, "note", "F2 is still owed; due by ch 1"))
 
+    def test_a_row_landed_earlier_stays_as_the_clerk_found_it(self):
+        with NovelFixture() as fx:
+            fx.chapter(1)
+            fx.chapter(2)
+            fx.state(blocks=(1, 2))
+            pressure = ("\n## Pressure\n| id | what the reader tracks | by chapter |\n|---|---|---|\n"
+                        "| C1 | the Long Ebb | ch1 set — day 12 of 40 · ch2 nearer — day 20 |\n")
+            ledger = fx.novel().text("plan", "reader-ledger.md") + pressure
+            fx.write("plan/reader-ledger.md", ledger)
+            fx.write("work/ch0002/ledger-before.md", ledger)
+            self.assertFalse(has(findings(fx), "warn", "before ch 2's clerk"))
+            fx.write("plan/reader-ledger.md", ledger
+                     .replace("| landed ch1 |", "| partly ch1 — the tally, not its date |")
+                     .replace("| partly ch1 — his office, not his reason |", "| landed ch2 |")
+                     .replace("ch1 set — day 12 of 40", "ch1 set — about forty days"))
+            got = findings(fx)
+            self.assertTrue(has(got, "warn", "P1 was `landed ch1` before ch 2's clerk"))
+            self.assertFalse(has(got, "warn", "A1 was"))
+            self.assertTrue(has(got, "warn", "C1 ch1's step changed in ch 2's clerk pass"))
+
     def test_last_blocks_prints_them_as_written(self):
         with NovelFixture() as fx:
             fx.chapter(1)

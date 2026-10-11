@@ -21,9 +21,10 @@ load-bearing, the headings may be edited. Every row and fact line ends on its so
 | `## Unsure` | each fact you could not source, as a question the user can answer |
 | `## Sources` | a table: id · where · what. A URL, or a path under `work/canon/` |
 
-**Ages are at the story's start.** Canon gives an age at some moment; work out the age at `start`
-from the timeline and say how (`16 at entry, start is one year later`). An age you cannot work out
-goes under `## Unsure`.
+**Ages and ranks are at the story's start.** Canon gives an age or a rank at some moment, and a
+wiki gives the latest; work out each at `start` from the timeline and say how (`16 at entry, start
+is one year later`; `lecturer; made dean in ch 80, after the start`). One you cannot work out goes
+under `## Unsure`.
 
 **Manner is characterisation in your words:** how they talk, what they never do, how they treat
 the people around them. It is what a fan checks first in a scene, and the planner's only guide to

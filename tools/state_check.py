@@ -4,7 +4,8 @@
 Bookkeeping only: one block per accepted chapter, in chapter order, with its keys; every thread id
 a block or a plan row uses has a row in `state/threads.md`; a planned thread the chapter skipped;
 the scene log and timeline cover every chapter; the reader ledger's statuses are in the form the
-clerk writes. Formats: `docs/novel-format.md`.
+clerk writes, and the last clerk changed no row an earlier chapter set (against
+`work/chNNNN/ledger-before.md`, which `room.py clerk` saves). Formats: `docs/novel-format.md`.
 
 Findings print as `level check: detail` (`defect`, `warn`, `note`), then a count line that ends in
 `clean` when there is no defect and no warn. It reports and never gates: the exit status is 0
@@ -218,6 +219,34 @@ def check_pressure(nov, out):
                     % (rid, ", ".join(str(n) for n in missing)))
 
 
+def check_ledger_moves(nov, out):
+    """What the last chapter's clerk changed that an earlier chapter set: a status `landed` before
+    it, or a Pressure step for an earlier chapter. Against the copy `room.py clerk` saved."""
+    last = nov.last_chapter
+    saved = nov.path("work", "ch%04d" % last, "ledger-before.md")
+    if not last or not os.path.isfile(saved):
+        return
+    text = mdio.read_text(saved)
+
+    def statuses(ledger):
+        return {r.first().strip("* "): r.get("status").strip()
+                for rows in ledger.values() for r in rows}
+
+    now = statuses(nov.ledger())
+    for rid, was in statuses(nov.ledger(text)).items():
+        m = re.match(r"^landed ch\s?(\d+)", was, re.I)
+        if m and int(m.group(1)) < last and now.get(rid, was) != was:
+            out.add("warn", "ledger", "%s was `%s` before ch %d's clerk, and now says `%s`"
+                    % (rid, was[:30], last, now.get(rid, "")[:40]))
+    trails = {rid: dict((n, (step, clause)) for n, step, clause in trail)
+              for rid, _, trail in nov.pressure()}
+    for rid, _, trail in nov.pressure(text):
+        for n, step, clause in trail:
+            if n < last and trails.get(rid, {}).get(n) != (step, clause):
+                out.add("warn", "pressure", "%s ch%d's step changed in ch %d's clerk pass"
+                        % (rid, n, last))
+
+
 def run(nov):
     out = Findings()
     if not os.path.isfile(nov.path("state", "continuity.md")):
@@ -228,6 +257,7 @@ def run(nov):
     check_scenes_and_timeline(nov, out)
     check_ledger(nov, out)
     check_pressure(nov, out)
+    check_ledger_moves(nov, out)
     return out
 
 

@@ -158,6 +158,22 @@ replay was paid for it):
       still cited, and every path under `## Sources` exists. Facts missing: loosen what counts as a
       whole-page read; do not revert the tool.
 
+Partial evidence, on Haiku (plan 10's retest, 2026-10-11): 7 `toc`, 15 `grep`, 22 Reads with an
+offset and 3 whole, no compaction, 0.17M cache writes; three transcripts cited, all through `grep`.
+The Sonnet run is still owed.
+
+## Plan 10 (2026-10-11)
+
+From [10](roadmap/10-prompts-for-smaller-models.md), on the next run's clerk (Sonnet), each chapter:
+
+- [ ] no `state_check` warn that a row "was landed … before ch N's clerk", or that a step "changed
+      in ch N's clerk pass", and `work/chNNNN/ledger-before.md` is there for every chapter;
+- [ ] each block's `ev` keeps the chapter's actions in order, and `at` names nobody who is only in
+      the beat sheet;
+- [ ] each Pressure step carries the day, count or price the page gives, and a lever step its cost;
+- [ ] at a fan-fiction init: the dossier cites transcripts for a show, and states each rank at the
+      start, with how it was worked out.
+
 ## The bench
 
 - [x] the blind panel on two models (`bench.py panel`, `judge--fable`): scores per model, with the

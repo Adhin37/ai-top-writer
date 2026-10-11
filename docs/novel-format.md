@@ -41,8 +41,8 @@ novels/<slug>/
   work/chNNNN/            the loop's hand-off files for the chapter in progress — beat sheet,
                           drafts per round, the writer's facts file per round, the continuity
                           editor's file and lint report per round, the history report per
-                          round from ch 3 (tools/history.py), editor notes, the clerk's
-                          fold file. Written in the wire format (kb/shared/wire.md). Overwritten
+                          round from ch 3 (tools/history.py), editor notes, the ledger as
+                          it stood before the clerk (ledger-before.md), the clerk's fold file. Written in the wire format (kb/shared/wire.md). Overwritten
                           per chapter; not a backup
   chapters/NNNN-<slug>.md the accepted chapters
 ```

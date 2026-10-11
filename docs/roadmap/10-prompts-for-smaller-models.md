@@ -93,4 +93,57 @@ the copies, `canonson` included, and `.test-run`.
 
 ## Session log
 
-(empty: fill in when the plan runs)
+### 2026-10-11 — steps 1 and 2 (no spawn)
+
+**Step 1, each miss against the line it followed:**
+
+| miss | model | the `kb/` line, or the gap | cause | fix |
+|---|---|---|---|---|
+| F11 `landed ch6` → `partly ch6` | Haiku 5.5 | clerk step 7, *"set the status … from its grade"*, and state-format's grade table (partly → `partly chN`), with no word on a row already landed | kb | step 7's first sentence replaced: a grade sets a row only where this chapter owes or pays it; an earlier `landed` stays |
+| `landed ch4` → `landed ch5` | Haiku 4.5 | the same: ch 5's notes graded the row *stated* again, and the table says stated → `landed chN` | kb | the same |
+| beat-sheet names in `at` | Haiku 4.5 | step 1 has the clerk read the beat sheet and never says it is the plan, not the page; `at` said "each person on the page" | kb, weak | step 3: the block holds the page, the beat sheet only the plan; the `at` row: nobody only in the beat sheet |
+| one-sentence `ev` | Haiku 4.5 | state-format's `ev`: *"the event as it played on the page, one clause"*, with a one-clause example; short-blocks.md says *short* throughout. Sonnet ignored the letter | kb | `ev` row replaced ("action by action, a clause each") and its example made whole; short-blocks.md gets *Short is for `kno`, not for `ev`* |
+| C1 step without its day | Haiku 5.5 | the trail format, *"<what the page did, one clause>"*, says nothing of numbers | kb, gap | the trail sentence: the clause keeps the day, count or price, and a lever's cost, with an example |
+| L1 step dropped "pays for Bai" | Haiku 5.5 | the same gap | kb, gap | the same |
+| notes under the status line | Haiku 5.5 | the prompt says *"Exactly one line, nothing before or after it"* | model's own | none |
+| no transcript read | Haiku 5.5 | sources.md ranks "the work itself" first as *"a chapter the user saved … or a chapter summary"*: nothing for a show | kb | rank 1 names the forms: a book's text, a show's transcripts (`Transcript:<episode>`), a summary that cites its episode; an uncited summary is the wiki's |
+| Zhao "newly commander at the start" | Haiku 5.5 | canon-format works out **ages** at `start` from the timeline, not ranks; the wiki's infobox gives the latest rank | kb, gap | the rule now covers ages and ranks, with a rank example |
+| the full-moon rule | Haiku 5.5 | — | not a miss | Haiku put it under `## Unsure`, which is right for a wiki-only rule; the plan's "write it as wiki" is dropped, since nothing failed |
+
+**Step 2, built:**
+
+- `kb/clerk/prompt.md` steps 3 and 7; `kb/shared/state-format.md` (`ev`, `at`, the Pressure
+  clause); `kb/clerk/short-blocks.md` (a whole `ev`, invented nouns); `kb/canon-researcher/
+  sources.md` rank 1; `kb/canon-researcher/canon-format.md` ages and ranks. Every change replaces
+  a line or adds an example; no rule added to a pile.
+- Backstop: `room.py clerk` saves `work/chNNNN/ledger-before.md` once, before the clerk;
+  `state_check.py` warns when a row `landed` before the chapter changed, or a Pressure step for an
+  earlier chapter changed (`check_ledger_moves`). `Novel.ledger` and `Novel.pressure` take a saved
+  text. Tests: `test_clerk_saves_the_ledger_once_before_the_clerk`,
+  `test_a_row_landed_earlier_stays_as_the_clerk_found_it`.
+- `bench.py`'s docstring: a model arm prefers a round with no later chapter.
+- `kb_check` clean; 371 tests pass.
+
+### 2026-10-11 — steps 3 and 4
+
+The user chose to run the retest ("Run it now"). Five spawns, $1.82 by `trace.py`: Sonnet clerks
+$0.66 + $0.56, Haiku clerks $0.23 + $0.13, the Haiku canon researcher $0.24. Every arm's model was
+confirmed in its transcript. Write-up: [2026-10-11-haiku-5-5-retest](../experiments/2026-10-11-haiku-5-5-retest.md).
+
+- **Clerk: stays on Sonnet.** The ledger matched in both rounds, with F11 untouched and C1 keeping
+  its day. `ev` and `at` were fixed. Still behind: `kno` (19 items against 27), a missed `^T17`, a
+  fold that never looks past the facts file, and text under the status line.
+- **Canon researcher: stays on Sonnet.** It now cites transcripts (3) and leaves Zhao's rank at the
+  start unsure, not wrong, but it has about half of Sonnet's sources and skipped the fan search.
+- No agent file, `README.md` decision, `CLAUDE.md` principle or `kb_check` level changed.
+- The fixes stay, for every model. The next run checks them on Sonnet (`docs/next-run-checklist.md`,
+  plan 10).
+- Found on the way: `bench.py freeze` leaves out the accepted round's reading folder, so a frozen
+  clerk cannot update the reader's memory. That is harmless to a verdict on state; noted in the
+  write-up, not fixed.
+- Deleted: the five `--h55r-` copies, their reading folders, `bench/h55r/` and `.test-run`.
+  `bench/h55-canon/canonson.md` is kept until plan 09's live check runs.
+- Found while cleaning up: a copy made with `cp -r` keeps its source's `slug`, so `clean.py` gave it
+  the source's reading folder, and `--delete` on such a copy would have removed the real novel's
+  reading. `owned()` now skips a copy's id when it equals its source's
+  (`test_a_copy_that_kept_its_sources_slug_never_owns_the_sources_reading`); 372 tests pass.

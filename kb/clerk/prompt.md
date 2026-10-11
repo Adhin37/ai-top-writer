@@ -32,16 +32,18 @@ search files with Read, Glob and Grep.
    It puts the chapter on the reader's shelf and copies that round's reader notes into the reader's
    memory, byte for byte. Never write or edit the reader's notes yourself: they are the reader's own
    words, and only the accepted round's reader may become memory.
-3. **`state/continuity.md`:** append the chapter's block after the last one. Create the file with a
+3. **`state/continuity.md`:** append the chapter's block after the last one. It holds what the
+   chapter puts on the page; the beat sheet is only what was planned. Create the file with a
    `# Continuity` heading if it does not exist.
 4. **`state/threads.md`:** for each thread the chapter touched, set `last` to N and update
    `status`. A thread the chapter opens that has a `planned` row becomes `open`, with `opened` N. A
    thread the chapter opens that has no row gets one, with the next free id.
 5. **`state/timeline.md`:** one row for each in-world day the chapter covers.
 6. **`state/scenes.md`:** one row per scene (scenes are split by `* * *`).
-7. **`plan/reader-ledger.md`:** set the status of each fact and face row the notes file grades,
-   from its grade, and mark a promise `landed` only where this chapter pays it. Append the
-   chapter's step to each Pressure row's trail. A `beat` line has no ledger row; skip it. Change
+7. **`plan/reader-ledger.md`:** a grade sets a row only where this chapter owes it or pays it.
+   A row `landed` in an earlier chapter stays as it is, whatever this retell shows: the grade
+   measures this reader, not that chapter. Mark a promise `landed` only where this chapter pays
+   it. Append the chapter's step to each Pressure row's trail. A `beat` line has no ledger row; skip it. Change
    nothing else in the ledger. Both per [../shared/state-format.md](../shared/state-format.md).
 8. **`work/chNNNN/fold.md`:** every fact the chapter establishes that the bible does not hold. Start
    from the facts file's `new` lines, and check each against the chapter as it now stands (the

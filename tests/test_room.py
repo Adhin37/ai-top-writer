@@ -245,6 +245,20 @@ class RoomTest(unittest.TestCase):
                       'novels/long-ebb/work/ch0002/notes-r1.md.', out)
         self.assertIn("Accepted round: reading/%s/ch02-r1/." % self.id, out)
 
+    def test_clerk_saves_the_ledger_once_before_the_clerk(self):
+        self.clerk_ready(700)
+        saved = os.path.join(self.fx.root, "work", "ch0002", "ledger-before.md")
+        ledger = self.fx.novel().text("plan", "reader-ledger.md")
+        code, out = self.run_room("clerk", self.novel, "2", "1")
+        self.assertIn("saved novels/long-ebb/work/ch0002/ledger-before.md", out)
+        with open(saved, encoding="utf-8") as fh:
+            self.assertEqual(fh.read(), ledger)
+        self.fx.write("plan/reader-ledger.md", ledger.replace("owed", "landed ch2"))
+        code, out = self.run_room("clerk", self.novel, "2", "1")
+        self.assertNotIn("saved", out)
+        with open(saved, encoding="utf-8") as fh:
+            self.assertEqual(fh.read(), ledger)
+
     def test_clerk_warns_when_the_accepted_notes_grade_no_pressure_id(self):
         self.clerk_ready(700)
         self.fx.write("work/ch0002/beats.md", "# Beats\npressure L1 held — she waits\n")
