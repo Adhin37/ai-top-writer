@@ -86,6 +86,17 @@ moves     takes help for the first time when the deep crew's first shift goes wr
 An antagonist's profile replaces `gift` with `case`: their argument for what they do, as they
 would make it.
 
+An opponent who reads the protagonist right every time drains hope: after a few chapters the reader
+stops believing she can get past him. Plan one misread, made in public, that stays wrong:
+
+```
+Kell   case: the Stack lives on its grades; a fitter who works outside hers is a leak
+       misread: takes Tovi's ninth-deck log for a forgery and says so to the council (ch 7);
+       it is real, and he never learns which fitter wrote it
+```
+
+He is still the stronger of the two. The misread is the gap the protagonist works through.
+
 ### A walk-on is one line
 
 ```

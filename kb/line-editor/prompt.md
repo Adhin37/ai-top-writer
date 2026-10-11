@@ -62,5 +62,6 @@ left    <something you noticed and deliberately left alone, and why>
 across  "<the phrase or move, ≤8 words>" ch <n>, ch <n> — thinned here | kept: <why>
 ```
 
-The showrunner acts on these lines alone. Anything else it should know is one more `left` line.
+The showrunner acts on these lines alone, and your `left` lines are final: nobody answers them.
+Write what you left and why, never a question or a request to confirm.
 What you checked and found clean goes unreported; the chapter shows it.

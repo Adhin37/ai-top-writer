@@ -41,6 +41,15 @@ ch 6   Tovi vs Security                     hopeless (+2): she loses, and it ope
 Mostly outmatched, sometimes even, rarely hopeless, almost never easy. Three chapters at the same gap
 read as a flat stretch whatever happens in them.
 
+### A clock counted in chapters
+
+> Ch 2: the Deck Nine pump fails in ninety days. Ch 9: seventy days left.
+
+Seventy days means nothing to a reader, who counts in chapters. If the deadline is still twenty
+chapters away, the reader stops feeling it. Put a nearer step inside the wait that the reader can
+see coming. In this example, the pressure audit is in four days, and if the main fails it the pump
+dies with it. Or bring the deadline closer. A clock the reader feels is counted in chapters.
+
 ### The stakes ceiling
 
 > Ch 2: Tovi mentions the Deck Nine pump in the canteen. Ch 3: Security has her name. Ch 4: she is

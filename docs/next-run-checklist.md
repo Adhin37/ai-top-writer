@@ -9,22 +9,27 @@ move the result into the roadmap's *Features* table.
 
 From the [optimisation write-up](experiments/2026-10-04-optimisation.md#to-measure-in-the-next-full-run):
 
-- [ ] the trace's *injected context* line: no `mcp`, no `ide_diagnostics`, for any role (the
-      pre-run probes);
-- [ ] the showrunner's effort reads `medium` per response, **and** the planner and writer still
-      read `high`: `settings.json`'s per-model `effortLevel` for Opus must not override an agent's
+- [x] the trace's *injected context* line: no `mcp`, no `ide_diagnostics`, for any role (the
+      pre-run probes); run #9: harness and one hook only, for every role;
+- [x] the showrunner's effort reads `medium` per response, **and** the planner and writer still
+      read `high` (run #9: showrunner medium 252, planner high 233, writer high 168): `settings.json`'s per-model `effortLevel` for Opus must not override an agent's
       own `effort`;
-- [ ] showrunner turns per chapter (`trace.py --chapters`), against 15–45 (mean 36; 21 predicted);
-- [ ] showrunner mean context and compactions, against mean 344k, peak 596k; no role but the
+- [x] showrunner turns per chapter (`trace.py --chapters`), against 15–45 (mean 36; 21 predicted);
+      run #9: 30–41, mean 33 (ch 6–12);
+- [x] showrunner mean context and compactions, against mean 344k, peak 596k (run #9: mean 134k,
+      peak 216k, 2 compactions; no subagent compacted, so the window stays); no role but the
       showrunner compacted. Whether `autoCompactWindow` reaches subagents at all; if none compacts
       at its peak, lower the window to 150k;
-- [ ] the showrunner's share, allotted, against 41%, with `status.py` matching the files and
+- [x] the showrunner's share, allotted, against 41% (run #9: 20%, $13.66 of $68.08), with `status.py` matching the files and
       `state_check.py` clean after every chapter;
-- [ ] each usage-limit pause: its cost, whether it fell at a chapter boundary, and whether the
+- [x] each usage-limit pause (run #9: two, both mid-chapter, $2.72 of showrunner cache rewrites;
+      no PAUSE line in the VS Code panel; no `CronCreate`, the user resumed by hand): its cost, whether it fell at a chapter boundary, and whether the
       `CronCreate` resume ran;
-- [ ] `/usage`'s plan breakdown, read once, beside the trace's allotted shares;
-- [ ] `docs/sessions/<session>.reads.tsv` fills, and the story and line editors act on
-      `history-rK.txt` from chapter 3.
+- [ ] `/usage`'s plan breakdown, read once, beside the trace's allotted shares; run #9: not read: `/usage` is
+      the user's command, and the run asked for no user step. Still open;
+- [x] `docs/sessions/<session>.reads.tsv` fills, and the story and line editors act on
+      `history-rK.txt` from chapter 3 (run #9: 1,333 reads; story editor 13 and line editor 7 reads
+      of `history-rK.txt`, cited in notes and hand-backs).
 
 ## The roles (06c, 06d)
 
@@ -76,47 +81,69 @@ From the [audit](experiments/2026-10-04-optimisation.md#post-07-audit-cheaper-an
 
 From the [write-up's fixes](experiments/2026-10-09-run-8.md#fixes-2026-10-10-after-the-run-no-agent-spawned):
 
-- [ ] the pre-run probe **edits** a file under `novels/` with the Edit tool (a Write shows nothing)
+- [x] (run #9: no diagnostics after the clerk's Edit, none in the trace) the pre-run probe **edits** a file under `novels/` with the Edit tool (a Write shows nothing)
       and no diagnostics come back; the trace's injected-context line has no `ide_diagnostics` for
       any role;
-- [ ] no git status or git block in any spawn's context, judges included: read one judge's
+- [x] (run #9: none, all three judges' disclosures; new contaminant, the harness's `userEmail` line) no git status or git block in any spawn's context, judges included: read one judge's
       disclosure. Start the run in a new session, since `includeGitInstructions` is read at start;
-- [ ] the warm story editor: its cost a chapter against run #8's $5.51 for 14 spawns, its notes
+- [x] (run #9: $4.84 for 14 rounds, $0.69 a chapter; every r1 grades its last notes; owed steady) the warm story editor: its cost a chapter against run #8's $5.51 for 14 spawns, its notes
       still quote-evidence-effect, and every round-1 and round-2 note file grading the last notes;
       owed grades steady between rounds on similar evidence (F13);
-- [ ] `ahead.txt` written at every ACCEPT that offers the beats; no second planner at a fold; a
+- [x] (run #9: ch 6–9, 11, 12; ch 10 blocked by the re-read; `--cold` only at ch 12) `ahead.txt` written at every ACCEPT that offers the beats; no second planner at a fold; a
       `--cold` fold only where the planner was never sent;
-- [ ] the line editors act on `gesture` and `tag` lines, the story editors on `recap` lines; the
+- [x] (run #9: gestures at half run #8's rate, tag questions none after ch 8; `recap` missed two paraphrased paragraphs, F13) the line editors act on `gesture` and `tag` lines, the story editors on `recap` lines; the
       judges' tic complaint against run #8's;
-- [ ] `lint-rK.txt` printed by every `room.py round` and read by the continuity editor, which runs
+- [x] (run #9: 14 of 14 rounds, read by the continuity editor 14 times, no lint run by it) `lint-rK.txt` printed by every `room.py round` and read by the continuity editor, which runs
       no lint itself;
-- [ ] the clerk's and the continuity editor's guard refusals against run #8's 41; the canon
+- [x] (run #9: 21, clerk 10, continuity 11, all shell compounds; canon researcher not spawned) the clerk's and the continuity editor's guard refusals against run #8's 41; the canon
       researcher's `scaffold.py check` runs;
-- [ ] the protagonist's move grows chapter to chapter in the plan rows, and the judges' agency
+- [x] (run #9: L1 grew 6 of 7; no judge names agency; P4 stated ×3) the protagonist's move grows chapter to chapter in the plan rows, and the judges' agency
       score against run #8's.
 
 ## Plan 08 (2026-10-10)
 
 From [08](roadmap/08-pressure-and-run-9.md):
 
-- [ ] `/plan` first: the planner adds `L1` and `C1` to `novels/ember-terraces`, one step for each
+- [x] (run #9: done, no `pressure` warn) `/plan` first: the planner adds `L1` and `C1` to `novels/ember-terraces`, one step for each
       of ch 1–5 (`status.py --debt` asks for them), and `state_check` raises no `pressure` warn;
-- [ ] the same `/plan` rewrites the passive rows ahead in `changed` lines (a want she acts on, an
+- [x] (run #9: rows 8 and 11 rewritten as acts) the same `/plan` rewrites the passive rows ahead in `changed` lines (a want she acts on, an
       event of which she is the subject): rows 8 ("get away from Dao") and 11 ("let her father
       speak for her") read as holds; a ch 5 bench kept a passive event without this;
-- [ ] the story editor's grade of each `pressure` line against the planner's: stricter, or as
+- [x] (run #9: it grades the reader's uptake, not the direction, F2; the clerk's step was stricter than the planner's twice; the direction stays the clerk's, see *Run #9's fixes*) the story editor's grade of each `pressure` line against the planner's: stricter, or as
       lenient as the bench's (a declined move graded `grew`);
-- [ ] every beat sheet has a `pressure` line, every notes file grades `L1` and `C1`, and every
+- [x] (run #9: every beat sheet and clerk yes; notes 10 of 14, ch 8–9 skipped it, F12; one flag, at ch 6, answered) every beat sheet has a `pressure` line, every notes file grades `L1` and `C1`, and every
       clerk appends one step to each trail; `room.py` put a `Pressure:` flag in a beats dispatch
       only after a step back or two holds, and the next beat sheet answered it;
-- [ ] the trail across ch 6–12 against run #8's (backfilled), and the judges' agency complaint
+- [x] (run #9: L1 grew, grew, held, grew, grew, grew, grew; agency gone from the judges' lists) the trail across ch 6–12 against run #8's (backfilled), and the judges' agency complaint
       against run #8's (all three ranked it first or second);
-- [ ] the slop note in every `lint-rK.txt`; the index per chapter against run #8's 6.2 mean, and
+- [x] (run #9: in all 14; drafts 5.7, accepted 5.2, against 6.2; touched twice) the slop note in every `lint-rK.txt`; the index per chapter against run #8's 6.2 mean, and
       whether the line editor touched any of its hits (it is a reference, not a list to cut);
-- [ ] the every-10 re-read at chapter 10 (first time), `long-middle.md` opened (`reads.tsv`),
+- [x] (run #9: re-read done, fresh 4 = warm 4; `long-middle.md` not opened, correctly: its index line says arc 3; click-next 4 through ch 7–9) the every-10 re-read at chapter 10 (first time), `long-middle.md` opened (`reads.tsv`),
       and click-next through chapters 7–9.
+
+## Run #9's fixes (2026-10-11)
+
+From the [write-up's fixes](experiments/2026-10-10-run-9.md#fixes-2026-10-11-after-the-run-no-agent-spawned):
+
+- [ ] every notes file grades each `pressure` id; where one does not, `room.py judge` printed the
+      warn and the next round's notes graded it (F12);
+- [ ] where the clerk's step (the direction) and the story editor's grade (the reader's uptake)
+      disagree, which the trail kept, and whether the next beat sheet answered it (F2: the clerk
+      was stricter twice in run #9);
+- [ ] no paragraph written for a revision note re-tells an earlier chapter: each confusion note's
+      `dir` asks for a clause (`note-protocol.md` N4), and no judge names a recap the loop wrote;
+      the judges' recap complaint against run #9's (all three);
+- [ ] `history.py`'s motif warns name no phrase a place name chained into a refrain; the line
+      editors' cuts still cite real refrains;
+- [ ] no line editor hand-back asks the showrunner anything (`left` lines final; run #9: four);
+- [ ] no fold `gap` the clerk had already closed (F4);
+- [ ] the judges' labelled-tell, clock and never-wrong-antagonist complaints, against run #9's, once
+      a `/plan` has re-planned rows 13 and 15 with the new `stakes.md` and `cast-design.md` examples;
+- [ ] each judge's disclosure: whether `userEmail` reached it and whether it named the author;
+- [ ] the run started from the terminal CLI: a PAUSE line at the threshold, and whether the
+      `CronCreate` resume ran.
 
 ## The bench
 
-- [ ] the blind panel on two models (`bench.py panel`, `judge--fable`): scores per model, with the
-      spread.
+- [x] the blind panel on two models (`bench.py panel`, `judge--fable`): scores per model, with the
+      spread (run #9: Opus 4.5, 4.5; Fable 4; spread 0.5 across models, 0 within).

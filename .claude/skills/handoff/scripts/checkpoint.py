@@ -6,7 +6,7 @@ and after the reset the prompt cache is cold. Everything a resume needs is alrea
 transcripts Claude Code keeps under ~/.claude/projects/<project>/: the user's messages, the
 session's last words, every agent's spawn prompt, how each agent ended, and what it wrote. This
 tool reads them and writes docs/sessions/<session-id>.md, spending no model tokens. The hooks in
-tools/session_hooks.py run it at the end of every turn and at the 429; the `handoff` skill says
+session_hooks.py, beside it, run it at the end of every turn and at the 429; the `handoff` skill says
 how a session resumes from the file.
 
 Two parts of the file are kept across rebuilds: the `<!-- note -->` block, which the session writes
@@ -25,10 +25,10 @@ import re
 import subprocess
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), *[os.pardir] * 4))
+sys.path.insert(0, os.path.join(ROOT, "tools"))
 from handback import default_transcripts  # noqa: E402
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SESSIONS = os.path.join("docs", "sessions")
 WRITE_TOOLS = {"Write", "Edit", "MultiEdit", "NotebookEdit"}
 IN_FLIGHT = {"running", "failed", "killed"}

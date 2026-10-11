@@ -1,4 +1,4 @@
-"""tools/session_hooks.py and tools/statusline.py - keeping the handoff current, and coming back."""
+"""session_hooks.py and statusline.py - keeping the handoff current, and coming back."""
 import contextlib
 import io
 import json
@@ -10,7 +10,7 @@ import unittest
 from unittest import mock
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, os.path.join(ROOT, "tools"))
+sys.path.insert(0, os.path.join(ROOT, ".claude", "skills", "handoff", "scripts"))
 
 import checkpoint  # noqa: E402
 import session_hooks  # noqa: E402

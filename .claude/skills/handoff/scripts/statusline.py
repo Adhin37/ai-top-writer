@@ -3,11 +3,11 @@
 
 Claude Code gives a status-line command the live usage of the 5-hour and 7-day windows
 (`rate_limits.<window>.used_percentage`, `resets_at`); no hook payload carries them. This script
-prints them and saves them to docs/sessions/usage.json, where tools/session_hooks.py reads them to
+prints them and saves them to docs/sessions/usage.json, where session_hooks.py, beside it, reads them to
 warn the session before the limit.
 
-The terminal CLI runs the status line; the VS Code panel does not appear to, and then usage.json is
-never written and the warning never fires. The handoff itself does not depend on it.
+The terminal CLI runs the status line; the VS Code panel does not, and then usage.json is never
+written: the hooks fall back on usage.py's estimate from the transcripts.
 """
 import datetime as dt
 import json
@@ -15,7 +15,7 @@ import os
 import sys
 import time
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), *[os.pardir] * 4))
 USAGE = os.path.join(ROOT, "docs", "sessions", "usage.json")
 LABELS = (("five_hour", "5h"), ("seven_day", "7d"))
 

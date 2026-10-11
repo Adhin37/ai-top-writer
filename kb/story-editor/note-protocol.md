@@ -66,6 +66,22 @@ ev    own reading: in scene 1 Ysolde explains the bar to her cousin, tide by tid
 eff   a reader who remembers scene 1 stops trusting her here, and the chapter needs her to be the one who can cross
 ```
 
+---
+
+**A confusion about an earlier chapter — the answer is a clause, not a recap:**
+
+```
+N4 who Orrin is
+where "Orrin was waiting at the slip, and Ysolde stopped."
+ev    reader: "Orrin? The name is familiar but I can't place him" · he was the uncle's boatman in ch 2, not seen since
+eff   the reader can't feel why she stops, so the scene's threat reads as a stranger's
+dir   one clause where she sees him, what he did in ch 2 ("Orrin, who had held the boat while her uncle read out the tally"); no paragraph going back over ch 2
+```
+
+Your reader reads a chapter at a time, with gaps between. Many paying readers read several in
+one sitting. A paragraph that retells chapter 2 helps the first and is skimmed by the second; a
+clause works for both.
+
 ## Keep lines have evidence too
 
 ```

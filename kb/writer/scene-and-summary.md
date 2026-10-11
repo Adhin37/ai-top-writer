@@ -43,6 +43,18 @@ practice gets a clause; the moment it changes stage gets the scene.
 > Ch 8, the scene: the line holds with the boy's whole weight on it, and she realises she tied it
 > while arguing with the harbourmaster.
 
+**A recall, in a clause.** When an earlier chapter must come back, bring back the one fact the
+moment needs, inside the action. A paragraph that retells it stops the scene for readers who
+read that chapter a minute ago.
+
+> Recap: Orrin stood at the slip. Ysolde remembered the night of the tally, two weeks before, when
+> he had held the boat steady while her uncle read the names aloud, and how he had looked at her
+> when the Calder boy's name was read, as if he already knew she would be the one to row him.
+> She stopped.
+
+> Clause: Orrin stood at the slip, the same man who had held the boat while her uncle read the
+> tally, and she stopped.
+
 ## When to break it
 
 Some turns are stronger reported late — a reveal that lands as the protagonist *finds out* what

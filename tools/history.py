@@ -58,6 +58,8 @@ TEMPO_CHAPTERS = 3          # chapters in a row with one main tempo, one opening
 MOTIF_N = 4                 # words in the window a motif is found by
 MOTIF_GAP = 12              # words between two pieces of one use: a clause put in the middle
 MOTIF_USES = 3              # a motif is used this often, in two chapters or more
+MOTIF_JOIN = 2              # places two windows must overlap in to be one motif (run #9: a
+                            # single long sentence chained a place name into a refrain)
 MOTIF_WARN = (3, 4)         # chapters and uses at which a motif is a warn: both of run #7's judged
                             # refrains sat at 3 chapters and 4 uses
 GESTURE_NOTE = (3, 5)        # chapters and sentences at which a gesture is a note
@@ -224,10 +226,10 @@ def motifs(chapters, setting, bible=()):
     """([(text, [chapter per use], bible source)], covered): phrases that come back whole, and the
     (chapter, word index) of every word inside one of their uses.
 
-    Every MOTIF_N-word window used in two chapters or more is a seed. Seeds that overlap at any one
-    place belong to one motif, so a long refrain and a shortened echo of it count as one thing
-    used several times. A motif needs two words that are neither common nor setting, so "the
-    Survey Office long room" is a place and not a refrain.
+    Every MOTIF_N-word window used in two chapters or more is a seed. Seeds that overlap in
+    MOTIF_JOIN places or more belong to one motif, so a long refrain and a shortened echo of it
+    count as one thing used several times. A motif needs two words that are neither common nor
+    setting, so "the Survey Office long room" is a place and not a refrain.
     """
     seen = {}               # window -> [(chapter index, token index)]
     toks = [tokens(c) for c in chapters]
@@ -244,7 +246,9 @@ def motifs(chapters, setting, bible=()):
         if len(content) < 2:
             continue
         seeds[key] = places
-    # Union the seeds that overlap at any place, then merge each motif's places into uses.
+    # Union the seeds that overlap in two places or more, then merge each motif's places into
+    # uses. A refrain's windows overlap at every use; two phrases that meet once, in one long
+    # sentence, stay two motifs.
     parent = dict((k, k) for k in seeds)
 
     def find(k):
@@ -253,13 +257,20 @@ def motifs(chapters, setting, bible=()):
             k = parent[k]
         return k
 
-    owner = {}
+    cover, met = {}, {}
     for key, places in seeds.items():
         for ci, i in places:
             for j in range(i, i + MOTIF_N):
-                other = owner.setdefault((ci, j), key)
-                if other != key:
-                    parent[find(key)] = find(other)
+                cover.setdefault((ci, j), []).append((key, i))
+    for (ci, _j), here in cover.items():
+        for x in range(len(here)):
+            for y in range(x + 1, len(here)):
+                (a, ia), (b, ib) = here[x], here[y]
+                if a != b:
+                    met.setdefault(tuple(sorted((a, b))), set()).add((ci, min(ia, ib)))
+    for (a, b), where_met in met.items():
+        if len(where_met) >= MOTIF_JOIN:
+            parent[find(a)] = find(b)
     groups = {}
     for key, places in seeds.items():
         groups.setdefault(find(key), set()).update(places)

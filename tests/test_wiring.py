@@ -97,8 +97,8 @@ class AgentWiringTest(unittest.TestCase):
                       "SessionStart", "UserPromptSubmit", "PostToolUse"):
             commands = [h["command"] for entry in settings["hooks"].get(event, [])
                         for h in entry["hooks"]]
-            self.assertTrue(any("tools/session_hooks.py" in c for c in commands), event)
-        self.assertIn("tools/statusline.py", settings["statusLine"]["command"])
+            self.assertTrue(any(".claude/skills/handoff/scripts/session_hooks.py" in c for c in commands), event)
+        self.assertIn(".claude/skills/handoff/scripts/statusline.py", settings["statusLine"]["command"])
         self.assertTrue(os.path.isfile(os.path.join(ROOT, ".claude", "skills", "handoff",
                                                     "SKILL.md")))
 

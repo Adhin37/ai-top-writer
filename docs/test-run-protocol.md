@@ -136,7 +136,9 @@ check with no impression at all.)
   contaminant.
 - **After the verdict, in a separate turn**, ask each judge what it was handed: every file it
   opened and every instruction it received. Record the answer as a **contaminant**. Known and
-  unfixable: the working directory's name, and the spawn prompt naming the folder.
+  unfixable: the working directory's name, the spawn prompt naming the folder, and the harness's
+  `userEmail` context line, which reaches every subagent (run #9; no setting found that drops it).
+  A judge that names the author from it has scored the person, not the page: re-run that judge.
 
 ## 8. Reconcile and route
 

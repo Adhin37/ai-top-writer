@@ -95,6 +95,23 @@ class HistoryTest(unittest.TestCase):
         self.assertIn("also in bible/world.md:3", motif[0])
         self.assertEqual(data["motifs"][0]["chapters"], [1, 1, 2, 3])
 
+    def test_two_phrases_that_meet_once_stay_two_motifs(self):
+        # run #9: one long sentence held a refrain and a place name, and the place name's uses in
+        # a later chapter were counted, and quoted, as the refrain's
+        with NovelFixture() as fx:
+            fx.write("bible/world.md", "# World\n")
+            fx.write("plan/chapters.md", PLAN)
+            fx.write("bible/lexicon.md", LEXICON)
+            fx.chapter(1, body("She rowed past the tarred stone mole and home.\n\n" + talk(0)))
+            fx.chapter(2, body("She rowed past the tarred stone mole under the copper bell "
+                               "buoy.\n\n" + talk(1)))
+            fx.chapter(3, body("Tam waited by the stone mole under the copper bell buoy.\n\n"
+                               + talk(2)))
+            fx.state(blocks=(), scenes=SCENES)
+            _items, data = findings(fx)
+        self.assertFalse([m for m in data["motifs"] if "tarred" in m["text"].lower()
+                          and "copper" in m["text"].lower()], data["motifs"])
+
     def test_a_line_in_several_mouths_is_a_signature_and_a_refrain_is_not(self):
         with NovelFixture() as fx:
             self.book(fx)

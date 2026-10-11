@@ -99,3 +99,20 @@ $10.13 in all; nothing committed.
 - Seen: the room grades its own trail leniently. Run #9 shows whether the story editor's grade is
   stricter.
 - Step 4 (run #9) waits for the weekly limit. Its first `/plan` must rewrite the passive rows ahead.
+
+**2026-10-10 → 11, step 4: run #9** ([write-up](../experiments/2026-10-10-run-9.md)). Ch 6–12 of
+`novels/ember-terraces` through the full loop under `.test-run`, from the VS Code panel; two
+usage-limit stops, both resumed warm. $68.08 with the panel; nothing committed.
+
+- Seven chapters, each REVISE then ACCEPT at round 1; `state_check` clean at every fold; the
+  every-10 re-read at ch 10 agreed with the warm reader (4 and 4).
+- Panel 4.5 / 4.5 (Opus 5) and 4 (Fable 5.1); 14/18 premise facts stated, 0 wrong. Run #8: 4/4/4,
+  12/18. **The lever worked:** no judge named agency, and Kesa's want went from partly ×3 to
+  stated ×3.
+- What the judges named instead: recap paragraphs (the ch 9 one was written for a revision note,
+  F13), tics at half run #8's rate, and a clock still ~80 days out at ch 12.
+- **Seen:** the story editor grades whether the reader got the pressure, not its direction (F2),
+  and skipped it at ch 8–9 (F12). The clerk's trail was the stricter grader.
+- Routed for the next plan: the confusion-to-recap examples (story editor, writer), a pressure-grade
+  check in `wire.py`, place names out of `history.py`'s motifs, the line editor's `left` lines
+  final, and the clock and antagonist examples for the planner.

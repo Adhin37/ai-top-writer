@@ -1,4 +1,4 @@
-"""tools/checkpoint.py - a session's handoff, built from its transcripts."""
+"""checkpoint.py - a session's handoff, built from its transcripts."""
 import contextlib
 import datetime as dt
 import io
@@ -9,7 +9,7 @@ import tempfile
 import unittest
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, os.path.join(ROOT, "tools"))
+sys.path.insert(0, os.path.join(ROOT, ".claude", "skills", "handoff", "scripts"))
 
 import checkpoint  # noqa: E402
 

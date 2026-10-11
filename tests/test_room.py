@@ -209,6 +209,17 @@ class RoomTest(unittest.TestCase):
         d = room.story_editor(room.Chapter(self.novel, 2, self.root), 1, warm=False)
         self.assertEqual(d[0], '@ spawn story-editor as "story-editor-ch02"')
 
+    def test_judge_asks_the_warm_story_editor_for_an_ungraded_pressure_id(self):
+        self.fx.write("work/ch0002/beats.md", "# Beats\npressure L1 grew — she rows out alone\n"
+                      "         past the bar · C1 nearer — the tide turns\n")
+        self.fx.write("work/ch0002/notes-r0.md", "verdict REVISE\n\n## Owed\nL1 stated \"rows "
+                      "out\"\nbeat bar stated \"the bar\"\n\n## Notes\n\n## Keep\n")
+        self.judge_ready(1)
+        code, out = self.run_room("judge", self.novel, "2", "1", "b1")
+        self.assertEqual(code, 0, out)
+        self.assertIn("warn: notes-r0.md grades no C1 from the beat sheet's pressure line", out)
+        self.assertIn("Your last notes graded no C1: grade each pressure id in Owed.", out)
+
     def test_judge_stops_when_the_reader_handed_back_nothing(self):
         self.fx.write("work/ch0002/draft-r0.md", DRAFT)
         self.run_room("round", self.novel, "2", "0")
@@ -233,6 +244,17 @@ class RoomTest(unittest.TestCase):
                       'novels/long-ebb/chapters/0002-the-bar.md. Notes: '
                       'novels/long-ebb/work/ch0002/notes-r1.md.', out)
         self.assertIn("Accepted round: reading/%s/ch02-r1/." % self.id, out)
+
+    def test_clerk_warns_when_the_accepted_notes_grade_no_pressure_id(self):
+        self.clerk_ready(700)
+        self.fx.write("work/ch0002/beats.md", "# Beats\npressure L1 held — she waits\n")
+        self.fx.write("work/ch0002/notes-r1.md", "verdict ACCEPT\n\n## Owed\n\n## Notes\n")
+        code, out = self.run_room("clerk", self.novel, "2", "1")
+        self.assertEqual(code, 0, out)
+        self.assertIn("warn: notes-r1.md grades no L1", out)
+        self.fx.write("work/ch0002/notes-r1.md", "verdict ACCEPT\n\n## Owed\nL1 held \"x\"\n")
+        code, out = self.run_room("clerk", self.novel, "2", "1")
+        self.assertNotIn("grades no", out)
 
     def test_clerk_asks_the_reader_to_compress_first_over_the_cap(self):
         self.clerk_ready(812)
@@ -491,23 +513,29 @@ class RoomTest(unittest.TestCase):
         self.assertIn("STOP: agent p2 handed back no `gap canon` line", out)
 
     def test_the_pause_reads_a_fresh_five_hour_reading(self):
-        path = os.path.join(self.root, "usage.json")
+        exact, guess = (os.path.join(self.root, f) for f in ("usage.json", "usage-estimate.json"))
+        paths = (exact, guess)
 
-        def reading(pct, age=0):
+        def reading(pct, age=0, path=exact):
             with open(path, "w", encoding="utf-8") as fh:
                 json.dump({"updated": time.time() - age, "rate_limits": {
                     "five_hour": {"used_percentage": pct, "resets_at": time.time() + 3600}}}, fh)
 
-        self.assertIsNone(room.usage_pause(path))
+        self.assertIsNone(room.usage_pause(paths))
         reading(79)
-        self.assertIsNone(room.usage_pause(path))
+        self.assertIsNone(room.usage_pause(paths))
         reading(81)
-        self.assertIn("PAUSE: the 5-hour window is at 81% (resets ", room.usage_pause(path))
+        self.assertIn("PAUSE: the 5-hour window is at 81% (resets ", room.usage_pause(paths))
         reading(90, age=600 + 1)
-        self.assertIsNone(room.usage_pause(path))
-        with open(path, "w", encoding="utf-8") as fh:
-            json.dump({"updated": "now", "rate_limits": []}, fh)
-        self.assertIsNone(room.usage_pause(path))            # a bad reading, not a crash
+        self.assertIsNone(room.usage_pause(paths))
+        reading(85, path=guess)                              # no status line: the estimate
+        self.assertIn("at 85%", room.usage_pause(paths))
+        reading(70)                                          # a fresh status line wins
+        self.assertIsNone(room.usage_pause(paths))
+        for path in paths:
+            with open(path, "w", encoding="utf-8") as fh:
+                json.dump({"updated": "now", "rate_limits": []}, fh)
+        self.assertIsNone(room.usage_pause(paths))           # a bad reading, not a crash
 
 
 if __name__ == "__main__":

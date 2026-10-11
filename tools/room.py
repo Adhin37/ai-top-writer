@@ -57,13 +57,17 @@ import handback  # noqa: E402
 import reading  # noqa: E402
 import status  # noqa: E402
 import wire  # noqa: E402
-from session_hooks import PAUSE_AT, fresh  # noqa: E402
 from lib import mdio  # noqa: E402
-from lib.novel import Novel  # noqa: E402
+from lib.novel import PRESSURE_WORDS, Novel  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TOOLS = os.path.dirname(os.path.abspath(__file__))
-USAGE = os.path.join(ROOT, "docs", "sessions", "usage.json")
+# the usage readings the handoff skill's scripts write: the status line's, else the transcripts'
+# estimate (the VS Code panel runs no status line)
+READINGS = tuple(os.path.join(ROOT, "docs", "sessions", f)
+                 for f in ("usage.json", "usage-estimate.json"))
+PAUSE_AT = 80
+FRESH_S = 600
 HISTORY_FROM = 3
 MAX_ROUND = 2
 AHEAD = "ahead.txt"     # judge: the next chapter's planner was offered at ACCEPT (fold continues it)
@@ -315,15 +319,25 @@ def run_tool(args, root=ROOT):
     return p.returncode, (p.stdout or "") + (p.stderr or "")
 
 
-def usage_pause(path=USAGE, now=None):
-    """A line when the 5-hour window is past PAUSE_AT by a fresh status-line reading, else None."""
-    try:
-        with open(path, encoding="utf-8") as fh:
-            usage = json.load(fh)
-    except (OSError, ValueError):
-        return None
-    now = now or time.time()
-    if not fresh(usage, now):
+def _fresh_reading(paths, now):
+    """The first of `paths` that holds a usage reading written in the last FRESH_S seconds."""
+    for path in paths:
+        try:
+            with open(path, encoding="utf-8") as fh:
+                usage = json.load(fh)
+        except (OSError, ValueError):
+            continue
+        updated = usage.get("updated") if isinstance(usage, dict) else None
+        if isinstance(updated, (int, float)) and not isinstance(updated, bool) \
+                and now - updated <= FRESH_S:
+            return usage
+    return None
+
+
+def usage_pause(paths=READINGS, now=None):
+    """A line when the 5-hour window is past PAUSE_AT by a fresh reading, else None."""
+    usage = _fresh_reading(paths, now or time.time())
+    if not usage:
         return None
     limits = usage.get("rate_limits")
     window = (limits if isinstance(limits, dict) else {}).get("five_hour") or {}
@@ -338,6 +352,20 @@ def usage_pause(path=USAGE, now=None):
         when = " (resets %s)" % resets
     return ("PAUSE: the 5-hour window is at %d%%%s. Start no new chapter: loop.md, "
             "\"Pause at a chapter boundary\"." % (pct, when))
+
+
+PRESSURE_ID = re.compile(r"(?:^pressure|·)\s+([A-Z]+\d+)\s+(?:%s)\b" % "|".join(PRESSURE_WORDS))
+
+
+def ungraded_pressure(c, k):
+    """The ids the beat sheet's `pressure` line steps that notes-rK's Owed leaves ungraded."""
+    beats, notes = c.abs(c.wfile("beats.md")), c.abs(c.wfile("notes-r%d.md" % k))
+    if not (os.path.isfile(beats) and os.path.isfile(notes)):
+        return []
+    block = re.search(r"^pressure .*(?:\n[ \t]+\S.*)*", mdio.read_text(beats), re.M)
+    ids = PRESSURE_ID.findall(" ".join(block.group(0).split())) if block else []
+    owed = {l.split()[0] for l in wire.sections(mdio.read_text(notes)).get("Owed", []) if l.split()}
+    return [i for i in dict.fromkeys(ids) if i not in owed]
 
 
 def wire_defects(path):
@@ -475,7 +503,14 @@ def step_judge(c, k, reader_id, transcripts=None):
                      "step 1)" % Chapter(c.abs(c.novel), c.n + 1, c.root).wfile("beats.md")]
     branches.append("              and on POLISHED: python3 tools/room.py clerk %s %d %d"
                     % (c.novel, c.n, k))
-    return lines, [story_editor(c, k)], "\n".join(branches[1:]), []
+    editor = story_editor(c, k)
+    missed = ungraded_pressure(c, k - 1) if k > 0 else []
+    if missed:
+        lines.append("warn: notes-r%d.md grades no %s from the beat sheet's pressure line"
+                     % (k - 1, ", ".join(missed)))
+        editor = (editor[0], editor[1] + " Your last notes graded no %s: grade each pressure id "
+                  "in Owed." % ", ".join(missed))
+    return lines, [editor], "\n".join(branches[1:]), []
 
 
 def step_clerk(c, k):
@@ -486,6 +521,10 @@ def step_clerk(c, k):
     if unwritten(c, k + 1):
         os.remove(c.abs(c.wfile("draft-r%d.md" % (k + 1))))
         lines.append("removed draft-r%d.md, the unrevised copy" % (k + 1))
+    missed = ungraded_pressure(c, k)
+    if missed:
+        lines.append("warn: notes-r%d.md grades no %s from the beat sheet's pressure line; the "
+                     "clerk has no grade to step from" % (k, ", ".join(missed)))
     notes = c.round_dir(k) + "/notes.md"
     if not os.path.isfile(c.abs(notes)):
         lines.append("warn: %s is missing; the reader's memory will not change" % notes)

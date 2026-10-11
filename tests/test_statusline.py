@@ -1,4 +1,4 @@
-"""tools/statusline.py - the status line and the usage copy the hooks read."""
+"""statusline.py - the status line and the usage copy the hooks read."""
 import json
 import os
 import sys
@@ -6,7 +6,7 @@ import tempfile
 import unittest
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-                                "tools"))
+                                ".claude", "skills", "handoff", "scripts"))
 import statusline  # noqa: E402
 
 

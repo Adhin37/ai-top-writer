@@ -53,7 +53,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"${CLAUDE_PROJECT_DIR}\"/tools/session_hooks.py",
+            "command": "python3 \"${CLAUDE_PROJECT_DIR}\"/.claude/skills/handoff/scripts/session_hooks.py",
             "async": true
           }
         ]
@@ -64,7 +64,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"${CLAUDE_PROJECT_DIR}\"/tools/session_hooks.py",
+            "command": "python3 \"${CLAUDE_PROJECT_DIR}\"/.claude/skills/handoff/scripts/session_hooks.py",
             "async": true
           }
         ]
@@ -75,7 +75,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"${CLAUDE_PROJECT_DIR}\"/tools/session_hooks.py"
+            "command": "python3 \"${CLAUDE_PROJECT_DIR}\"/.claude/skills/handoff/scripts/session_hooks.py"
           }
         ]
       }
@@ -85,7 +85,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"${CLAUDE_PROJECT_DIR}\"/tools/session_hooks.py"
+            "command": "python3 \"${CLAUDE_PROJECT_DIR}\"/.claude/skills/handoff/scripts/session_hooks.py"
           }
         ]
       }
@@ -95,7 +95,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"${CLAUDE_PROJECT_DIR}\"/tools/session_hooks.py"
+            "command": "python3 \"${CLAUDE_PROJECT_DIR}\"/.claude/skills/handoff/scripts/session_hooks.py"
           }
         ]
       }
@@ -105,7 +105,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"${CLAUDE_PROJECT_DIR}\"/tools/session_hooks.py"
+            "command": "python3 \"${CLAUDE_PROJECT_DIR}\"/.claude/skills/handoff/scripts/session_hooks.py"
           }
         ]
       }
@@ -115,7 +115,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"${CLAUDE_PROJECT_DIR}\"/tools/session_hooks.py"
+            "command": "python3 \"${CLAUDE_PROJECT_DIR}\"/.claude/skills/handoff/scripts/session_hooks.py"
           }
         ]
       }
@@ -125,7 +125,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"${CLAUDE_PROJECT_DIR}\"/tools/session_hooks.py"
+            "command": "python3 \"${CLAUDE_PROJECT_DIR}\"/.claude/skills/handoff/scripts/session_hooks.py"
           }
         ]
       }
@@ -133,6 +133,6 @@
   },
   "statusLine": {
     "type": "command",
-    "command": "python3 \"${CLAUDE_PROJECT_DIR}\"/tools/statusline.py"
+    "command": "python3 \"${CLAUDE_PROJECT_DIR}\"/.claude/skills/handoff/scripts/statusline.py"
   }
 }

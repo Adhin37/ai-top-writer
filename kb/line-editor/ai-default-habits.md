@@ -45,6 +45,15 @@ Two sentences that carry information and nothing else — no dash, no reversal, 
 chapter of loaded sentences, these are the ones a reader feels. Roughly a third of a chapter can
 work like this.
 
+## Named after it is shown
+
+> She shipped the oars, then shipped them again, the way she did when she was afraid.
+
+The doubled action has told the reader she is afraid since chapter 3, so the clause after the comma
+names a tell the reader already reads. Cut it at the comma. A gloss works the same way:
+"slack water, the hour the bar lies open" explains the term once. When that gloss comes back in
+chapter 6, the reader already knows the term; write the term alone.
+
 ## When to leave it
 
 A habit that belongs to one character's voice — the lecturer's triads, the pedant's dashes — is
