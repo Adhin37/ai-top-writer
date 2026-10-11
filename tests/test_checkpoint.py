@@ -203,6 +203,16 @@ class CheckpointTest(unittest.TestCase):
         self.assertIn("> hello", text)
         self.assertNotIn("monitor fired", text)
 
+    def test_a_long_session_keeps_the_first_and_the_latest_messages(self):
+        self.session([human(i, "message %02d" % i) for i in range(15)])
+        text = self.build()
+        for i in (0, 1, 7, 14):
+            self.assertIn("> message %02d" % i, text)
+        for i in (2, 6):
+            self.assertNotIn("> message %02d" % i, text)
+        self.assertIn("*5 message(s) between, left out: the transcript holds them.*", text)
+        self.assertIn("15. *", text)                # numbered as in the session
+
     def test_note_and_closed_at_survive_a_rebuild(self):
         self.session([human(0, "go"), limit(1)])
         path = checkpoint.handoff_path(self.root, SID)

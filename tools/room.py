@@ -4,13 +4,18 @@
 Each showrunner turn re-reads its whole context, so every tool call it makes costs a turn. This
 tool folds what a step runs (the reading view, the history report, filing the reader's report,
 checks) into one call, and prints the hand-off texts of `kb/showrunner/loop.md`, filled in, for the
-showrunner to send unchanged. It prints paths and short findings, never a file's content.
+showrunner to send unchanged. It prints paths and short findings, never a file's content, and a
+list of findings stops at SHOWN lines with a count of the rest. A file that grows with the book is
+named with the line range a role needs (`<novel>/state/continuity.md lines 104-111`), not whole.
 
 Steps (NOVEL is the novel directory, N the chapter, K the round):
 
   room.py beats NOVEL N              before the chapter: plan row, threads, the usage pause; the
                                      planner's beats task (step 1). With no reader's memory before
                                      a chapter N > 1, a fresh re-read of ch01-N-1 comes first
+  room.py approve NOVEL N            after PLANNER DONE beats: what loop.md step 1 checks, from the
+                                     beat sheet (its event beside the plan row's, the ledger rows
+                                     due, the header's line range), so the sheet is not read whole
   room.py round NOVEL N K            after DRAFT READY: the round's reading folder, the history
                                      report (ch 3 on); the beta reader and continuity editor (step
                                      3). It never rebuilds a folder the reader worked in (--force)
@@ -70,6 +75,7 @@ PAUSE_AT = 80
 FRESH_S = 600
 HISTORY_FROM = 3
 MAX_ROUND = 2
+SHOWN = 8               # findings printed before "+n more"
 AHEAD = "ahead.txt"     # judge: the next chapter's planner was offered at ACCEPT (fold continues it)
 # Rounds 1 and 2 continue the round-0 continuity editor, which already holds the bible and the state,
 # instead of a fresh one. False spawns a fresh one every round.
@@ -161,6 +167,8 @@ def planner_beats(c, warm=True):
     prev = c.last_notes()
     if c.n > 1 and prev:
         text += " Editor's notes for the planner: %s." % prev
+    if c.n > 1:
+        text += last_block_note(c)
     text += pressure_note(c.nov)
     if not warm:
         return dispatch("spawn", "planner", "Novel: %s. %s" % (c.novel, text),
@@ -211,6 +219,7 @@ def story_editor(c, k, warm=None):
     text = "Novel: %s. Chapter %d, round %d. %s" % (c.novel, c.n, k, files)
     if c.n > 1:
         text += " Reader's memory before this chapter: reading/%s/shelf/notes.md." % c.id
+        text += last_block_note(c)
     return dispatch("spawn", "story-editor", text + hist, "story-editor-ch%02d" % c.n)
 
 
@@ -235,13 +244,16 @@ def clerk(c, k):
                     "Accepted round: %s/." % (c.novel, c.n, c.chapter_file,
                                               c.wfile("notes-r%d.md" % k),
                                               c.wfile("facts-r%d.md" % k), c.wfile("beats.md"),
-                                              c.round_dir(k)),
+                                              c.round_dir(k)) + last_block_note(c),
                     "clerk ch%02d" % c.n)
 
 
 def planner_fold(c, warm=False):
     """Warm: planner-ch(N+1), spawned at ACCEPT for N+1's beats, continued after them."""
     text = "Task: fold chapter %d. Fold file: %s." % (c.n, c.wfile("fold.md"))
+    rng = block_lines(c, c.n)
+    if rng:
+        text += " Its block: %s." % rng
     if warm:
         return dispatch("continue", "planner-ch%02d" % (c.n + 1), text + " Then check your beat "
                         "sheet for chapter %d against what you folded." % (c.n + 1))
@@ -256,7 +268,8 @@ def planner_ahead(c, k):
                     "accepted and not yet in state/: its text is %s. Reader's notes: %s/notes.md. "
                     "Editor's notes for the planner: %s." % (
                         c.novel, nxt, c.n, c.wfile("draft-r%d.md" % k), c.round_dir(k),
-                        c.wfile("notes-r%d.md" % k)) + pressure_note(c.nov),
+                        c.wfile("notes-r%d.md" % k)) + last_block_note(c)
+                    + pressure_note(c.nov),
                     "planner-ch%02d" % nxt)
 
 
@@ -266,15 +279,45 @@ def pressure_note(nov):
     return " Pressure: %s." % "; ".join(flags) if flags else ""
 
 
+def shown(lines, where, indent=""):
+    """At most SHOWN lines, then a count of the rest and where they are."""
+    out = [indent + l for l in lines[:SHOWN]]
+    if len(lines) > SHOWN:
+        out.append("%s+%d more: %s" % (indent, len(lines) - SHOWN, where))
+    return out
+
+
+def block_lines(c, number=None):
+    """'<novel>/state/continuity.md lines A-B': the block for chapter `number` (else the last
+    block), for a role to Read by offset and limit instead of the whole file; '' if there is none."""
+    path = c.nov.path("state", "continuity.md")
+    blocks = c.nov.blocks() if os.path.isfile(path) else []
+    if not blocks:
+        return ""
+    b = blocks[-1] if number is None else c.nov.block(number)
+    return "%s/state/continuity.md lines %d-%d" % (c.novel, b.line_no, b.last_line) if b else ""
+
+
+def last_block_note(c):
+    rng = block_lines(c)
+    return " Last continuity block: %s." % rng if rng else ""
+
+
 def researcher_lookup(novel, gaps):
     return dispatch("spawn", "canon-researcher", "Novel: %s. Task: lookup.\n%s"
                     % (novel, "\n".join(gaps)), "canon lookup")
 
 
 def fresh_reader(c, folder):
-    return dispatch("spawn", "beta-reader", "Your reading folder is %s/. There are no notes: read "
-                    "every chapter in order from ch01, then report on chapter %d."
-                    % (folder, c.n), "beta-reader fresh ch%02d" % c.n)
+    gone = reading.skipped(c.abs(folder), c.n)
+    text = ("Your reading folder is %s/. There are no notes: read every chapter in order from "
+            "ch01, then report on chapter %d." % (folder, c.n))
+    if gone:
+        text = ("Your reading folder is %s/. There are no notes: read every chapter in it, in "
+                "order from ch01, then report on chapter %d. It does not hold %s: you skipped that "
+                "stretch, as a reader coming back to a long serial does; say so in your notes, and "
+                "mark what you only guess about it." % (folder, c.n, gone))
+    return dispatch("spawn", "beta-reader", text, "beta-reader fresh ch%02d" % c.n)
 
 
 # ---------------------------------------------------------------- checks
@@ -416,8 +459,8 @@ def step_beats(c):
         raise Stop("state/threads.md is missing: the planner's ledger task writes it first")
     late = overdue(c.nov)
     if late:
-        raise Stop("the ledger has rows past due: run kb/showrunner/plan.md first\n  "
-                   + "\n  ".join(late))
+        raise Stop("\n".join(["the ledger has rows past due: run kb/showrunner/plan.md first"]
+                              + shown(late, "python3 tools/status.py %s --debt" % c.novel, "  ")))
     pause = usage_pause()
     if pause:
         lines.append(pause)
@@ -432,9 +475,48 @@ def step_beats(c):
         return lines, [fresh_reader(prev, folder)], (
             "then, with its report back: python3 tools/room.py adopt %s %d <agent id>, then "
             "python3 tools/room.py beats %s %d again" % (c.novel, prev.n, c.novel, c.n)), []
-    then = ("then: read %s and approve it (loop.md step 1), then send the writer:"
-            % c.wfile("beats.md"))
+    then = ("then, on PLANNER DONE beats: python3 tools/room.py approve %s %d, approve the beat "
+            "sheet (loop.md step 1), then send the writer:" % (c.novel, c.n))
     return lines, [planner_beats(c, warm=False)], then, [writer(c)]
+
+
+def due_rows(nov, n):
+    """The ledger's ids due at chapter n and not landed."""
+    ledger = nov.ledger()
+    return [r.first().strip("* ") for kind in ("facts", "faces", "promises") for r in ledger[kind]
+            if not status.landed(r.get("status").strip())
+            and status.row_due(r, status.DUE_COLS[kind]) == n]
+
+
+def step_approve(c):
+    """What loop.md step 1 checks, so the showrunner reads the beat sheet's header, not all of it."""
+    beats = c.wfile("beats.md")
+    if not os.path.isfile(c.abs(beats)):
+        raise Stop("no beat sheet: %s" % beats)
+    text = mdio.read_text(c.abs(beats))
+    lines = text.split("\n")
+    end = next((i for i, l in enumerate(lines) if l.startswith("## ")), len(lines))
+    head = "\n".join(lines[:end])
+    row = c.nov.plan_row(c.n)
+    out = ["ch %d · step 1 approve the beats" % c.n,
+           "plan event: %s" % (" ".join(row.get("event").split()) if row is not None
+                               else "(no plan row)"),
+           "read %s lines 1-%d only: the header (event, learns, promises, pressure); the scenes "
+           "below are the writer's" % (beats, end)]
+    ids = set(re.findall(r"\b[A-Z]+\d+\b", head))
+    due = due_rows(c.nov, c.n)
+    missing = [i for i in due if i not in ids]
+    out.append("ledger due ch %d: %s%s" % (c.n, ", ".join(due) or "none",
+                                          " - not in the header: %s" % ", ".join(missing)
+                                          if missing else ""))
+    block = re.search(r"^pressure .*(?:\n[ \t]+\S.*)*", head, re.M)
+    stepped = set(re.findall(r"\b[A-Z]+\d+\b", block.group(0))) if block else set()
+    unstepped = [pid for pid, _w, _t in c.nov.pressure() if pid not in stepped]
+    if unstepped:
+        out.append("pressure line steps no %s" % ", ".join(unstepped))
+    return out, [], ("then: approve it as written, or send the planner back saying which test it "
+                     "fails (loop.md step 1); the writer's dispatch is the one the last step "
+                     "printed"), []
 
 
 def step_round(c, k, force=False):
@@ -461,7 +543,8 @@ def step_round(c, k, force=False):
         hist = c.wfile("history-r%d.txt" % k)
         code, text = run_tool([os.path.join(TOOLS, "history.py"), c.novel, "--draft", draft,
                                "--out", hist], c.root)
-        lines.append(("history %s" % hist) if code == 0 else "warn history: %s" % text.strip())
+        lines.append(("history %s" % hist) if code == 0
+                     else "warn history: %s" % text.strip()[-300:])
     came = [writer(c)] if k == 0 else [revise(c, k - 1)]
     return lines, readers(c, k), ("then, with both back: python3 tools/room.py judge %s %d %d "
                                   "<beta-reader agent id>" % (c.novel, c.n, k)), came
@@ -473,7 +556,7 @@ def step_judge(c, k, reader_id, transcripts=None):
     cont = c.wfile("continuity-r%d.md" % k)
     if not os.path.isfile(c.abs(cont)):
         raise Stop("no continuity file: %s" % cont)
-    lines += wire_defects(c.abs(cont))
+    lines += shown(wire_defects(c.abs(cont)), "python3 tools/wire.py check %s" % cont)
     branches = ["", "then, on NOTES READY:"]
     if k < MAX_ROUND:
         old, new = c.wfile("draft-r%d.md" % k), c.wfile("draft-r%d.md" % (k + 1))
@@ -499,8 +582,8 @@ def step_judge(c, k, reader_id, transcripts=None):
             fh.write("%s offered at round %d for chapter %d's beats\n" % (head[2:], k, c.n + 1))
         branches += ["           in the same message, if chapter %d is in this run: %s"
                      % (c.n + 1, head), "  " + text,
-                     "              and on PLANNER DONE beats: read %s and approve it (loop.md "
-                     "step 1)" % Chapter(c.abs(c.novel), c.n + 1, c.root).wfile("beats.md")]
+                     "              and on PLANNER DONE beats: python3 tools/room.py approve %s %d "
+                     "(loop.md step 1)" % (c.novel, c.n + 1)]
     branches.append("              and on POLISHED: python3 tools/room.py clerk %s %d %d"
                     % (c.novel, c.n, k))
     editor = story_editor(c, k)
@@ -553,7 +636,7 @@ def step_fold(c, cold=False):
                                      else "%d defect, %d warn" % (
                                          sum(l.startswith("defect") for l in found),
                                          sum(l.startswith("warn") for l in found))))
-    lines += ["  " + l for l in found]
+    lines += shown(found, "python3 tools/state_check.py %s" % c.novel, "  ")
     fold = c.wfile("fold.md")
     count = 0
     if os.path.isfile(c.abs(fold)):
@@ -606,7 +689,8 @@ def step_fold(c, cold=False):
         beats.append("  no plan row for chapter %d: kb/showrunner/plan.md first" % nxt.n)
     if late:
         beats += ["  the ledger has rows past due: kb/showrunner/plan.md first, then "
-                  "room.py beats"] + ["    " + l for l in late]
+                  "room.py beats"] + shown(late, "python3 tools/status.py %s --debt" % c.novel,
+                                           "    ")
     blocked = len(beats) > 2
     if count and not blocked:
         warm = [planner_beats(nxt)]
@@ -694,9 +778,9 @@ def where(novel, root=ROOT):
                                         for f in os.listdir(c.abs(c.work))) if m]
     drafts = [k for k in drafts if not unwritten(c, k)]
     if not drafts:
-        return c.n, ("step 2: beats written, no draft -> approve %s, then the writer (after the "
-                     "planner's fold of chapter %d, if room.py fold printed one)"
-                     % (c.wfile("beats.md"), c.n - 1))
+        return c.n, ("step 2: beats written, no draft -> python3 tools/room.py approve %s %d, then "
+                     "the writer (after the planner's fold of chapter %d, if room.py fold printed "
+                     "one)" % (c.novel, c.n, c.n - 1))
     k = max(drafts)
     kn, verdict = last_round(c)
     if kn != k:
@@ -721,8 +805,8 @@ def where(novel, root=ROOT):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    ap.add_argument("step", choices=("beats", "round", "judge", "clerk", "fold", "adopt",
-                                     "canon", "where"))
+    ap.add_argument("step", choices=("beats", "approve", "round", "judge", "clerk", "fold",
+                                     "adopt", "canon", "where"))
     ap.add_argument("novel")
     ap.add_argument("rest", nargs="*", help="N, K, the agent id: as the step needs")
     ap.add_argument("--log", help="append hand-backs and dispatches to this working log")
@@ -743,7 +827,7 @@ def main(argv=None):
             n, line = where(args.novel, args.root)
             print("ch %d · %s" % (n, line))
             return 0
-        need = {"beats": 1, "round": 2, "judge": 3, "clerk": 2, "fold": 1, "adopt": 2,
+        need = {"beats": 1, "approve": 1, "round": 2, "judge": 3, "clerk": 2, "fold": 1, "adopt": 2,
                 "canon": 1}
         if len(args.rest) != need[args.step]:
             raise Stop("%s takes %d argument(s) after NOVEL" % (args.step, need[args.step]))
@@ -759,6 +843,8 @@ def main(argv=None):
         if args.step == "beats":
             lines, sends, then, after = step_beats(c)
             came, then = [], render([then], after)
+        elif args.step == "approve":
+            lines, sends, then, came = step_approve(c)
         elif args.step == "round":
             lines, sends, then, came = step_round(c, k, args.force)
         elif args.step == "judge":

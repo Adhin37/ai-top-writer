@@ -124,6 +124,26 @@ class ReadingTest(unittest.TestCase):
         self.assertEqual(lines[last - 1], "1 | 58th")
         self.assertTrue(any(r.endswith("### Early life") for r in rows))
 
+    def run_main(self, *argv):
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            code = canon_fetch.main(list(argv))
+        return code, out.getvalue()
+
+    def test_toc_of_several_files_is_one_line_a_file(self):
+        trial = os.path.join(self.tmp, "Trial.md")
+        code, out = self.run_main("toc", self.page, trial)
+        self.assertEqual(code, 0)
+        self.assertNotIn("## History", out)
+        self.assertEqual(sum(1 for l in out.splitlines() if "heading(s)" in l), 2)
+        code, out = self.run_main("toc", self.page, trial, "--full")
+        self.assertIn("## History", out)
+
+    def test_grep_holds_its_ceilings(self):
+        code, out = self.run_main("grep", self.tmp, "Corin", "--context", "50", "--max", "5000")
+        self.assertEqual(code, 0)
+        self.assertIn("(--context 3, --max 100 at most)", out)
+
     def test_grep_finds_paragraphs_under_their_heading(self):
         rows, extra, _files = canon_fetch.grep(self.tmp, ["intake", "academy"])
         self.assertEqual(extra, 0)

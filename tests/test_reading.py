@@ -100,6 +100,35 @@ class ShelfTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "holds the reader's work"):
             reading.build_fresh(self.fx.root, 3, self.fx.tmp)
 
+    def test_a_fresh_read_past_its_budget_keeps_the_opening_and_the_latest(self):
+        self.assertEqual(reading.fresh_keep({1: 10, 2: 10, 3: 10}, budget=30), [1, 2, 3])
+        sizes = {i: 10 for i in range(1, 13)}
+        self.assertEqual(reading.fresh_keep(sizes, budget=60, opening=3), [1, 2, 3, 10, 11, 12])
+        # the chapter reported on is kept even when it alone passes the budget
+        self.assertEqual(reading.fresh_keep({1: 10, 2: 10, 3: 10, 4: 99}, budget=30), [1, 2, 3, 4])
+        for n in range(4, 9):
+            with open(os.path.join(self.shelf, "ch%02d.md" % n), "w", encoding="utf-8") as fh:
+                fh.write("# Chapter %d\n\nText.\n" % n)
+        size = os.path.getsize(os.path.join(self.shelf, "ch01.md"))
+        folder = reading.build_fresh(self.fx.root, 8, self.fx.tmp, budget=size * 5)
+        self.assertEqual(sorted(os.listdir(folder)),
+                         ["ch01.md", "ch02.md", "ch03.md", "ch07.md", "ch08.md"])
+        self.assertEqual(reading.skipped(folder, 8), "ch04-ch06")
+        self.assertEqual(reading.skipped(folder, 3), "")
+
+    def test_a_lost_shelf_is_rebuilt_whole_even_when_the_fresh_read_skips(self):
+        import shutil
+        shutil.rmtree(self.shelf)
+        for n in range(1, 6):
+            self.fx.chapter(n, "Accepted %d.\n" % n, title="T%d" % n)
+        folder = reading.build_fresh(self.fx.root, 5, self.fx.tmp, budget=60)
+        self.assertEqual(reading.skipped(folder, 5), "ch04")
+        with open(os.path.join(folder, "notes.md"), "w", encoding="utf-8") as fh:
+            fh.write("Rebuilt.\n")
+        reading.adopt(self.fx.root, folder, self.fx.tmp)
+        self.assertEqual(sorted(os.listdir(self.shelf)),
+                         ["ch%02d.md" % n for n in range(1, 6)] + ["notes.md"])
+
     def test_a_lost_shelf_is_rebuilt_from_the_accepted_chapters(self):
         import shutil
         shutil.rmtree(self.shelf)

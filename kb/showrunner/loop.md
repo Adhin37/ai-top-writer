@@ -48,7 +48,10 @@ it prints a `PAUSE` line when the usage window is nearly spent (below). If the r
 missing, it prints a fresh **beta-reader** for the chapters so far instead of the planner: send it,
 then `room.py adopt`, then `beats` again.
 
-Read `work/chNNNN/beats.md` (`room.py` printed its path). Approve it **as written** unless:
+On PLANNER DONE beats: `python3 tools/room.py approve novels/{slug} N`. It prints the plan row's
+event, the ledger rows due this chapter (and any the sheet's header does not name), and the line
+range of the sheet's header: read those lines, not the scenes below them, which are the writer's.
+Approve it **as written** unless:
 - it breaks the plan row's event;
 - it leaves a ledger row due this chapter unscheduled;
 - a `learns` item names no one who carries it (someone saying it, doing it, or weighing it before a

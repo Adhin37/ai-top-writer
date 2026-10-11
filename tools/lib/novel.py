@@ -67,6 +67,11 @@ class Block(object):
     def threads(self):
         return thread_refs(" ".join(self.keys().get("thr", [])))
 
+    @property
+    def last_line(self):
+        """The file line of the block's last `key value` or stray line (its head, if none)."""
+        return max([self.line_no] + [n for n, _k, _v in self.lines] + [n for n, _t in self.stray])
+
 
 class Novel(object):
     def __init__(self, root):

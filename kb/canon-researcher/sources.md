@@ -51,7 +51,8 @@ python3 tools/canon_fetch.py grep novels/<slug>/work/canon/src/<wiki> <words>
 - **Find, then read the part.** `toc` lists a page's headings with their line ranges and sizes;
   `grep` prints the paragraphs holding every word you give, with their line and heading. Read only
   that section or scene: offset its first line, limit its line count. Read a page whole only when
-  `toc` shows no heading that fits. Cite the page in `## Sources`.
+  `toc` shows no heading that fits. `toc` on several files gives one line each (size, headings) to
+  choose from. Cite the page in `## Sources`.
 - A page already cached is not fetched again. Fetch the pages you need, not the whole wiki: a
   category listing tells you who exists, and the pages close to the story's start tell you most.
 

@@ -57,8 +57,8 @@ Write `novels/<slug>/work/chNNNN/beats.md` per [beat-sheet.md](beat-sheet.md), f
 - the bible files the chapter touches, and from chapter 2 on the final scene of the previous
   chapter. Open no chapter before it and no earlier beat sheet: `state/` and the reader's notes
   stand for them;
-- from chapter 2 on, `state/`: the last continuity block, whose `hook` line is what the last page
-  promised (this chapter plays it, pays it or turns it on purpose), and `state/scenes.md`, the
+- from chapter 2 on, `state/`: the last continuity block, by the line range the showrunner gives
+  (Read that range, not the whole file), whose `hook` line is what the last page promised (this chapter plays it, pays it or turns it on purpose), and `state/scenes.md`, the
   shape of the last chapters' scenes ([arcs-and-chapters.md](arcs-and-chapters.md)).
   When the showrunner says the previous chapter is accepted and not yet in `state/`, its text is
   the draft it names: its last page is the hook, and `state/` stops one chapter earlier. You will

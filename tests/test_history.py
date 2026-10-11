@@ -210,14 +210,32 @@ class HistoryTest(unittest.TestCase):
             with contextlib.redirect_stdout(buf):
                 rc = history.main([fx.root, "--out", out])
             self.assertEqual(rc, 0)
-            text = buf.getvalue()
+            with open(out, encoding="utf-8") as fh:
+                text = fh.read()
             self.assertIn("## for the line editor", text)
             self.assertIn("## for the story editor", text)
             self.assertIn("findings to weigh, not gates", text)
-            with open(out, encoding="utf-8") as fh:
-                self.assertEqual(fh.read(), text)
+            # with --out the report goes to the file only: stdout names it
+            self.assertEqual(buf.getvalue(), "history -> %s (%d lines)\n"
+                             % (out, text.count("\n")))
         with contextlib.redirect_stderr(io.StringIO()):
             self.assertEqual(history.main(["/no/such/novel"]), 1)
+
+    def test_a_warn_motif_the_newest_chapter_lacks_is_counted_not_listed(self):
+        # the editors of chapter N can only cut from chapter N: a refrain that stopped is a count
+        with NovelFixture() as fx:
+            self.book(fx)
+            fx.chapter(4, body("She rowed home in the rain and said nothing to anyone."))
+            items, data = findings(fx)
+        self.assertTrue(any("knots" in m["text"].lower() for m in data["motifs"]))
+        motifs = [(lv, d) for lv, c, d in items if c == "motif"]
+        self.assertFalse([d for lv, d in motifs if "knots" in d.lower()], motifs)
+        self.assertIn(("note", "+1 more at the warn level, none in ch 4"), motifs)
+
+    def test_long_chapter_lists_keep_their_ends(self):
+        self.assertEqual(history.where([1, 1, 3, 5]), "ch 1 (2), 3, 5")
+        self.assertEqual(history.where([1, 1, 2, 4, 5, 6, 9, 9, 10, 12]),
+                         "ch 1 (2), 2 … 9 (2), 10, 12 - 8 chapters")
 
     def test_fewer_than_three_chapters_say_so(self):
         with NovelFixture() as fx:

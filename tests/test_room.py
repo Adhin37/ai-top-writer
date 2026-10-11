@@ -74,7 +74,8 @@ class RoomTest(unittest.TestCase):
         self.assertEqual(code, 0, out)
         self.assertIn('@ spawn planner as "planner-ch01"\nNovel: novels/long-ebb. Task: beats '
                       'for chapter 1.', out)
-        before, after = out.split("then: read novels/long-ebb/work/ch0001/beats.md")
+        before, after = out.split("then, on PLANNER DONE beats: python3 tools/room.py approve "
+                                  "novels/long-ebb 1")
         self.assertNotIn("writer", before)
         self.assertIn('@ spawn writer as "writer-ch01"\nNovel: novels/long-ebb. Chapter 1. Beat '
                       'sheet: novels/long-ebb/work/ch0001/beats.md. Write '
@@ -98,6 +99,43 @@ class RoomTest(unittest.TestCase):
         self.assertIn('@ spawn beta-reader as "beta-reader fresh ch01"', out)
         self.assertIn("room.py adopt novels/long-ebb 1 <agent id>", out)
         self.assertNotIn("@ spawn planner", out)
+
+    def test_approve_prints_the_header_range_and_a_due_row_the_header_misses(self):
+        sheet = ('# Ch 2 — "The Bar"\nevent    Nessa rows the boy out\nlearns   %s\n'
+                 'pressure L1 grew: she takes the oars\n\n## Scene 1 — the quay\nprose plan\n')
+        self.fx.write("work/ch0002/beats.md", sheet % "R1 the tally's date: sc 1, Tam says it")
+        code, out = self.run_room("approve", self.novel, "2")
+        self.assertEqual(code, 0, out)
+        self.assertIn("plan event: Nessa rows the boy out past the bar", out)
+        self.assertIn("read novels/long-ebb/work/ch0002/beats.md lines 1-5 only", out)
+        self.assertIn("ledger due ch 2: F2 - not in the header: F2", out)
+        self.assertNotIn("@ ", out)                 # no dispatch: the last step printed the writer
+        self.fx.write("work/ch0002/beats.md", sheet % "F2 the bar is dry: sc 1, she walks it")
+        code, out = self.run_room("approve", self.novel, "2")
+        self.assertIn("ledger due ch 2: F2\n", out)
+
+    def test_approve_stops_without_a_beat_sheet(self):
+        code, out = self.run_room("approve", self.novel, "2")
+        self.assertEqual(code, 2)
+        self.assertIn("STOP: no beat sheet", out)
+
+    def test_dispatches_name_the_last_continuity_block_by_its_lines(self):
+        self.fx.chapter(1, title="The Tally")
+        self.fx.state(blocks=(1,))
+        rng = "novels/long-ebb/state/continuity.md lines 3-8"
+        c = room.Chapter(self.novel, 2, self.root)
+        self.assertIn("Last continuity block: %s." % rng, room.planner_beats(c)[1])
+        self.assertIn("Last continuity block: %s." % rng, room.story_editor(c, 0)[1])
+        one = room.Chapter(self.novel, 1, self.root)
+        self.assertIn("Last continuity block: %s." % rng, room.clerk(one, 0)[1])
+        self.assertIn("Its block: %s." % rng, room.planner_fold(one)[1])
+        self.assertNotIn("continuity block", room.planner_beats(one)[1])   # chapter 1: no state
+
+    def test_long_finding_lists_stop_with_a_count(self):
+        self.assertEqual(room.shown(["x"] * 3, "f"), ["x"] * 3)
+        out = room.shown(["x%d" % i for i in range(12)], "python3 tools/status.py n --debt", "  ")
+        self.assertEqual(len(out), room.SHOWN + 1)
+        self.assertEqual(out[-1], "  +4 more: python3 tools/status.py n --debt")
 
     # ------------------------------------------------------------ round
 
@@ -397,7 +435,8 @@ class RoomTest(unittest.TestCase):
                       'novels/long-ebb/work/ch0001/draft-r0.md. Reader\'s notes: '
                       'reading/%s/ch01-r0/notes.md. Editor\'s notes for the planner: '
                       'novels/long-ebb/work/ch0001/notes-r0.md.' % self.id, accept)
-        self.assertIn("approve it (loop.md step 1)", accept)
+        self.assertIn("on PLANNER DONE beats: python3 tools/room.py approve novels/long-ebb 2 "
+                      "(loop.md step 1)", accept)
         self.assertIn("room.py clerk novels/long-ebb 1 0", accept)
 
     def test_judge_holds_the_next_beats_without_a_plan_row(self):

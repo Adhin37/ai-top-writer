@@ -27,7 +27,8 @@ contradiction waiting three chapters on, when a writer who never read that chapt
   moved the plot: write their profile ([cast-design.md](cast-design.md)) and drop the `_extras.md`
   entry.
 - **The chapter's plan row**: set its threads cell to the threads the chapter touched (its block's
-  `thr` in `state/continuity.md`), so the plan says what the book did.
+  `thr`: Read the block's line range the showrunner gives, not the whole file), so the plan says
+  what the book did.
 
 A `gap` about a `state/` cell (a thread's chapter, a timeline line) is the clerk's to fix. The clerk
 may already have fixed it: open the `state/` file the gap names and check it as it stands now. If the

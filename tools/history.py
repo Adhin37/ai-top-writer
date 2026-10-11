@@ -68,6 +68,7 @@ TAG_WARN = (3, 8)            # chapters and tag questions from one speaker that 
 RECAP_SHARE = 0.7            # of a sentence's content words found in one earlier sentence
 RECAP_MIN = 5                # content words a sentence needs before it can be a recap
 SHOWN = 8                   # notes of one check shown before "+n more"
+WHERE_SHOWN = 6             # chapters listed in full before a list keeps its first 2 and last 3
 LEVELS = ("warn", "note")
 OWNERS = (("line editor", ("motif", "signature", "gesture", "tag")),
           ("story editor", ("two-hander", "tempo", "temp", "recap")))
@@ -143,12 +144,16 @@ def runs(numbers):
 
 
 def where(chapters):
-    """[1, 1, 3, 5] -> 'ch 1 (2), 3, 5'."""
+    """[1, 1, 3, 5] -> 'ch 1 (2), 3, 5'. Past WHERE_SHOWN chapters, the first 2 and the last 3:
+    'ch 1 (2), 2 … 9 (9), 10 (7), 12 (6) - 9 chapters'."""
     counts = {}
     for c in chapters:
         counts[c] = counts.get(c, 0) + 1
-    return "ch " + ", ".join("%d (%d)" % (c, n) if n > 1 else str(c)
-                             for c, n in sorted(counts.items()))
+    parts = ["%d (%d)" % (c, n) if n > 1 else str(c) for c, n in sorted(counts.items())]
+    if len(parts) > WHERE_SHOWN:
+        return "ch %s … %s - %d chapters" % (", ".join(parts[:2]), ", ".join(parts[-3:]),
+                                             len(parts))
+    return "ch " + ", ".join(parts)
 
 
 def longest_run(seq):
@@ -331,9 +336,13 @@ def extend(uses, toks):
 
 def check_motifs(chapters, rep, setting, bible):
     found, covered = motifs(chapters, setting, bible)
-    notes = 0
+    newest = max(c.number for c in chapters)
+    notes = earlier = 0
     for text, chs, source in found:
         warn = len(set(chs)) >= MOTIF_WARN[0] and len(chs) >= MOTIF_WARN[1]
+        if warn and newest not in chs:
+            earlier += 1            # nothing for this chapter's editor to cut: counted, not listed
+            continue
         if not warn:
             notes += 1
             if notes > SHOWN:
@@ -343,6 +352,8 @@ def check_motifs(chapters, rep, setting, bible):
             shown, len(chs), where(chs), (" - also in %s" % source) if source else ""))
     if notes > SHOWN:
         rep.add("note", "motif", "+%d more, in fewer chapters" % (notes - SHOWN))
+    if earlier:
+        rep.add("note", "motif", "+%d more at the warn level, none in ch %d" % (earlier, newest))
     return found, covered
 
 
@@ -687,7 +698,7 @@ def main(argv=None):
     ap.add_argument("--draft", help="a chapter in progress, counted as chapter N")
     ap.add_argument("--chapter", type=int, help="the draft's chapter number")
     ap.add_argument("--upto", type=int, help="leave out chapters after N")
-    ap.add_argument("--out", help="also write the report to this file")
+    ap.add_argument("--out", help="write the report to this file instead of stdout")
     ap.add_argument("--json", action="store_true")
     args = ap.parse_args(argv)
     nov = resolve(args.novel, ROOT)
@@ -708,11 +719,13 @@ def main(argv=None):
         drafted = data.get("draft")
         text = "\n".join(rep.lines("history %s - ch %s%s" % (
             nov.slug, runs(chs), (" (ch %d is the draft)" % drafted) if drafted else "")))
-    sys.stdout.write(text + "\n")
     if args.out:
         os.makedirs(os.path.dirname(os.path.abspath(args.out)), exist_ok=True)
         with open(args.out, "w", encoding="utf-8") as fh:
             fh.write(text + "\n")
+        sys.stdout.write("history -> %s (%d lines)\n" % (args.out, text.count("\n") + 1))
+    else:
+        sys.stdout.write(text + "\n")
     return 0
 
 

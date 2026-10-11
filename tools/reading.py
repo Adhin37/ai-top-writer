@@ -20,7 +20,8 @@ Usage:
                                        the reader's memory
   reading.py fresh NOVEL N             reading/<id>/fresh-chNN/: ch01 … chNN, no notes, for a
                                        reader who re-reads everything (every 10 chapters, or to
-                                       rebuild a lost memory)
+                                       rebuild a lost memory). Past FRESH_BUDGET bytes, the
+                                       opening chapters and the latest that fit, not the middle
   reading.py adopt NOVEL FRESH_DIR     a fresh reader's notes replace the running ones, and the
                                        shelf gets back any chapter it lacks
 
@@ -45,6 +46,10 @@ import export_prose  # noqa: E402
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 NOTES_CAP = 800
 REREAD_EVERY = 10
+# A fresh re-read is one sitting: past this many bytes of prose (~100k tokens; run #9's ch 1-10 were
+# 271k) it keeps the opening chapters and as many of the latest as fit, and skips the middle.
+FRESH_BUDGET = 400000
+FRESH_OPENING = 3
 
 
 def folder(novel, root=ROOT):
@@ -157,9 +162,38 @@ def accept(novel, n, round_dir, root=ROOT):
     return out
 
 
-def build_fresh(novel, n, root=ROOT, force=False):
+def fresh_keep(sizes, budget=FRESH_BUDGET, opening=FRESH_OPENING):
+    """The chapter numbers a fresh re-read holds, from {number: bytes}: all of them when they fit
+    the budget; else the first `opening` and, from the last back, as many as still fit (the last
+    always)."""
+    nums = sorted(sizes)
+    if sum(sizes.values()) <= budget:
+        return nums
+    keep = nums[:opening]
+    used = sum(sizes[i] for i in keep)
+    for i in reversed(nums[opening:]):
+        if used + sizes[i] > budget and i != nums[-1]:
+            break
+        keep.append(i)
+        used += sizes[i]
+    return sorted(keep)
+
+
+def skipped(fresh, n):
+    """'ch04-ch12' for the chapters 1..n a fresh folder does not hold; '' when it holds them all."""
+    have = set(int(m.group(1)) for m in (re.match(r"^ch(\d+)\.md$", f) for f in os.listdir(fresh))
+               if m)
+    gone = [i for i in range(1, n + 1) if i not in have]
+    if not gone:
+        return ""
+    return "ch%02d" % gone[0] if len(gone) == 1 else "ch%02d-ch%02d" % (gone[0], gone[-1])
+
+
+def build_fresh(novel, n, root=ROOT, force=False, budget=FRESH_BUDGET):
     """reading/<id>/fresh-chNN/: ch01 … chNN from the shelf, or exported from the accepted
-    chapters where the shelf lacks one (a lost shelf is rebuilt this way). Returns its path."""
+    chapters where the shelf lacks one (a lost shelf is rebuilt this way). Past `budget` bytes it
+    holds only what `fresh_keep` keeps; a skipped chapter the shelf lacks is exported to the shelf,
+    so the shelf stays whole. Returns its path."""
     base = shelf(novel, root)
     out = fresh_dir(novel, n, root)
     srcs = []
@@ -171,8 +205,14 @@ def build_fresh(novel, n, root=ROOT, force=False):
                 raise ValueError("chapter %d is neither on the shelf nor in %s/chapters"
                                  % (i, novel))
         srcs.append((i, src))
+    keep = set(fresh_keep({i: os.path.getsize(src) for i, src in srcs}, budget))
     _clear(out, None, force)
     for i, src in srcs:
+        if i not in keep:
+            if os.path.dirname(src) != base:
+                os.makedirs(base, exist_ok=True)
+                export_prose.export([src], base, as_name="ch%02d.md" % i)
+            continue
         if os.path.dirname(src) == base:
             shutil.copyfile(src, os.path.join(out, "ch%02d.md" % i))
         else:

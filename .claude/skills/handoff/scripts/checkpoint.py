@@ -34,6 +34,7 @@ WRITE_TOOLS = {"Write", "Edit", "MultiEdit", "NotebookEdit"}
 IN_FLIGHT = {"running", "failed", "killed"}
 HUMAN_CAP = 1500
 LAST_WORDS = 3
+HUMAN_FIRST, HUMAN_LAST = 2, 8      # user messages kept whole: the task, then the latest
 FILES_CAP = 40
 WRAPPERS = re.compile(r"<(ide_opened_file|ide_selection|system-reminder)>.*?</\1>", re.S)
 AGENT_ID = re.compile(r"agentId: ([\w-]+)")
@@ -393,7 +394,15 @@ def render(session_id, main, crew, root, event=None, now=None, note="", closed_a
     out.append("")
 
     out += ["## Task - the user's messages, verbatim", ""]
-    for i, (t, text) in enumerate(main["human"], 1):
+    human = list(enumerate(main["human"], 1))
+    if len(human) > HUMAN_FIRST + HUMAN_LAST:
+        cut = len(human) - HUMAN_FIRST - HUMAN_LAST
+        human = human[:HUMAN_FIRST] + [(None, cut)] + human[-HUMAN_LAST:]
+    for i, item in human:
+        if i is None:
+            out += ["*%d message(s) between, left out: the transcript holds them.*" % item, ""]
+            continue
+        t, text = item
         out += ["%d. *%s %s*" % (i, day(t), hm(t)), "", quote(text, HUMAN_CAP), ""]
     if not main["human"]:
         out += ["None found.", ""]

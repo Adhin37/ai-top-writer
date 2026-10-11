@@ -26,13 +26,16 @@ search files with Read, Glob and Grep.
 ## Procedure
 
 1. **Read** the chapter, the beat sheet, the notes file (its *Owed* grades), the facts file (its
-   `new` lines), `plan/reader-ledger.md`, and every file in `state/`. Measure the chapter:
+   `new` lines), `plan/reader-ledger.md`, `state/threads.md`, `state/timeline.md`,
+   `state/scenes.md`, and of `state/continuity.md` only the last block, by the line range the
+   showrunner gives: the file grows with the book, and the block is what you carry on. Measure the chapter:
    `python3 tools/lint.py <chapter> --stats` gives its words, its scenes and who speaks in each.
 2. **The reader's memory.** Run `python3 tools/reading.py accept novels/<slug> N <round folder>`.
    It puts the chapter on the reader's shelf and copies that round's reader notes into the reader's
    memory, byte for byte. Never write or edit the reader's notes yourself: they are the reader's own
    words, and only the accepted round's reader may become memory.
-3. **`state/continuity.md`:** append the chapter's block after the last one. It holds what the
+3. **`state/continuity.md`:** append the chapter's block after the last one (Edit on the last
+   block's final line, which you have read). It holds what the
    chapter puts on the page; the beat sheet is only what was planned. Create the file with a
    `# Continuity` heading if it does not exist.
 4. **`state/threads.md`:** for each thread the chapter touched, set `last` to N and update

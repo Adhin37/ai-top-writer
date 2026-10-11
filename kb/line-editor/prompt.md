@@ -20,7 +20,8 @@ it. Read `novel.md` (narration, the style anchor), `bible/lexicon.md`, the speak
 `bible/cast/_voices.md`, and [../shared/format-spec.md](../shared/format-spec.md). From chapter 2
 on, also the two chapters before this one in `chapters/`. From chapter 3 on, also the history
 report (`work/chNNNN/history-rK.txt`): its lines under *for the line editor* count every use of a
-phrase, a gesture and a speaker's tag questions across the whole book.
+phrase, a gesture and a speaker's tag questions across the whole book. A refrain this chapter does
+not use is only counted: it is not yours to cut.
 
 ## Procedure
 

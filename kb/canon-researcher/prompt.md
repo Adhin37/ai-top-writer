@@ -20,8 +20,8 @@ Read [index.md](index.md) now. The showrunner's message names the novel and your
    appear), `genre`, `mc`, `opening.promise`, and `work/init/round-1.md` with its answers. The
    message may carry the planner's `gap canon` lines: the dossier answers each, or lists it under
    `## Unsure`.
-2. If `work/canon/inbox/` holds files (pages the user saved, their own notes), read them first: they
-   are sources, cited by path.
+2. If `work/canon/inbox/` holds files (pages the user saved, their own notes), go through them first,
+   as you would a fetched page (find, then read the part, below): they are sources, cited by path.
 3. Find the sources per [sources.md](sources.md), fetch the wiki pages you need into
    `work/canon/src/<wiki>/` with `tools/canon_fetch.py`, and read only the sections and scenes
    that hold your facts (its § Fetching: find, then read the part).

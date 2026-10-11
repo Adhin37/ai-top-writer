@@ -174,6 +174,19 @@ From [10](roadmap/10-prompts-for-smaller-models.md), on the next run's clerk (So
 - [ ] at a fan-fiction init: the dossier cites transcripts for a show, and states each rank at the
       start, with how it was worked out.
 
+## Plan 11 (2026-10-11)
+
+From [11](roadmap/11-bounded-reads.md), on the next full run (baseline: run #9's trace):
+
+- [ ] the showrunner runs `room.py approve` and Reads `beats.md` with a limit (the header), not
+      whole; its compactions (run #9: 3 at 217k) and its context mean (129k);
+- [ ] clerk, planner and story editor Read `state/continuity.md` with an offset, never whole (the
+      guard's `*.reads.tsv` and the transcripts); their cache writes a spawn against run #9;
+- [ ] the clerk's block still appended in place, after the last one (`state_check` clean), and no
+      continuity or story-editor finding traced to a fact only an earlier block held;
+- [ ] the line editor still acts on the history report's motifs in its chapter;
+- [ ] at ch 15+ or a lost memory past the budget: the fresh reader's notes say what it skipped.
+
 ## The bench
 
 - [x] the blind panel on two models (`bench.py panel`, `judge--fable`): scores per model, with the

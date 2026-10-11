@@ -8,7 +8,8 @@ uses the API only, names itself honestly in its user agent, waits between reques
 `blocked`, and the researcher says so.
 
   search WIKI QUERY...            titles and one line each, best match first
-  category WIKI NAME              the pages in a category (`Characters`, `Episodes`)
+  category WIKI NAME              the pages in a category (`Characters`, `Episodes`), 100 at most
+                                  (--limit)
   page WIKI TITLE... --out DIR    each page as DIR/<Title>.md, from the API's rendered page: the
                                   infobox as `key: value` lines (ages, status, affiliations live
                                   there), then the body as text, with navboxes, references,
@@ -16,10 +17,12 @@ uses the API only, names itself honestly in its user agent, waits between reques
                                   fetched again (--refresh does). A transcript gets a
                                   `## Scene N — <speakers>` heading at each scene
   toc FILE...                     each heading with its line range and size: Read one section with
-                                  offset = the first line, limit = the line count
+                                  offset = the first line, limit = the line count. Given several
+                                  files, one line each (its size and heading count); --full for all
   grep PATH WORDS... [--context N]
                                   each paragraph holding every word, under its file and nearest
-                                  heading, with its line number; capped (--max), the rest counted
+                                  heading, with its line number; capped (--max, at most 100; context
+                                  at most 3), the rest counted
   restyle DIR                     add the scene headings to transcripts saved before they existed
 
 WIKI is a host (`<name>.fandom.com`, a standalone wiki) or an `api.php` URL. Wikipedia's robots.txt
@@ -408,6 +411,10 @@ def md_files(path):
                   if f.endswith(".md"))
 
 
+GREP_CONTEXT = 3        # lines either side of a hit, at most
+GREP_MAX = 100          # hits, at most
+
+
 def clip(text, pat, width):
     """`text` cut to `width` characters around `pat`'s first match (or from the start)."""
     if len(text) <= width:
@@ -483,10 +490,21 @@ def arg(s):
 def read_cmd(args):
     """The commands on saved pages: no network."""
     if args.cmd == "toc":
+        if len(args.files) > 1 and not args.full:
+            # one line a file: a whole cache's headings would be the page-sized read toc replaces
+            for f in args.files:
+                rows = toc(f)
+                print("%s, %d heading(s)" % (rows[0], len(rows) - 1))
+            print("one line a file: toc FILE for its headings")
+            return 0
         for f in args.files:
             print("\n".join(toc(f)))
         return 0
     if args.cmd == "grep":
+        context, cap = min(args.context, GREP_CONTEXT), min(args.max, GREP_MAX)
+        if (context, cap) != (args.context, args.max):
+            print("(--context %d, --max %d at most)" % (GREP_CONTEXT, GREP_MAX))
+        args.context, args.max = context, cap
         rows, extra, files = grep(args.path, [arg(w) for w in args.words], args.context,
                                   args.max)
         print("\n".join(rows) if rows else "no paragraph holds all of: %s" % " ".join(args.words))
@@ -511,7 +529,7 @@ def main(argv=None):
     p = sub.add_parser("category")
     p.add_argument("wiki")
     p.add_argument("name")
-    p.add_argument("--limit", type=int, default=500)
+    p.add_argument("--limit", type=int, default=100)
     p = sub.add_parser("page")
     p.add_argument("wiki")
     p.add_argument("titles", nargs="+")
@@ -519,6 +537,7 @@ def main(argv=None):
     p.add_argument("--refresh", action="store_true")
     p = sub.add_parser("toc")
     p.add_argument("files", nargs="+")
+    p.add_argument("--full", action="store_true", help="every file's headings, not one line each")
     p = sub.add_parser("grep")
     p.add_argument("path")
     p.add_argument("words", nargs="+")
@@ -539,6 +558,8 @@ def main(argv=None):
             members = category(api, arg(args.name), args.limit)
             print("%d page(s) in %s" % (len(members), arg(args.name)))
             print("\n".join(m.replace(" ", "_") for m in members))
+            if len(members) >= args.limit:
+                print("… stopped at --limit %d: search the wiki for a name instead" % args.limit)
             return 0
     except Refused as exc:
         print("blocked %s" % exc)

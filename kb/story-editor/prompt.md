@@ -34,8 +34,8 @@ callback the scene uses.
 
 Read: the beat sheet (`work/chNNNN/beats.md`), `bible/premise.md`, `plan/reader-ledger.md`, the
 draft, the writer's facts file, the reader's report, then the continuity
-file. From chapter 2 on, also the reader's memory, the last block in `state/continuity.md` and
-`state/scenes.md` ([state-format.md](../shared/state-format.md)). Open other bible files only to
+file. From chapter 2 on, also the reader's memory, the last block of `state/continuity.md` (Read the
+line range the showrunner gives, not the whole file) and `state/scenes.md` ([state-format.md](../shared/state-format.md)). Open other bible files only to
 check a specific fact.
 
 ## Procedure
