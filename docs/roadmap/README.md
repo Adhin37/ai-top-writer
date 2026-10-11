@@ -27,12 +27,16 @@ in `docs/sessions/`, and the `handoff` skill resumes it (the same session, or a 
 | 06d | [Session 7d: model and effort by role; the skill-authoring guide against `kb/`](06d-model-effort-and-kb.md) | **built** 2026-10-04: no role changes model (the Sonnet roles mostly read; on Opus +$6–10 a run); the rule *Sonnet only at `high`*, warned by `kb_check`; `trace.py --reprice`; the continuity editor checks its own file; a prompt audit (one fossil removed); `kb_check` warns on dated text; a bible read-set tool measured and dropped. No agent spawned | 06c |
 | 07 | [Session 8: retire skilled-writer](07-retire-skilled-writer.md) | **done** 2026-10-04: the coverage diff (64 areas; 8 gaps filled, one as a new planner doc and seven as examples; the rest covered, or waived with a reason) and the `sw` tools diff in [kb-mapping.md](../kb-mapping.md); [history.md](../history.md); an archive notice in the old repo; both projects' memory updated, lessons 35–36. No agent spawned | 05 |
 | 08 | [Session 9: the lead's pressure, an outside slop figure, and run #9](08-pressure-and-run-9.md) | **steps 1–2 built** 2026-10-10: Pressure rows in the ledger (`L1` the lead's lever, `C1` the clock), flagged by `status.py` and handed to the planner; EQ-Bench's slop index in `lint.py` (it does not separate run #7 from run #8). **Step 3 done** 2026-10-10 ($10.13): Pressure rows alone left the ch 5 event passive, so the planner now checks the lever when it writes plan rows; the planner stays at `high`. **Step 4 done** 2026-10-11, run #9 on ch 6–12 ([write-up](../experiments/2026-10-10-run-9.md)): 4.5 / 4.5 / 4 from the blind panel, 14/18 premise facts stated; the agency complaint is gone; $1.95 per 1,000 words | run #8 |
+| 09 | [Session 10: the canon researcher reads sections, not pages](09-canon-reading.md) | planned 2026-10-11; closes the Haiku 5.5 test (aside) | 08 |
+| 10 | [Session 11: prompts a smaller model can follow, then Haiku 5.5 again](10-prompts-for-smaller-models.md) | planned 2026-10-11 | 09 |
 
 After 08, run #9's routed fixes are built (2026-10-11, [the write-up's fixes](../experiments/2026-10-10-run-9.md#fixes-2026-10-11-after-the-run-no-agent-spawned)):
 recap examples for the story editor and the writer, the pressure grade's warn, the motif union, the clock
 and the antagonist as planner examples. A run confirms them ([checklist](../next-run-checklist.md#run-9s-fixes-2026-10-11)).
 What remains is that run and the first human read of a chapter 1, once the
 user lifts the standing decision that they read nothing ([07 § After the rebuild](07-retire-skilled-writer.md#after-the-rebuild)).
+
+Next: [09](09-canon-reading.md), the canon researcher's reading cost (any model), and the Haiku 5.5 test's write-up; then [10](10-prompts-for-smaller-models.md), the clerk's and canon researcher's md files made explicit enough for Haiku 5.5, and a fair retest.
 
 ## Why this order
 
