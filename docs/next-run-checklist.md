@@ -143,6 +143,21 @@ From the [write-up's fixes](experiments/2026-10-10-run-9.md#fixes-2026-10-11-aft
 - [ ] the run started from the terminal CLI: a PAUSE line at the threshold, and whether the
       `CronCreate` resume ran.
 
+## Plan 09 (2026-10-11)
+
+From [09](roadmap/09-canon-reading.md), at the next fan-fiction init or `gap canon` lookup (no
+replay was paid for it):
+
+- [ ] `trace.py` for `canon-researcher`: cache writes and compactions a spawn, against the Sonnet
+      baseline (init: 0.69M cache writes, 3 compactions, $3.45; 31 of 39 pages opened more than
+      once); no `long_tier` warn if the role runs on Haiku;
+- [ ] its transcript uses `toc` or `grep` before a Read, and Reads with an offset; a page read whole
+      only where `toc` shows no heading that fits;
+- [ ] the dossier against `bench/h55-canon/canonson.md`: the same ages and statuses at the start
+      (Zuko 15–16, Iroh about 54, Zhao Captain or Commander, not "newly commander"), transcripts
+      still cited, and every path under `## Sources` exists. Facts missing: loosen what counts as a
+      whole-page read; do not revert the tool.
+
 ## The bench
 
 - [x] the blind panel on two models (`bench.py panel`, `judge--fable`): scores per model, with the

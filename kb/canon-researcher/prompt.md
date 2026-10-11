@@ -22,8 +22,9 @@ Read [index.md](index.md) now. The showrunner's message names the novel and your
    `## Unsure`.
 2. If `work/canon/inbox/` holds files (pages the user saved, their own notes), read them first: they
    are sources, cited by path.
-3. Find the sources per [sources.md](sources.md), and fetch the wiki pages you need into
-   `work/canon/src/<wiki>/` with `tools/canon_fetch.py`.
+3. Find the sources per [sources.md](sources.md), fetch the wiki pages you need into
+   `work/canon/src/<wiki>/` with `tools/canon_fetch.py`, and read only the sections and scenes
+   that hold your facts (its § Fetching: find, then read the part).
 4. Write `bible/canon.md` per [canon-format.md](canon-format.md), within the scope:
    - **cast:** everyone in `must_appear`, everyone close to where the story starts (their family,
      team, teachers, rivals, the antagonists active then), and anyone the seed names;

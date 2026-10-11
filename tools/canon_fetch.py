@@ -13,7 +13,14 @@ uses the API only, names itself honestly in its user agent, waits between reques
                                   infobox as `key: value` lines (ages, status, affiliations live
                                   there), then the body as text, with navboxes, references,
                                   galleries and edit links dropped. A page already in DIR is not
-                                  fetched again (--refresh does)
+                                  fetched again (--refresh does). A transcript gets a
+                                  `## Scene N — <speakers>` heading at each scene
+  toc FILE...                     each heading with its line range and size: Read one section with
+                                  offset = the first line, limit = the line count
+  grep PATH WORDS... [--context N]
+                                  each paragraph holding every word, under its file and nearest
+                                  heading, with its line number; capped (--max), the rest counted
+  restyle DIR                     add the scene headings to transcripts saved before they existed
 
 WIKI is a host (`<name>.fandom.com`, a standalone wiki) or an `api.php` URL. Wikipedia's robots.txt
 shuts its API to programs like this one, so the tool refuses it: read Wikipedia with WebFetch.
@@ -294,7 +301,173 @@ def render(title, url, html, cats, fetched):
             lines.append(("### %s" % value) if key == "§" else
                          ("%s: %s" % (key, value)) if key else value)
     lines += ["", text]
-    return "\n".join(lines).rstrip() + "\n", len(box)
+    out = "\n".join(lines).rstrip() + "\n"
+    if is_transcript(title, cats):
+        out = add_scenes(out)
+    return out, len(box)
+
+
+# ------------------------------------------------------------------------------- transcripts
+
+# A change of place or time, in a stage direction. "Cut to" alone is usually a camera cut inside a
+# scene; it breaks a scene only once the scene has run SCENE_CHARS (some transcripts use nothing
+# else).
+SCENE_MARK = re.compile(r"\bscene\s+(?:changes|cuts|shifts|switches|transitions|returns)\b"
+                        r"|\bfades?\s+(?:to|from|in|out)\b|\bflashback\b", re.I)
+CUT = re.compile(r"\bcut(?:s)?\s+(?:back\s+)?to\b", re.I)
+SPEAKER = re.compile(r"^([^|\[\]]{1,40}?) \| ")
+HEADER = re.compile(r"^(?:source|fetched|categories): ")
+SCENE_CHARS = 3000
+MAX_SPEAKERS = 6
+
+
+def is_transcript(title, cats):
+    return (title.lower().startswith("transcript:")
+            or any(c.lower().endswith("transcripts") for c in cats))
+
+
+def add_scenes(text):
+    """A saved transcript with a `## Scene N — <speakers>` heading at each scene: after the header
+    block (`# Title`, `source:`…), up to the page's first `##` heading (Cast, Locations). A page
+    that already has scene headings comes back unchanged."""
+    lines = text.split("\n")
+    if any(l.startswith("## Scene ") for l in lines):
+        return text
+    start = 1 if lines and lines[0].startswith("# ") else 0
+    while start < len(lines) and (not lines[start].strip() or HEADER.match(lines[start])):
+        start += 1
+    end = next((i for i in range(start, len(lines)) if lines[i].startswith("## ")), len(lines))
+    body = lines[start:end]
+    scenes, cur, size = [], [], 0
+    for line in body:
+        stage = bool(line.strip()) and not SPEAKER.match(line)
+        if cur and size and stage and (SCENE_MARK.search(line) or
+                                       (size >= SCENE_CHARS and CUT.search(line))):
+            scenes.append(cur)
+            cur, size = [], 0
+        cur.append(line)
+        size += len(line)
+    if cur:
+        scenes.append(cur)
+    out = []
+    for n, scene in enumerate(scenes, 1):
+        out += [scene_heading(n, scene), ""] + scene + [""]
+    text = "\n".join(lines[:start] + [""] + out + lines[end:])
+    return re.sub(r"\n{3,}", "\n\n", text)
+
+
+def scene_heading(n, scene):
+    who = []
+    for line in scene:
+        m = SPEAKER.match(line)
+        if m and m.group(1).strip() not in who:
+            who.append(m.group(1).strip())
+    names = ", ".join(who[:MAX_SPEAKERS])
+    if len(who) > MAX_SPEAKERS:
+        names += " +%d" % (len(who) - MAX_SPEAKERS)
+    return "## Scene %d — %s" % (n, names or "no dialogue")
+
+
+# ------------------------------------------------------------------------------- reading
+
+HEADING = re.compile(r"^(#{1,6}) (.*)")
+
+
+def headings(lines):
+    """[(line number, level, title, last line, characters)] for each heading; a section runs to
+    the next heading of its level or above."""
+    found = [(i, len(m.group(1)), m.group(2).strip())
+             for i, line in enumerate(lines) for m in [HEADING.match(line)] if m]
+    out = []
+    for k, (i, level, title) in enumerate(found):
+        j = next((f[0] for f in found[k + 1:] if f[1] <= level), len(lines))
+        while j > i + 1 and not lines[j - 1].strip():
+            j -= 1
+        out.append((i + 1, level, title, j, sum(len(l) + 1 for l in lines[i:j])))
+    return out
+
+
+def size(chars):
+    return "%.1fk" % (chars / 1000.0) if chars >= 1000 else "%d" % chars
+
+
+def toc(path):
+    with open(path, encoding="utf-8") as fh:
+        lines = fh.read().split("\n")
+    rows = ["%s (%d lines, %s chars)" % (path, len(lines), size(sum(len(l) + 1 for l in lines)))]
+    for first, level, title, last, chars in headings(lines):
+        rows.append("%5d-%-5d %6s  %s%s %s" % (first, last, size(chars), "  " * (level - 1),
+                                               "#" * level, title))
+    return rows
+
+
+def md_files(path):
+    if os.path.isfile(path):
+        return [path]
+    return sorted(os.path.join(d, f) for d, _s, fs in os.walk(path) for f in fs
+                  if f.endswith(".md"))
+
+
+def clip(text, pat, width):
+    """`text` cut to `width` characters around `pat`'s first match (or from the start)."""
+    if len(text) <= width:
+        return text
+    at = pat.search(text).start() if pat else 0
+    lo = max(0, min(at - width // 3, len(text) - width))
+    return ("…" if lo else "") + text[lo:lo + width] + "…"
+
+
+def grep(path, words, context=0, limit=40, width=400):
+    """(output lines, hits past the cap). A paragraph is a line; it matches when it holds every
+    word, case ignored. A long paragraph is cut to `width` characters around its first match."""
+    pats = [re.compile(r"\b" + re.escape(w), re.I) for w in words]
+    rows, shown, extra, extra_files = [], 0, 0, set()
+    for f in md_files(path):
+        with open(f, encoding="utf-8") as fh:
+            lines = fh.read().split("\n")
+        head, printed_file, last = "", False, -1
+        for i, line in enumerate(lines):
+            m = HEADING.match(line)
+            if m:
+                head = line
+                continue
+            if not all(p.search(line) for p in pats):
+                continue
+            if shown >= limit:
+                extra += 1
+                extra_files.add(f)
+                continue
+            if not printed_file:
+                rows.append("== %s" % f)
+                printed_file = True
+            rows.append("   [%s]" % (head or "top"))
+            for j in range(max(0, i - context), min(len(lines), i + context + 1)):
+                if j <= last or not lines[j].strip():
+                    continue
+                text = clip(lines[j], pats[0] if j == i else None, width)
+                rows.append("%6d%s %s" % (j + 1, ":" if j == i else "-", text))
+                last = j
+            shown += 1
+    return rows, extra, len(extra_files)
+
+
+def restyle(path):
+    done = []
+    for f in md_files(path):
+        with open(f, encoding="utf-8") as fh:
+            text = fh.read()
+        head = text.split("\n")[:6]
+        title = head[0][2:] if head[0].startswith("# ") else ""
+        cats = next((l[len("categories: "):].split(", ") for l in head
+                     if l.startswith("categories: ")), [])
+        if not is_transcript(title, cats):
+            continue
+        new = add_scenes(text)
+        if new != text:
+            with open(f, "w", encoding="utf-8") as fh:
+                fh.write(new)
+            done.append((f, sum(1 for l in new.split("\n") if l.startswith("## Scene "))))
+    return done
 
 
 def safe_name(title):
@@ -305,6 +478,27 @@ def safe_name(title):
 
 def arg(s):
     return urllib.parse.unquote(s).replace("_", " ")
+
+
+def read_cmd(args):
+    """The commands on saved pages: no network."""
+    if args.cmd == "toc":
+        for f in args.files:
+            print("\n".join(toc(f)))
+        return 0
+    if args.cmd == "grep":
+        rows, extra, files = grep(args.path, [arg(w) for w in args.words], args.context,
+                                  args.max)
+        print("\n".join(rows) if rows else "no paragraph holds all of: %s" % " ".join(args.words))
+        if extra:
+            print("… %d more hit(s) in %d file(s) past the cap of %d: add a word, or grep one file"
+                  % (extra, files, args.max))
+        return 0
+    done = restyle(args.dir)
+    for f, n in done:
+        print("restyled %s (%d scenes)" % (f, n))
+    print("%d transcript(s) restyled" % len(done))
+    return 0
 
 
 def main(argv=None):
@@ -323,7 +517,18 @@ def main(argv=None):
     p.add_argument("titles", nargs="+")
     p.add_argument("--out", required=True)
     p.add_argument("--refresh", action="store_true")
+    p = sub.add_parser("toc")
+    p.add_argument("files", nargs="+")
+    p = sub.add_parser("grep")
+    p.add_argument("path")
+    p.add_argument("words", nargs="+")
+    p.add_argument("--context", type=int, default=0)
+    p.add_argument("--max", type=int, default=40)
+    p = sub.add_parser("restyle")
+    p.add_argument("dir")
     args = ap.parse_args(argv)
+    if args.cmd in ("toc", "grep", "restyle"):
+        return read_cmd(args)
     api = api_url(args.wiki)
     try:
         if args.cmd == "search":

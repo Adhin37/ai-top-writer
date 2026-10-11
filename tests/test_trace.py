@@ -129,6 +129,24 @@ class TraceTest(unittest.TestCase):
         self.assertIn("warn: no rate for claude-newmodel-9", trace.render(result))
         self.assertEqual(trace.summarise(self.paths)["unpriced"], {})
 
+    def test_haiku_5_5_costs_five_times_above_100k_input(self):
+        r = trace.Response()
+        r.model, r.output, r.read = "claude-haiku-5-5", 1000, 90000
+        self.assertFalse(r.long_tier())
+        self.assertAlmostEqual(sum(r.cost()), (1000 * 0.50 + 90000 * 0.01) / 1e6)
+        r.input = 20000
+        self.assertTrue(r.long_tier())
+        self.assertAlmostEqual(sum(r.cost()), (1000 * 2.50 + 90000 * 0.05 + 20000 * 0.50) / 1e6)
+        self.assertFalse(r.long_tier("claude-sonnet-5-5"))
+        sub = os.path.join(self.base, "0123abcd-0000", "subagents", "agent-a3.jsonl")
+        row = assistant("2026-01-01T00:00:09.000Z", "s3", usage(500, read=150000))
+        row["message"]["model"] = "claude-haiku-5-5"
+        write(sub, [user("2026-01-01T00:00:08.500Z", "read"), row])
+        result = trace.summarise(trace.transcripts_for("0123", self.base))
+        self.assertEqual([(t["model"], t["responses"]) for t in result["long_tier"]],
+                         [("claude-haiku-5-5", 1)])
+        self.assertIn("with over 100k input, priced at 5x", trace.render(result))
+
     def test_handbacks_entering_the_showrunner(self):
         s = trace.summarise(self.paths)["showrunner"]
         self.assertEqual(s["handbacks"], 3)

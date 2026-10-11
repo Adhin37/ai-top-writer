@@ -80,7 +80,11 @@ RATES = {
     "claude-sonnet-5-5": (2.00, 10.00, 0.20),
     "claude-sonnet-5": (2.00, 10.00, 0.20),
     "claude-haiku-4-5": (1.00, 5.00, 0.10),
+    "claude-haiku-5-5": (0.10, 0.50, 0.01),
 }
+# A model whose rates multiply once a request's input (fresh, cache read and cache write) passes a
+# threshold: {model: (tokens, factor)}. Haiku 5.5 costs 5x above 100k.
+LONG_TIER = {"claude-haiku-5-5": (100000, 5.0)}
 WRITE_5M, WRITE_1H = 1.25, 2.00
 TTL_5M, TTL_1H = 300.0, 3600.0
 SYNTHETIC = ("<synthetic>",)
@@ -242,8 +246,21 @@ class Response(object):
             return 0.0
         return max(0.0, self.content_chars / CHARS_PER_TOKEN - self.output)
 
+    @property
+    def prompt(self):
+        """The request's whole input: fresh, read from the cache and written to it."""
+        return self.input + self.read + self.write_5m + self.write_1h
+
+    def long_tier(self, model=None):
+        tier = LONG_TIER.get(model or self.model)
+        return bool(tier) and self.prompt > tier[0]
+
     def rates(self, model=None):
-        return RATES.get(model or self.model, (0.0, 0.0, 0.0))
+        rates = RATES.get(model or self.model, (0.0, 0.0, 0.0))
+        if self.long_tier(model):
+            factor = LONG_TIER[model or self.model][1]
+            rates = tuple(r * factor for r in rates)
+        return rates
 
     def unrecorded_cost(self, model=None):
         return self.unrecorded * self.rates(model)[1] / MILLION
@@ -575,7 +592,7 @@ def summarise(paths, since=None, until=None, match=None, log=None, reprice=None)
     rounds = assign_chapters(transcripts)
     log = reads_log(session_id(paths)) if log is None else log
     roles, agents, chapters = {}, [], {}
-    showrunner, expiries, finals, docs = None, [], {}, {}
+    showrunner, expiries, finals, docs, long = None, [], {}, {}, {}
     by_agent = dict((t.agent_id, t.role) for t in transcripts if t.agent_id)
     for t in transcripts:
         if pattern and (t.role == "showrunner" or not pattern.search(t.description)):
@@ -604,6 +621,9 @@ def summarise(paths, since=None, until=None, match=None, log=None, reprice=None)
                 for kk, vv in v.items():
                     total[k][kk] = total[k].get(kk, 0) + vv
         for r in rs:
+            if r.long_tier():
+                n, cost = long.get((t.role, r.model), (0, 0.0))
+                long[(t.role, r.model)] = (n + 1, cost + sum(r.cost()))
             if r.expired:
                 expiries.append({"role": t.role, "agent": t.agent_id, "at": r.timestamp,
                                  "gap_s": r.gap, "tokens": r.writes, "usd": r.write_cost(),
@@ -665,6 +685,8 @@ def summarise(paths, since=None, until=None, match=None, log=None, reprice=None)
             "total": sum(r["cost"] for r in roles.values()),
             "unrecorded_usd": sum(r["unrecorded_usd"] for r in roles.values()),
             "unpriced": unpriced,
+            "long_tier": [{"role": k[0], "model": k[1], "responses": v[0], "cost": v[1]}
+                          for k, v in sorted(long.items())],
             "chapters": dict((str(k), v) for k, v in chapters.items()),
             "rounds": dict((str(k), v) for k, v in rounds.items()),
             "expiries": expiries,
@@ -814,6 +836,12 @@ def render(result, show_agents=False, show_chapters=False, show_docs=False):
         # A model with no rate would cost 0 and look cheap: say so rather than fall silent.
         out.append("warn: no rate for %s (agents with %d responses on it); their cost is "
                    "counted as $0 - add it to RATES" % (model, n))
+    for row in result.get("long_tier", []):
+        # Above the threshold every token costs the tier's multiple: the context is the lever.
+        tokens, factor = LONG_TIER[row["model"]]
+        out.append("warn: %s sent %d response(s) on %s with over %dk input, priced at %gx: $%.2f"
+                   % (row["role"], row["responses"], row["model"], tokens // 1000, factor,
+                      row["cost"]))
     out.append("")
     out.append("effort, responses at each level: " + " · ".join(
         "%s %s" % (role, ", ".join("%s %d" % kv for kv in sorted(r["effort"].items())))

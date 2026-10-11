@@ -1,7 +1,7 @@
 ---
 type: howto
 title: Where canon comes from
-description: Where the canon researcher looks, what outranks what when sources disagree, how to fetch wiki pages with tools/canon_fetch.py, and what to do when a site refuses.
+description: Where the canon researcher looks, what outranks what when sources disagree, how to fetch wiki pages with tools/canon_fetch.py and read only the part that holds a fact, and what to do when a site refuses.
 roles: [canon-researcher]
 ---
 # Where canon comes from
@@ -37,12 +37,19 @@ programs; their web pages may sit behind a bot check). Cache every page under th
 python3 tools/canon_fetch.py search <wiki> <words>
 python3 tools/canon_fetch.py category <wiki> Characters
 python3 tools/canon_fetch.py page <wiki> <Title> <Title> --out novels/<slug>/work/canon/src/<wiki>
+python3 tools/canon_fetch.py toc novels/<slug>/work/canon/src/<wiki>/<Title>.md
+python3 tools/canon_fetch.py grep novels/<slug>/work/canon/src/<wiki> <words>
 ```
 
 - `<wiki>` is the host: `ashfall.fandom.com`. A title takes underscores for spaces and `%28` `%29`
   for brackets: `Corin_Dask`, `Ilse_Maro_%28novel%29`. Search first when unsure of a title.
 - Each page lands as a text file: its URL, its categories, the infobox as `key: value` lines, then
-  the article. Read it there; cite the page's URL in `## Sources`.
+  the article under its headings. A transcript gets a `## Scene N — <speakers>` heading at each
+  scene.
+- **Find, then read the part.** `toc` lists a page's headings with their line ranges and sizes;
+  `grep` prints the paragraphs holding every word you give, with their line and heading. Read only
+  that section or scene: offset its first line, limit its line count. Read a page whole only when
+  `toc` shows no heading that fits. Cite the page in `## Sources`.
 - A page already cached is not fetched again. Fetch the pages you need, not the whole wiki: a
   category listing tells you who exists, and the pages close to the story's start tell you most.
 

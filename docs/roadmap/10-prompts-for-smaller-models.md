@@ -73,7 +73,7 @@ grown-houses ch 5 (06c's Haiku 4.5 round). `touch .test-run` first.
 
 - Compare the clerks line by line with the run's own block and ledger, and read the new warn.
 - Compare the canon dossier with 09's live-check Sonnet dossier and with
-  `novels/ember-terraces--h55-canonson/bible/canon.md`: ages and statuses at the start, sources
+  `bench/h55-canon/canonson.md`: ages and statuses at the start, sources
   that exist, transcripts read, no rule without a source.
 - Confirm from the transcripts that each arm ran on `claude-haiku-5-5`, and take the cost from
   `tools/trace.py`.
