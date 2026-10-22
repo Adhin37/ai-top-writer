@@ -54,7 +54,8 @@ dispatches, filled in:
 From chapter 2 on, this step started at the previous chapter's ACCEPT: `room.py judge` printed a
 **planner** for chapter N's beats, to spawn beside the line editor (step 4). When it said the beats
 wait, the previous chapter's `room.py fold` prints them instead. For chapter 1, the first chapter
-of a session, or when neither did: `python3 tools/room.py beats novels/{slug} N`. It stops if the chapter has no plan row or the
+of a session, or when neither did: `python3 tools/room.py beats novels/{slug} N`. After a fold
+whose planner you sent, it continues that planner (`--cold` if it can no longer be resumed). It stops if the chapter has no plan row or the
 ledger has rows past due ([plan.md](plan.md) first; `fold` says the same for the next chapter), and
 it prints a `PAUSE` line when the usage window is nearly spent (below). If the reader's memory is
 missing, it prints a fresh **beta-reader** for the chapters so far instead of the planner: send it,
@@ -117,7 +118,7 @@ On `CLERK DONE`: `python3 tools/room.py fold novels/{slug} N`. It runs the state
 the fold file. When chapter N+1's beats started at ACCEPT, it continues that planner,
 `planner-ch(N+1)`, to fold the lines for the bible, then prints the writer for N+1; if that planner
 is still on its beats, send the fold on its `PLANNER DONE beats`. If you never sent it (N+1 is not
-in the run), `room.py fold … --cold` spawns a fresh one for the fold. Otherwise, if
+in the run, or a pause came after ACCEPT), `room.py fold … --cold` spawns a fresh one for the fold. Otherwise, if
 the fold has lines, it prints a **planner** described `planner-ch(N+1)` to fold them, continued warm
 for N+1's beats, which it also prints. Send the fold now; the rest when chapter N+1 starts.
 

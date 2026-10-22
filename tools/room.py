@@ -11,7 +11,8 @@ named with the line range a role needs (`<novel>/state/continuity.md lines 104-1
 Steps (NOVEL is the novel directory, N the chapter, K the round):
 
   room.py beats NOVEL N              before the chapter: plan row, threads, the usage pause; the
-                                     planner's beats task (step 1). With no reader's memory before
+                                     planner's beats task (step 1): it continues the planner that
+                                     folded N-1 (fresh with --cold). With no reader's memory before
                                      a chapter N > 1, a fresh re-read of ch01-N-1 comes first
   room.py approve NOVEL N            after PLANNER DONE beats: what loop.md step 1 checks, from the
                                      beat sheet (its event beside the plan row's, the ledger rows
@@ -28,7 +29,8 @@ Steps (NOVEL is the novel directory, N the chapter, K the round):
   room.py fold NOVEL N               after CLERK DONE: state check, the fold count, the every-10
                                      re-read, the usage pause; the planner's fold and N+1's beats.
                                      When `judge` started N+1's beats at ACCEPT (beside the line
-                                     editor), the fold continues that planner, then the writer
+                                     editor), the fold continues that planner, then the writer;
+                                     --cold when it was never sent
   room.py adopt NOVEL N READER_ID    after the every-10 fresh reader: files its report, adopts its
                                      notes
   room.py canon NOVEL PLANNER_ID     after a planner's hand-back with `gap canon` lines (fan
@@ -36,7 +38,7 @@ Steps (NOVEL is the novel directory, N the chapter, K the round):
                                      continued to finish its task
   room.py where NOVEL                which chapter and step the files say the room is at
 
-Every step takes `--log LOG` (an experiment's working log) and `--agent ID`, repeatable: the
+Every step takes `--log LOG` (an experiment's working log) and `--agent ID`, repeatable or comma-separated: the
 hand-backs of those agents are appended to LOG verbatim (tools/handback.py), followed by the
 dispatches this step prints and the one its previous step's branch sent (`judge` and `adopt` add
 the reader's id themselves; `fold` logs the next chapter's warm beats with the fold). `--transcripts
@@ -78,6 +80,7 @@ MAX_ROUND = 2
 SHOWN = 8               # findings printed before "+n more"
 MAP_OVER = 8000         # characters (~2k tokens): a bible file past this gets its sections mapped
 AHEAD = "ahead.txt"     # judge: the next chapter's planner was offered at ACCEPT (fold continues it)
+FOLDER = "folder.txt"   # fold: a planner was spawned for this fold (the next beats continue it)
 # Rounds 1 and 2 continue the round-0 continuity editor, which already holds the bible and the state,
 # instead of a fresh one. False spawns a fresh one every round.
 WARM_CONTINUITY = True
@@ -503,7 +506,7 @@ def append_log(log, agents, sent, transcripts=None, root=ROOT):
 # ---------------------------------------------------------------- steps
 
 
-def step_beats(c):
+def step_beats(c, cold=False):
     lines = ["ch %d · step 1 beats" % c.n]
     if c.nov.plan_row(c.n) is None:
         raise Stop("chapter %d has no plan row in plan/chapters.md: run kb/showrunner/plan.md "
@@ -530,7 +533,12 @@ def step_beats(c):
             "python3 tools/room.py beats %s %d again" % (c.novel, prev.n, c.novel, c.n)), []
     then = ("then, on PLANNER DONE beats: python3 tools/room.py approve %s %d (it prints the "
             "writer)" % (c.novel, c.n))
-    return lines, [planner_beats(c, warm=False)], then, []
+    folder = c.n > 1 and os.path.isfile(c.abs(Chapter(c.abs(c.novel), c.n - 1, c.root)
+                                              .wfile(FOLDER)))
+    if folder and not cold:
+        lines.append("planner-ch%02d folded chapter %d: continue it (if it cannot be resumed: "
+                     "python3 tools/room.py beats %s %d --cold)" % (c.n, c.n - 1, c.novel, c.n))
+    return lines, [planner_beats(c, warm=bool(folder and not cold))], then, []
 
 
 def due_rows(nov, n):
@@ -570,7 +578,8 @@ def step_approve(c):
     then = ("then: approve it as written, or send the planner back saying which test it fails "
             "(loop.md step 1). Approved, send the writer%s:" % (
                 " (a sheet started at chapter %d's ACCEPT: after room.py fold %s %d)"
-                % (c.n - 1, c.novel, c.n - 1) if c.n > 1 else ""))
+                % (c.n - 1, c.novel, c.n - 1) if c.n > 1 and os.path.isfile(
+                    c.abs(Chapter(c.abs(c.novel), c.n - 1, c.root).wfile(AHEAD))) else ""))
     return out, [], render([then], [writer(c)]), []
 
 
@@ -729,6 +738,8 @@ def step_fold(c, cold=False):
     if pause:
         lines.append(pause)
     have_beats = os.path.isfile(nxt.abs(nxt.wfile("beats.md")))
+    if cold and os.path.isfile(c.abs(c.wfile(AHEAD))):
+        os.remove(c.abs(c.wfile(AHEAD)))                 # offered at ACCEPT, never sent
     if have_beats or (not cold and os.path.isfile(c.abs(c.wfile(AHEAD)))):
         # The beats ran at ACCEPT (room.py judge): fold into that planner, then the writer. Its
         # beat sheet may still be in progress: the fold waits for its PLANNER DONE beats.
@@ -747,6 +758,8 @@ def step_fold(c, cold=False):
         return lines, dispatches, then + render([], [writer(nxt)]), [planner_ahead(c, k or 0)]
     if count:
         dispatches.append(planner_fold(c))
+        with open(c.abs(c.wfile(FOLDER)), "w", encoding="utf-8") as fh:
+            fh.write("planner-ch%02d spawned for chapter %d's fold\n" % (nxt.n, c.n))
     beats = ["", "then, for chapter %d (when it is in the run):" % nxt.n]
     late, warm = overdue(nxt.nov), []
     if nxt.nov.plan_row(nxt.n) is None:
@@ -877,14 +890,16 @@ def main(argv=None):
     ap.add_argument("rest", nargs="*", help="N, K, the agent id: as the step needs")
     ap.add_argument("--log", help="append hand-backs and dispatches to this working log")
     ap.add_argument("--agent", action="append", default=[], help="an agent whose hand-back "
-                    "goes into --log (repeatable)")
+                    "goes into --log (repeatable, or comma-separated)")
     ap.add_argument("--force", action="store_true", help="round: rebuild a reading folder the "
                     "reader has already worked in (its work is lost)")
     ap.add_argument("--cold", action="store_true", help="fold: chapter N+1's planner was not "
-                    "sent at ACCEPT; spawn a fresh one for the fold")
+                    "sent at ACCEPT; spawn a fresh one for the fold. beats: spawn a fresh planner "
+                    "instead of continuing the one that folded chapter N-1")
     ap.add_argument("--transcripts", help="directory holding the transcripts (tests)")
     ap.add_argument("--root", default=ROOT, help=argparse.SUPPRESS)
     args = ap.parse_args(argv)
+    args.agent = [a for arg in args.agent for a in arg.split(",") if a.strip()]
     if not os.path.isfile(os.path.join(args.novel, "novel.md")):
         sys.stderr.write("room: no novel.md in %s\n" % args.novel)
         return 1
@@ -907,7 +922,7 @@ def main(argv=None):
         c = Chapter(args.novel, int(args.rest[0]), args.root)
         k = int(args.rest[1]) if args.step in ("round", "judge", "clerk") else None
         if args.step == "beats":
-            lines, sends, then, after = step_beats(c)
+            lines, sends, then, after = step_beats(c, args.cold)
             came, then = [], render([then], after)
         elif args.step == "approve":
             lines, sends, then, came = step_approve(c)

@@ -52,8 +52,11 @@ search files with Read, Glob and Grep.
    from the facts file's `new` lines, and check each against the chapter as it now stands (the
    line editor may have changed it). Then add what else the chapter states as true: a name, a
    distance, a price, a rule, a relationship, a date. One fact a line. A bible line the chapter has
-   overtaken (a first-appearance entry, a detail set otherwise) is a `stale` line. **You never edit
-   `bible/`**: the planner folds this file in.
+   overtaken (a first-appearance entry, a detail set otherwise) is a `stale` line. A place's fact
+   names its place after the file: `bible/world.md § the sluice`. What happened on a day (a cut, a
+   market, a count of days left) is the timeline's, written at step 5; the fold keeps only the
+   standing fact it left (the post stands in the grass). **You never edit `bible/`**: the planner
+   folds this file in.
 9. **Check:** `python3 tools/state_check.py novels/<slug>`. Fix what it reports in the files you
    wrote. What it reports about files you do not write (the plan, the bible) you leave, and the
    count goes in your status line.

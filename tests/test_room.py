@@ -45,10 +45,12 @@ class RoomTest(unittest.TestCase):
         with open(os.path.join(self.shelf, "notes.md"), "w", encoding="utf-8") as fh:
             fh.write("The reader's memory after chapter 1.\n")
         self.transcripts = os.path.join(self.root, "transcripts")
+        self.readings, room.READINGS = room.READINGS, ()      # never this machine's live usage
         self.cwd = os.getcwd()
         os.chdir(self.root)
 
     def tearDown(self):
+        room.READINGS = self.readings
         os.chdir(self.cwd)
         self.fx.__exit__(None, None, None)
 
@@ -131,6 +133,7 @@ class RoomTest(unittest.TestCase):
         sheet = ('# Ch 2 — "The Bar"\nevent    Nessa rows the boy out\nlearns   %s\n'
                  'pressure L1 grew: she takes the oars\n\n## Scene 1 — the quay\nprose plan\n')
         self.fx.write("work/ch0002/beats.md", sheet % "R1 the tally's date: sc 1, Tam says it")
+        self.fx.write("work/ch0001/" + room.AHEAD, "planner-ch02 offered\n")    # judge, at ACCEPT
         code, out = self.run_room("approve", self.novel, "2")
         self.assertEqual(code, 0, out)
         self.assertIn("plan event: Nessa rows the boy out past the bar", out)
@@ -537,6 +540,51 @@ class RoomTest(unittest.TestCase):
         code, out = self.run_room("fold", self.novel, "1", "--cold")
         self.assertIn('@ spawn planner as "planner-ch02"\nNovel: novels/long-ebb. Task: fold '
                       'chapter 1.', out)
+
+    def test_after_a_cold_fold_the_beats_continue_that_planner(self):
+        self.fx.write("work/ch0001/notes-r0.md", "# Notes\nverdict ACCEPT | owed 1/1\n")
+        self.fx.write("work/ch0001/fold.md", '# Fold — chapter 1\nnew    the boathouse has two '
+                      'doors | bible/world.md | "two doors"\n')
+        self.fx.write("work/ch0001/" + room.AHEAD, "planner-ch02 offered\n")    # never sent
+        code, out = self.run_room("fold", self.novel, "1", "--cold")
+        self.assertIn('@ spawn planner as "planner-ch02"', out)
+        self.assertFalse(os.path.isfile(self.fx.path("work", "ch0001", room.AHEAD)))
+        code, out = self.run_room("beats", self.novel, "2")
+        self.assertEqual(code, 0, out)
+        self.assertIn("@ continue planner-ch02\nTask: beats for chapter 2.", out)
+        self.assertNotIn("@ spawn planner", out)
+        code, out = self.run_room("beats", self.novel, "2", "--cold")
+        self.assertIn('@ spawn planner as "planner-ch02"', out)
+        self.fx.write("work/ch0002/beats.md", "# Ch 2\nevent    x\n")
+        code, out = self.run_room("approve", self.novel, "2")
+        self.assertNotIn("ACCEPT", out)                    # this sheet came after the fold
+        self.assertIn("Approved, send the writer:", out)
+
+    def test_judge_past_the_pause_starts_no_next_beats(self):
+        self.fx.write("work/ch0001/draft-r0.md", DRAFT.replace("number: 2", "number: 1"))
+        self.run_room("round", self.novel, "1", "0")
+        self.fx.write("work/ch0001/continuity-r0.md",
+                      "# Continuity — chapter 1, round 0\nlint     x\nchecked  y\nnone\n")
+        self.agent("b1", REPORT.replace("chapter 2", "chapter 1"), "beta-reader ch01 r0")
+        usage = os.path.join(self.root, "usage.json")
+        with open(usage, "w", encoding="utf-8") as fh:
+            json.dump({"updated": time.time(), "rate_limits": {"five_hour": {
+                "used_percentage": 85}}}, fh)
+        room.READINGS = (usage,)
+        code, out = self.run_room("judge", self.novel, "1", "0", "b1")
+        self.assertEqual(code, 0, out)
+        self.assertNotIn("@ spawn planner", out)
+        self.assertIn("chapter 2's beats wait for room.py fold: the usage window", out)
+        self.assertFalse(os.path.isfile(self.fx.path("work", "ch0001", room.AHEAD)))
+
+    def test_agent_ids_may_be_comma_separated(self):
+        self.agent("w1", "DRAFT READY x")
+        self.agent("s1", "NOTES READY y")
+        self.fx.write("work/ch0001/beats.md", "# Ch 1\nevent    x\n")
+        log = "docs/experiments/run.md"
+        code, out = self.run_room("approve", self.novel, "1", "--log", log, "--agent", "w1,s1")
+        self.assertNotIn("warn log", out)
+        self.assertEqual(out.count("log w1") + out.count("log s1"), 2, out)
 
     def test_judge_marks_the_next_beats_as_offered(self):
         self.fx.write("work/ch0001/draft-r0.md", DRAFT.replace("number: 2", "number: 1"))
